@@ -1,5 +1,7 @@
+import RegisterPage from "./pages/register/RegisterPage.component";
+
 function App() {
-  return "Hello, World!";
+  return <RegisterPage />;
 }
 
 export default App;
