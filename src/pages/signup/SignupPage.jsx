@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const RegisterPage = () => {
+const SignupPage = () => {
   const testEmail = "y.motosugi0227@gmail.com";
   const [email, setEmail] = useState(testEmail);
   const [error, setError] = useState({});
@@ -95,4 +95,4 @@ const RegisterPage = () => {
   );
 };
 
-export default RegisterPage;
+export default SignupPage;
