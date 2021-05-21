@@ -3,15 +3,8 @@ import { TextField, Button, CircularProgress } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 
 const useStyles = makeStyles((theme) => ({
-  inputForm: {
-    width: "100%",
-    marginBottom: "1rem",
-  },
-  registerButton: {
-    marginTop: "1rem",
-    textTransform: "uppercase",
-    marginBottom: "1rem",
-  },
+  inputform: theme.inputForm,
+  formButton: theme.formButton,
 }));
 
 const ActivationForm = ({
@@ -63,7 +56,7 @@ const ActivationForm = ({
       />
       {createUserError && <Alert severity="error">{createUserError}</Alert>}
       <Button
-        className={classes.registerButton}
+        className={classes.formButton}
         variant="contained"
         color="primary"
         onClick={handleSubmit}
