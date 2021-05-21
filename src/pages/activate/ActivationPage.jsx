@@ -97,6 +97,7 @@ const ActivationPage = ({ match, history }) => {
 
   const doSubmit = async (data) => {
     try {
+      // TODO: right place to set user credential to global state.
       await createUser(data);
       history.push("/");
       return setLoading(false);
