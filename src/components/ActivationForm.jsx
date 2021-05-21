@@ -18,7 +18,7 @@ const ActivationForm = ({
 }) => {
   const classes = useStyles();
 
-  const isDisabled = () =>
+  const shouldDisable = () =>
     error.password === "" ||
     error.confirmingPassword === "" ||
     error.password.length > 0 ||
@@ -60,7 +60,7 @@ const ActivationForm = ({
         variant="contained"
         color="primary"
         onClick={handleSubmit}
-        disabled={isDisabled()}
+        disabled={shouldDisable()}
       >
         {loading ? <CircularProgress color="inherit" size={20} /> : "Submit"}
       </Button>

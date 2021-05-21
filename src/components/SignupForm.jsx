@@ -24,7 +24,7 @@ const SignupForm = ({
     return loading ? <CircularProgress color="inherit" size={20} /> : "Signup";
   };
 
-  const shouldDisableButton = () =>
+  const shouldDisable = () =>
     email === "" || !!error.length || severity === "error";
 
   return (
@@ -44,7 +44,7 @@ const SignupForm = ({
         variant="contained"
         color="primary"
         onClick={handleSubmit}
-        disabled={shouldDisableButton()}
+        disabled={shouldDisable()}
       >
         {getButtonContent(message, loading)}
       </Button>
