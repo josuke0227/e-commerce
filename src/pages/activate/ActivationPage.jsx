@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { TextField, Paper, Button, CircularProgress } from "@material-ui/core";
+import Alert from "@material-ui/lab/Alert";
 import jwt from "jsonwebtoken";
-import { passwordSchema } from "./schema";
+import { passwordSchema, schemaSelector } from "../../schemas/authSchema";
+import { createUser } from "../../services/activationService";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -28,30 +30,36 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: "1rem",
-    width: "16rem",
+    width: "18rem",
     display: "flex",
     flexDirection: "column",
   },
 }));
 
-const ActivationPage = ({ match }) => {
+const ActivationPage = ({ match, history }) => {
   const classes = useStyles();
 
   const [data, setData] = useState({
-    email: "",
     password: "",
     confirmingPassword: "",
-    token: "",
   });
-  const [error, setError] = useState({});
+  const [token, setToken] = useState("");
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState({
+    password: "",
+    confirmingPassword: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [createUserError, setCreateUserError] = useState("");
 
   useEffect(() => {
     if (match.params.token) {
       const token = match.params.token;
       const { email } = jwt.decode(token);
-      setData({ ...data, email, token });
+      setEmail(email);
+      setToken(token);
     }
-  }, []);
+  }, [match.params, email]);
 
   const handleInputChange = (e) => {
     e.preventDefault();
@@ -76,7 +84,7 @@ const ActivationPage = ({ match }) => {
   };
 
   const getPasswordErrorMessage = (result) => {
-    if (!result.error) return null;
+    if (!result.error) return false;
 
     const { error } = result;
     if (error.message.includes("[a-zA-Z0-9]")) {
@@ -87,15 +95,55 @@ const ActivationPage = ({ match }) => {
   };
 
   const getConfirmingPasswordMessage = (data) => {
-    if (data.password === data.confirmingPassword) {
-      return null;
+    if (data.password !== data.confirmingPassword) {
+      return "password and confirming password must be the same";
     }
-    return "password and confirming password must be the same";
+    return false;
   };
 
-  const handleSubmit = () => {
-    // TODO: check the shape of submitting data.
-    console.log(data);
+  const isDisabled = () =>
+    error.password === "" ||
+    error.confirmingPassword === "" ||
+    error.password.length > 0 ||
+    error.confirmingPassword.length > 0;
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    const userCredential = {
+      ...data,
+      email,
+      token,
+    };
+    const userSchema = schemaSelector([
+      "email",
+      "password",
+      "confirmingPassword",
+      "token",
+    ]);
+
+    const { error } = userSchema.validate(userCredential, {
+      abortEarly: false,
+    });
+
+    if (error) {
+      setCreateUserError(error.message);
+      setLoading(false);
+      return;
+    }
+
+    doSubmit(userCredential);
+  };
+
+  const doSubmit = async (data) => {
+    try {
+      await createUser(data);
+      history.push("/");
+      return setLoading(false);
+    } catch (error) {
+      const { data: message } = error.response;
+      setCreateUserError(message);
+      return setLoading(false);
+    }
   };
 
   return (
@@ -105,18 +153,19 @@ const ActivationPage = ({ match }) => {
           className={classes.inputForm}
           id="email"
           label="your email address"
-          value={data.email}
+          value={email}
           disabled
         />
         <TextField
+          autoFocus
           type="password"
           className={classes.inputForm}
           id="password"
           label="enter password"
           value={data.password}
-          helperText={error && error.password}
+          helperText={!!error.password && error.password}
           onChange={handleInputChange}
-          error={error.password}
+          error={error.password.length > 0}
         />
         <TextField
           type="password"
@@ -124,19 +173,19 @@ const ActivationPage = ({ match }) => {
           id="confirmingPassword"
           label="confirm password"
           value={data.confirmingPassword}
-          helperText={error && error.confirmingPassword}
+          helperText={!!error.confirmingPassword && error.confirmingPassword}
           onChange={handleInputChange}
-          error={error.confirmingPassword}
+          error={error.confirmingPassword.length > 0}
         />
+        {createUserError && <Alert severity="error">{createUserError}</Alert>}
         <Button
           className={classes.registerButton}
           variant="contained"
           color="primary"
           onClick={handleSubmit}
-          disabled={false}
+          disabled={isDisabled()}
         >
-          Submit
-          {/* <CircularProgress color="inherit" size={20} /> */}
+          {loading ? <CircularProgress color="inherit" size={20} /> : "Submit"}
         </Button>
       </Paper>
     </div>

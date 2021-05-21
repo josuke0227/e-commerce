@@ -1,13 +1,8 @@
 import { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  TextField,
-  Paper,
-  Button,
-  LinearProgress,
-  Typography,
-} from "@material-ui/core";
-import { emailShcema } from "./schema";
+import { TextField, Paper, Button, CircularProgress } from "@material-ui/core";
+import Alert from "@material-ui/lab/Alert";
+import { emailSchema } from "../../schemas/authSchema";
 import { sendUserEmail } from "../../services/signupServices";
 
 const useStyles = makeStyles((theme) => ({
@@ -33,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: "1rem",
-    width: "16rem",
+    width: "18rem",
   },
 }));
 
@@ -43,12 +38,13 @@ const SignupPage = () => {
   const [error, setError] = useState({});
   const [message, setMessage] = useState();
   const [loading, setLoading] = useState(false);
+  const [responseStatus, setResponseStatus] = useState(null);
 
   const classes = useStyles();
 
   const handleInputChange = ({ target }) => {
     const email = target.value;
-    const result = emailShcema.validate(email);
+    const result = emailSchema.validate(email);
     setError(result.error || null);
     setEmail(target.value);
   };
@@ -57,14 +53,37 @@ const SignupPage = () => {
     e.preventDefault();
     setLoading(true);
 
+    const { error } = emailSchema.validate(email);
+    if (error) {
+      setLoading(false);
+      setError(error);
+      return;
+    }
+
     try {
-      const { data } = await sendUserEmail(email);
-      setMessage(data.message);
+      const { data, status } = await sendUserEmail(email);
+      setMessage(data);
+      setResponseStatus(status);
     } catch (error) {
-      setMessage(error.message);
+      const { data: errorMessage, status } = error.response;
+      setMessage(errorMessage);
+      setResponseStatus(status);
     }
 
     setLoading(false);
+  };
+
+  const getSeverity = (responseStatus) => {
+    if (responseStatus > 199 && responseStatus < 300) return "success";
+    if (responseStatus > 399 && responseStatus < 600) return "error";
+  };
+
+  const getButtonContent = (message, loading) => {
+    if (message && !loading) return "Resend";
+
+    if (loading) return <CircularProgress color="inherit" size={20} />;
+
+    return "Signup";
   };
 
   return (
@@ -86,10 +105,11 @@ const SignupPage = () => {
           onClick={handleSubmit}
           disabled={error !== null}
         >
-          {message ? "Resend" : "Register Now"}
+          {getButtonContent(message, loading)}
         </Button>
-        {loading && <LinearProgress className={classes.progressBar} />}
-        <Typography variant="subtitle1">{message}</Typography>
+        {message && (
+          <Alert severity={getSeverity(responseStatus)}>{message}</Alert>
+        )}
       </Paper>
     </div>
   );
