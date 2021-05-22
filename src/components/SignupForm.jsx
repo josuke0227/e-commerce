@@ -2,6 +2,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { TextField, Button, CircularProgress } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 import GoogleButton from "./GoogleButton";
+import FaceBookButton from "./FacebookButton";
 
 const useStyles = makeStyles((theme) => ({
   inputform: theme.inputForm,
@@ -13,7 +14,6 @@ const SignupForm = ({
   error,
   handleInputChange,
   handleSubmit,
-  informParent,
   loading,
   message,
   setMessage,
@@ -43,11 +43,8 @@ const SignupForm = ({
         value={email}
       />
       {message && <Alert severity={severity}>{message}</Alert>}
-      <GoogleButton
-        informParent={informParent}
-        setSeverity={setSeverity}
-        setMessage={setMessage}
-      />
+      <GoogleButton setSeverity={setSeverity} setMessage={setMessage} />
+      <FaceBookButton setSeverity={setSeverity} setMessage={setMessage} />
       <Button
         className={classes.formButton}
         color="primary"

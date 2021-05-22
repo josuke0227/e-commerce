@@ -7,7 +7,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
-  inputform: theme.inputForm,
   formButton: {
     ...theme.formButton,
     width: "100%",
@@ -16,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Google = ({ setMessage, setSeverity }) => {
+const GoogleButton = ({ setMessage, setSeverity }) => {
   const classes = useStyles();
   const history = useHistory();
 
@@ -35,27 +34,25 @@ const Google = ({ setMessage, setSeverity }) => {
   };
 
   return (
-    <div className="pb-3">
-      <GoogleLogin
-        clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-        onSuccess={handleResponse}
-        onFailure={handleResponse}
-        render={(renderProps) => (
-          <Button
-            className={classes.formButton}
-            onClick={renderProps.onClick}
-            disabled={renderProps.disabled}
-            variant="contained"
-            color="default"
-            endIcon={<GoogleIcon />}
-          >
-            Signup with Google
-          </Button>
-        )}
-        cookiePolicy={"single_host_origin"}
-      />
-    </div>
+    <GoogleLogin
+      clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+      onSuccess={handleResponse}
+      onFailure={handleResponse}
+      render={(renderProps) => (
+        <Button
+          className={classes.formButton}
+          onClick={renderProps.onClick}
+          disabled={renderProps.disabled}
+          variant="contained"
+          color="default"
+          endIcon={<GoogleIcon />}
+        >
+          Signup with Google
+        </Button>
+      )}
+      cookiePolicy={"single_host_origin"}
+    />
   );
 };
 
-export default Google;
+export default GoogleButton;

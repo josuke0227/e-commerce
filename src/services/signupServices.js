@@ -11,5 +11,12 @@ export const signupWithGoogle = async (response) =>
   axios({
     method: "POST",
     url: `${process.env.REACT_APP_API}/signup/googleaccount`,
-    data: { idToken: response.tokenId }, // key name is set the same as the prop of token parser on backend
+    data: { idToken: response.tokenId },
+  });
+
+export const signupWithFacebook = async (response) =>
+  axios({
+    method: "POST",
+    url: `${process.env.REACT_APP_API}/signup/facebookaccount`,
+    data: { userID: response.userID, accessToken: response.accessToken },
   });
