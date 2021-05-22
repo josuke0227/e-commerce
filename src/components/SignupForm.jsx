@@ -1,5 +1,10 @@
 import { makeStyles } from "@material-ui/core/styles";
-import { TextField, Button, CircularProgress } from "@material-ui/core";
+import {
+  TextField,
+  Button,
+  CircularProgress,
+  Typography,
+} from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 import GoogleButton from "./GoogleButton";
 import FaceBookButton from "./FacebookButton";
@@ -7,6 +12,12 @@ import FaceBookButton from "./FacebookButton";
 const useStyles = makeStyles((theme) => ({
   inputform: theme.inputForm,
   formButton: theme.formButton,
+  subtitle: {
+    textAlign: "center",
+  },
+  title: {
+    marginBottom: "1rem",
+  },
 }));
 
 const SignupForm = ({
@@ -33,6 +44,9 @@ const SignupForm = ({
 
   return (
     <>
+      <Typography variant="h6" className={classes.title}>
+        Signup with email
+      </Typography>
       <TextField
         className={classes.inputform}
         error={!!error.length}
@@ -41,10 +55,9 @@ const SignupForm = ({
         label="email address"
         onChange={handleInputChange}
         value={email}
+        autoFocus
       />
       {message && <Alert severity={severity}>{message}</Alert>}
-      <GoogleButton setSeverity={setSeverity} setMessage={setMessage} />
-      <FaceBookButton setSeverity={setSeverity} setMessage={setMessage} />
       <Button
         className={classes.formButton}
         color="primary"
@@ -54,6 +67,11 @@ const SignupForm = ({
       >
         {getButtonContent(message, loading)}
       </Button>
+      <Typography variant="subtitle1" className={classes.subtitle}>
+        OR
+      </Typography>
+      <GoogleButton setSeverity={setSeverity} setMessage={setMessage} />
+      <FaceBookButton setSeverity={setSeverity} setMessage={setMessage} />
     </>
   );
 };
