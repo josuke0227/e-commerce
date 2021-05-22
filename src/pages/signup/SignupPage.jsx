@@ -21,6 +21,8 @@ const SignupPage = () => {
     setEmail(target.value);
   };
 
+  const informParent = (response) => {};
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -54,6 +56,9 @@ const SignupPage = () => {
         loading={loading}
         message={message}
         severity={severity}
+        setMessage={setMessage}
+        setSeverity={setSeverity}
+        informParent={informParent}
       />
     </CenteredCardLayout>
   );
