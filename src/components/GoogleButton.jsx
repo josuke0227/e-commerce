@@ -2,6 +2,7 @@ import { Button } from "@material-ui/core";
 import React from "react";
 import GoogleLogin from "react-google-login";
 import { signupWithGoogle } from "../services/signupServices";
+import { signinWithGoogle } from "../services/signinServices";
 import { ReactComponent as GoogleIcon } from "../images/googleIcon.svg";
 import { makeStyles } from "@material-ui/core/styles";
 import { useHistory } from "react-router-dom";
@@ -12,16 +13,25 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     marginBottom: "0.5rem",
     textTransform: "none",
+
+    "& > span::first-letter": {
+      textTransform: "uppercase",
+    },
   },
 }));
 
-const GoogleButton = ({ setMessage, setSeverity }) => {
+const GoogleButton = ({ setSeverity, setMessage, label = "Signup" }) => {
   const classes = useStyles();
   const history = useHistory();
 
+  const toggleService = (label) => {
+    if (label === "Signin") return signinWithGoogle;
+    else return signupWithGoogle;
+  };
+
   const handleResponse = async (response) => {
     try {
-      const { data } = await signupWithGoogle(response);
+      const { data } = await toggleService(label)(response);
       console.log("data :>> ", data);
       // TODO: Add data to global status;
 
@@ -29,7 +39,7 @@ const GoogleButton = ({ setMessage, setSeverity }) => {
     } catch (error) {
       const message = error.response.data;
       setMessage(message);
-      setSeverity("error");
+      setSeverity && setSeverity("error");
     }
   };
 
@@ -47,7 +57,7 @@ const GoogleButton = ({ setMessage, setSeverity }) => {
           color="default"
           endIcon={<GoogleIcon />}
         >
-          Signup with Google
+          {label} with Google
         </Button>
       )}
       cookiePolicy={"single_host_origin"}

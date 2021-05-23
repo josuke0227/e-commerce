@@ -7,7 +7,7 @@ import SigninForm from "../../components/SigninForm";
 const SigninPage = ({ history }) => {
   const [data, setData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({ email: "", password: "" });
-  const [authError, setAuthError] = useState("");
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e) => {
@@ -15,7 +15,7 @@ const SigninPage = ({ history }) => {
     const { id: path, value } = e.target;
     setData({ ...data, [path]: value });
     setErrors({ ...errors, [path]: "" });
-    setAuthError("");
+    setMessage("");
   };
 
   const handleSubmit = () => {
@@ -44,7 +44,7 @@ const SigninPage = ({ history }) => {
       history.push("/");
       // TODO: set user credential to global state.
     } catch (error) {
-      setAuthError(error.response.data);
+      setMessage(error.response.data);
       console.log(error);
     }
     setLoading(false);
@@ -53,7 +53,8 @@ const SigninPage = ({ history }) => {
   return (
     <CenteredCardLayout>
       <SigninForm
-        authError={authError}
+        message={message}
+        setMessage={setMessage}
         data={data}
         errors={errors}
         handleInputChange={handleInputChange}

@@ -1,24 +1,38 @@
 import { makeStyles } from "@material-ui/core/styles";
-import { TextField, Button, CircularProgress } from "@material-ui/core";
+import {
+  TextField,
+  Button,
+  CircularProgress,
+  Typography,
+} from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
+import GoogleButton from "./GoogleButton";
+import FaceBookButton from "./FacebookButton";
 
 const useStyles = makeStyles((theme) => ({
   inputform: theme.inputForm,
   formButton: theme.formButton,
+  subtitle: {
+    textAlign: "center",
+  },
 }));
 
 const SigninForm = ({
-  authError,
+  message,
   data,
   errors,
   handleInputChange,
   handleSubmit,
   loading,
+  setMessage,
 }) => {
   const classes = useStyles();
 
   return (
     <>
+      <Typography variant="h6" className={classes.title}>
+        Signin with email
+      </Typography>
       <TextField
         className={classes.inputForm}
         type="email"
@@ -39,7 +53,7 @@ const SigninForm = ({
         onChange={handleInputChange}
         error={!!errors.password && errors.password.length > 0}
       />
-      {authError && <Alert severity="error">{authError}</Alert>}
+      {message && <Alert severity="error">{message}</Alert>}
       <Button
         className={classes.formButton}
         variant="contained"
@@ -49,6 +63,11 @@ const SigninForm = ({
       >
         {loading ? <CircularProgress color="inherit" size={20} /> : "Submit"}
       </Button>
+      <Typography variant="subtitle1" className={classes.subtitle}>
+        OR
+      </Typography>
+      <GoogleButton setMessage={setMessage} label="Signin" />
+      <FaceBookButton setMessage={setMessage} label="Signin" />
     </>
   );
 };

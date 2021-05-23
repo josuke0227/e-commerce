@@ -2,6 +2,7 @@ import React from "react";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 import FacebookIcon from "@material-ui/icons/Facebook";
 import { signupWithFacebook } from "../services/signupServices";
+import { signinWithFacebook } from "../services/signinServices";
 import { useHistory } from "react-router-dom";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { Button } from "@material-ui/core";
@@ -10,39 +11,42 @@ const useStyles = makeStyles((theme) => ({
   faceBookIcon: {
     fontSize: "24px",
   },
-  formButton: {
-    ...theme.formButton,
-    width: "100%",
-    marginBottom: "0.5rem",
-    textTransform: "none",
-  },
 }));
 
 const SignupButton = withStyles((theme) => ({
   root: {
     color: "#fff",
     backgroundColor: "#4267B2",
+    marginTop: "1rem",
+    marginBottom: "0.5rem",
     "&:hover": {
       backgroundColor: "#375694",
     },
   },
+  label: {
+    textTransform: "none",
+  },
 }))(Button);
 
-const FacebookButton = ({ setMessage, setSeverity }) => {
+const FacebookButton = ({ setMessage, setSeverity, label = "Signup" }) => {
   const classes = useStyles();
   const history = useHistory();
 
+  const toggleService = (label) => {
+    if (label === "Signin") return signinWithFacebook;
+    else return signupWithFacebook;
+  };
+
   const handleResponse = async (response) => {
     try {
-      const { data } = await signupWithFacebook(response);
+      const { data } = await toggleService(label)(response);
       console.log("data :>> ", data);
       // TODO: Add data to global status;
-
       history.push("/");
     } catch (error) {
       const message = error.response.data;
       setMessage(message);
-      setSeverity("error");
+      setSeverity && setSeverity("error");
     }
   };
 
@@ -54,11 +58,10 @@ const FacebookButton = ({ setMessage, setSeverity }) => {
       render={(renderProps) => (
         <SignupButton
           onClick={renderProps.onClick}
-          className={classes.formButton}
           variant="contained"
           endIcon={<FacebookIcon className={classes.faceBookIcon} />}
         >
-          Signup with Facebook
+          {label} with Facebook
         </SignupButton>
       )}
     />
