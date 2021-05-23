@@ -10,14 +10,11 @@ import GoogleButton from "./GoogleButton";
 import FaceBookButton from "./FacebookButton";
 
 const useStyles = makeStyles((theme) => ({
-  inputform: theme.inputForm,
+  formTitle: theme.formTitle,
+  inputForm: theme.inputForm,
   formButton: theme.formButton,
-  subtitle: {
-    textAlign: "center",
-  },
-  title: {
-    marginBottom: "1rem",
-  },
+  formAlert: theme.formAlert,
+  formSubtitle: theme.formSubtitle,
 }));
 
 const SignupForm = ({
@@ -44,11 +41,11 @@ const SignupForm = ({
 
   return (
     <>
-      <Typography variant="h6" className={classes.title}>
+      <Typography variant="h6" className={classes.formTitle}>
         Signup with email
       </Typography>
       <TextField
-        className={classes.inputform}
+        className={classes.inputForm}
         error={!!error.length}
         helperText={error}
         id="email"
@@ -57,7 +54,11 @@ const SignupForm = ({
         value={email}
         autoFocus
       />
-      {message && <Alert severity={severity}>{message}</Alert>}
+      {message && (
+        <Alert className={classes.formAlert} severity={severity}>
+          {message}
+        </Alert>
+      )}
       <Button
         className={classes.formButton}
         color="primary"
@@ -67,7 +68,7 @@ const SignupForm = ({
       >
         {getButtonContent(message, loading)}
       </Button>
-      <Typography variant="subtitle1" className={classes.subtitle}>
+      <Typography variant="subtitle1" className={classes.formSubtitle}>
         OR
       </Typography>
       <GoogleButton setSeverity={setSeverity} setMessage={setMessage} />

@@ -10,11 +10,11 @@ import GoogleButton from "./GoogleButton";
 import FaceBookButton from "./FacebookButton";
 
 const useStyles = makeStyles((theme) => ({
-  inputform: theme.inputForm,
+  formTitle: theme.formTitle,
+  inputForm: theme.inputForm,
   formButton: theme.formButton,
-  subtitle: {
-    textAlign: "center",
-  },
+  formAlert: theme.formAlert,
+  formSubtitle: theme.formSubtitle,
 }));
 
 const SigninForm = ({
@@ -30,7 +30,7 @@ const SigninForm = ({
 
   return (
     <>
-      <Typography variant="h6" className={classes.title}>
+      <Typography variant="h6" className={classes.formTitle}>
         Signin with email
       </Typography>
       <TextField
@@ -53,7 +53,11 @@ const SigninForm = ({
         onChange={handleInputChange}
         error={!!errors.password && errors.password.length > 0}
       />
-      {message && <Alert severity="error">{message}</Alert>}
+      {message && (
+        <Alert className={classes.formAlert} severity="error">
+          {message}
+        </Alert>
+      )}
       <Button
         className={classes.formButton}
         variant="contained"
@@ -63,7 +67,7 @@ const SigninForm = ({
       >
         {loading ? <CircularProgress color="inherit" size={20} /> : "Submit"}
       </Button>
-      <Typography variant="subtitle1" className={classes.subtitle}>
+      <Typography variant="subtitle1" className={classes.formSubtitle}>
         OR
       </Typography>
       <GoogleButton setMessage={setMessage} label="Signin" />

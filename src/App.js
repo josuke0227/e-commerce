@@ -5,14 +5,23 @@ import ActivationPage from "./pages/activate/ActivationPage";
 import SigninPage from "./pages/signin/SigninPage";
 
 const theme = createMuiTheme({
+  formTitle: {
+    marginBottom: "1rem",
+  },
   inputForm: {
     width: "100%",
     marginBottom: "1rem",
   },
   formButton: {
-    marginTop: "1rem",
     textTransform: "uppercase",
     marginBottom: "1rem",
+  },
+  formAlert: {
+    marginBottom: "1rem",
+  },
+  formSubtitle: {
+    marginBottom: "1rem",
+    textAlign: "center",
   },
 });
 

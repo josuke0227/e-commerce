@@ -1,10 +1,18 @@
 import { makeStyles } from "@material-ui/core/styles";
-import { TextField, Button, CircularProgress } from "@material-ui/core";
+import {
+  TextField,
+  Button,
+  CircularProgress,
+  Typography,
+} from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 
 const useStyles = makeStyles((theme) => ({
-  inputform: theme.inputForm,
+  formTitle: theme.formTitle,
+  inputForm: theme.inputForm,
   formButton: theme.formButton,
+  formAlert: theme.formAlert,
+  formSubtitle: theme.formSubtitle,
 }));
 
 const ActivationForm = ({
@@ -26,6 +34,9 @@ const ActivationForm = ({
 
   return (
     <>
+      <Typography variant="h6" className={classes.formTitle}>
+        Please set your password to activate your account.
+      </Typography>
       <TextField
         className={classes.inputForm}
         id="email"
@@ -54,7 +65,11 @@ const ActivationForm = ({
         onChange={handleInputChange}
         error={error.confirmingPassword.length > 0}
       />
-      {createUserError && <Alert severity="error">{createUserError}</Alert>}
+      {createUserError && (
+        <Alert className={classes.formAlert} severity="error">
+          {createUserError}
+        </Alert>
+      )}
       <Button
         className={classes.formButton}
         variant="contained"
