@@ -1,11 +1,10 @@
 import { Button } from "@material-ui/core";
-import React from "react";
+import { makeStyles } from "@material-ui/core/styles";
 import GoogleLogin from "react-google-login";
+import { useHistory } from "react-router-dom";
 import { signupWithGoogle } from "../../services/signupServices";
 import { signinWithGoogle } from "../../services/signinServices";
 import { ReactComponent as GoogleIcon } from "../../images/googleIcon.svg";
-import { makeStyles } from "@material-ui/core/styles";
-import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   formButton: {

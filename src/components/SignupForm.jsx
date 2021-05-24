@@ -1,8 +1,8 @@
-import GoogleButton from "./shared/GoogleButton";
-import FaceBookButton from "./shared/FacebookButton";
-import TextInputGenerator from "./shared/TextInputGenerator";
 import AuthFormContents from "./shared/AuthFormContents";
+import FaceBookButton from "./shared/FacebookButton";
+import GoogleButton from "./shared/GoogleButton";
 import MultipleStateButton from "./shared/MultipleStateButton";
+import TextInputGenerator from "./shared/TextInputGenerator";
 
 const SignupForm = ({
   email,
@@ -11,10 +11,10 @@ const SignupForm = ({
   handleSubmit,
   loading,
   message,
+  path,
   setMessage,
   setSeverity,
   severity,
-  path,
 }) => {
   const isSignupPage = () => path === "/signup";
 
@@ -49,13 +49,13 @@ const SignupForm = ({
     alert: { message, severity },
     submitButton: (
       <MultipleStateButton
-        email={email}
-        handleSubmit={handleSubmit}
-        message={message}
-        loading={loading}
-        error={error}
-        severity={severity}
         defaultLabel={getDefaultLabel()}
+        email={email}
+        error={error}
+        handleSubmit={handleSubmit}
+        loading={loading}
+        message={message}
+        severity={severity}
       />
     ),
     SNSButtons: setSNSButtons(),

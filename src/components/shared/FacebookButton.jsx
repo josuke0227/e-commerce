@@ -1,11 +1,10 @@
-import React from "react";
-import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
-import FacebookIcon from "@material-ui/icons/Facebook";
-import { signupWithFacebook } from "../../services/signupServices";
-import { signinWithFacebook } from "../../services/signinServices";
-import { useHistory } from "react-router-dom";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { Button } from "@material-ui/core";
+import FacebookIcon from "@material-ui/icons/Facebook";
+import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
+import { useHistory } from "react-router-dom";
+import { signupWithFacebook } from "../../services/signupServices";
+import { signinWithFacebook } from "../../services/signinServices";
 
 const useStyles = makeStyles((theme) => ({
   faceBookIcon: {

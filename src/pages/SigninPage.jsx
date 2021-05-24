@@ -53,13 +53,13 @@ const SigninPage = ({ history }) => {
   return (
     <CenteredCardLayout>
       <SigninForm
-        message={message}
-        setMessage={setMessage}
         data={data}
         errors={errors}
         handleInputChange={handleInputChange}
         handleSubmit={handleSubmit}
         loading={loading}
+        message={message}
+        setMessage={setMessage}
       />
     </CenteredCardLayout>
   );

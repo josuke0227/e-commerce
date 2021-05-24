@@ -1,6 +1,6 @@
-import TextInputGenerator from "./shared/TextInputGenerator";
 import AuthFormContents from "./shared/AuthFormContents";
 import ButtonWithLoader from "./shared/ButtonWIthLoader";
+import TextInputGenerator from "./shared/TextInputGenerator";
 
 const ActivationForm = ({
   createUserError,

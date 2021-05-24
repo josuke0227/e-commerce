@@ -1,8 +1,8 @@
-import GoogleButton from "./shared/GoogleButton";
-import FaceBookButton from "./shared/FacebookButton";
-import TextInputGenerator from "./shared/TextInputGenerator";
 import AuthFormContents from "./shared/AuthFormContents";
 import ButtonWithLoader from "./shared/ButtonWIthLoader";
+import FaceBookButton from "./shared/FacebookButton";
+import GoogleButton from "./shared/GoogleButton";
+import TextInputGenerator from "./shared/TextInputGenerator";
 
 const SigninForm = ({
   message,

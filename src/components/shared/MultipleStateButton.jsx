@@ -6,13 +6,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const MultipleStateButton = ({
-  email,
-  handleSubmit,
-  message,
-  loading,
-  error,
-  severity,
   defaultLabel,
+  email,
+  error,
+  handleSubmit,
+  loading,
+  message,
+  severity,
 }) => {
   const classes = useStyles();
 

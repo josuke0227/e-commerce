@@ -16,7 +16,7 @@ const SignupPage = ({ match }) => {
   useEffect(() => {
     const path = match.path;
     setPath(path);
-  }, [path]);
+  }, [match.path, path]);
 
   const handleInputChange = ({ target }) => {
     const email = target.value;
@@ -54,16 +54,16 @@ const SignupPage = ({ match }) => {
   return (
     <CenteredCardLayout>
       <SignupForm
-        path={path}
         email={email}
         error={error}
         handleInputChange={handleInputChange}
         handleSubmit={handleSubmit}
         loading={loading}
         message={message}
-        severity={severity}
+        path={path}
         setMessage={setMessage}
         setSeverity={setSeverity}
+        severity={severity}
       />
     </CenteredCardLayout>
   );
