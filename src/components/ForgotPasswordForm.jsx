@@ -6,8 +6,6 @@ import {
   Typography,
 } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
-import GoogleButton from "./shared/GoogleButton";
-import FaceBookButton from "./shared/FacebookButton";
 
 const useStyles = makeStyles((theme) => ({
   formTitle: theme.formTitle,
@@ -17,15 +15,13 @@ const useStyles = makeStyles((theme) => ({
   formSubtitle: theme.formSubtitle,
 }));
 
-const SignupForm = ({
+const ForgotPasswordForm = ({
   email,
   error,
   handleInputChange,
   handleSubmit,
   loading,
   message,
-  setMessage,
-  setSeverity,
   severity,
 }) => {
   const classes = useStyles();
@@ -33,7 +29,7 @@ const SignupForm = ({
   const getButtonContent = (message, loading) => {
     if (message && severity === "success") return "Resend";
 
-    return loading ? <CircularProgress color="inherit" size={20} /> : "Signup";
+    return loading ? <CircularProgress color="inherit" size={20} /> : "Submit";
   };
 
   const shouldDisable = () =>
@@ -42,7 +38,7 @@ const SignupForm = ({
   return (
     <>
       <Typography variant="h6" className={classes.formTitle}>
-        Signup with email
+        Forgot Password
       </Typography>
       <TextField
         className={classes.inputForm}
@@ -68,13 +64,8 @@ const SignupForm = ({
       >
         {getButtonContent(message, loading)}
       </Button>
-      <Typography variant="subtitle1" className={classes.formSubtitle}>
-        OR
-      </Typography>
-      <GoogleButton setSeverity={setSeverity} setMessage={setMessage} />
-      <FaceBookButton setSeverity={setSeverity} setMessage={setMessage} />
     </>
   );
 };
 
-export default SignupForm;
+export default ForgotPasswordForm;

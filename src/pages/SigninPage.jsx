@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { schemaSelector } from "../../schemas/authSchema";
-import { signin } from "../../services/signinServices";
-import CenteredCardLayout from "../../components/shared/CenteredCardLayout";
-import SigninForm from "../../components/SigninForm";
+import { schemaSelector } from "../schemas/authSchema";
+import { signin } from "../services/signinServices";
+import CenteredCardLayout from "../components/shared/CenteredCardLayout";
+import SigninForm from "../components/SigninForm";
 
 const SigninPage = ({ history }) => {
   const [data, setData] = useState({ email: "", password: "" });

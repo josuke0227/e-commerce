@@ -7,6 +7,13 @@ export const sendUserEmail = async (email) =>
     data: { email },
   });
 
+export const forgotPassword = async (email) =>
+  await axios({
+    method: "PUT",
+    url: `${process.env.REACT_APP_API}/forgotpassword`,
+    data: { email },
+  });
+
 export const signupWithGoogle = async (response) =>
   axios({
     method: "POST",

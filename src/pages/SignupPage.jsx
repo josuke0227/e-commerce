@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { emailSchema } from "../../schemas/authSchema";
-import { sendUserEmail } from "../../services/signupServices";
-import CenteredCardLayout from "../../components/shared/CenteredCardLayout";
-import SignupForm from "../../components/SignupForm";
+import { emailSchema } from "../schemas/authSchema";
+import { sendUserEmail } from "../services/signupServices";
+import CenteredCardLayout from "../components/shared/CenteredCardLayout";
+import SignupForm from "../components/SignupForm";
 
-const SignupPage = () => {
+const SignupPage = ({ match }) => {
   const testEmail = "y.motosugi0227@gmail.com";
   const [email, setEmail] = useState(testEmail);
   const [error, setError] = useState("");

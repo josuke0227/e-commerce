@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import jwt from "jsonwebtoken";
-import { passwordSchema, schemaSelector } from "../../schemas/authSchema";
-import { createUser } from "../../services/activationService";
-import CenteredCardLayout from "../../components/shared/CenteredCardLayout";
-import ActivationForm from "../../components/ActivationForm";
+import { passwordSchema, schemaSelector } from "../schemas/authSchema";
+import { createUser } from "../services/activationServices";
+import CenteredCardLayout from "../components/shared/CenteredCardLayout";
+import ActivationForm from "../components/ActivationForm";
 
 const ActivationPage = ({ match, history }) => {
   const [data, setData] = useState({

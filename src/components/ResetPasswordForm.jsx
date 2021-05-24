@@ -4,11 +4,8 @@ import {
   Button,
   CircularProgress,
   Typography,
-  Link,
 } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
-import GoogleButton from "./shared/GoogleButton";
-import FaceBookButton from "./shared/FacebookButton";
 
 const useStyles = makeStyles((theme) => ({
   formTitle: theme.formTitle,
@@ -16,71 +13,74 @@ const useStyles = makeStyles((theme) => ({
   formButton: theme.formButton,
   formAlert: theme.formAlert,
   formSubtitle: theme.formSubtitle,
-  formLink: {
-    marginBottom: "0.5rem",
-  },
 }));
 
-const SigninForm = ({
-  message,
+const ActivationForm = ({
+  createUserError,
   data,
-  errors,
+  email,
+  error,
   handleInputChange,
   handleSubmit,
   loading,
-  setMessage,
 }) => {
   const classes = useStyles();
+
+  const shouldDisable = () =>
+    error.password === "" ||
+    error.confirmingPassword === "" ||
+    error.password.length > 0 ||
+    error.confirmingPassword.length > 0;
 
   return (
     <>
       <Typography variant="h6" className={classes.formTitle}>
-        Signin with email
+        Please set password
       </Typography>
       <TextField
         className={classes.inputForm}
-        type="email"
         id="email"
-        label="email address"
-        value={data.email}
-        helperText={errors.email}
-        onChange={handleInputChange}
-        error={!!errors.email && errors.email.length > 0}
+        label="your email address"
+        value={email}
+        disabled
       />
       <TextField
-        className={classes.inputForm}
+        autoFocus
         type="password"
+        className={classes.inputForm}
         id="password"
-        label="password"
+        label="enter password"
         value={data.password}
-        helperText={errors.password}
+        helperText={!!error.password && error.password}
         onChange={handleInputChange}
-        error={!!errors.password && errors.password.length > 0}
+        error={error.password.length > 0}
       />
-      {message && (
+      <TextField
+        type="password"
+        className={classes.inputForm}
+        id="confirmingPassword"
+        label="confirm password"
+        value={data.confirmingPassword}
+        helperText={!!error.confirmingPassword && error.confirmingPassword}
+        onChange={handleInputChange}
+        error={error.confirmingPassword.length > 0}
+      />
+      {createUserError && (
         <Alert className={classes.formAlert} severity="error">
-          {message}
+          {createUserError}
         </Alert>
       )}
-      <Link className={classes.formLink} href="/forgotpassword">
-        <Typography variant="subtitle2">Forgot password?</Typography>
-      </Link>
       <Button
         className={classes.formButton}
         variant="contained"
         color="primary"
         onClick={handleSubmit}
-        disabled={false}
+        disabled={shouldDisable()}
       >
         {loading ? <CircularProgress color="inherit" size={20} /> : "Submit"}
       </Button>
-      <Typography variant="subtitle1" className={classes.formSubtitle}>
-        OR
-      </Typography>
-      <GoogleButton setMessage={setMessage} label="Signin" />
-      <FaceBookButton setMessage={setMessage} label="Signin" />
     </>
   );
 };
 
-export default SigninForm;
+export default ActivationForm;
