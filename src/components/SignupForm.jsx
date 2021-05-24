@@ -1,13 +1,9 @@
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  TextField,
-  Button,
-  CircularProgress,
-  Typography,
-} from "@material-ui/core";
-import Alert from "@material-ui/lab/Alert";
+import { Button, CircularProgress } from "@material-ui/core";
 import GoogleButton from "./shared/GoogleButton";
 import FaceBookButton from "./shared/FacebookButton";
+import TextInputGenerator from "./shared/TextInputGenerator";
+import AuthFormContents from "./shared/AuthFormContents";
 
 const useStyles = makeStyles((theme) => ({
   formTitle: theme.formTitle,
@@ -39,26 +35,23 @@ const SignupForm = ({
   const shouldDisable = () =>
     email === "" || !!error.length || severity === "error";
 
-  return (
-    <>
-      <Typography variant="h6" className={classes.formTitle}>
-        Signup with email
-      </Typography>
-      <TextField
-        className={classes.inputForm}
-        error={!!error.length}
-        helperText={error}
-        id="email"
-        label="email address"
-        onChange={handleInputChange}
-        value={email}
-        autoFocus
-      />
-      {message && (
-        <Alert className={classes.formAlert} severity={severity}>
-          {message}
-        </Alert>
-      )}
+  const textInputDefinitions = [
+    {
+      autoFocus: true,
+      error: !!error.length,
+      helperText: error,
+      id: "email",
+      label: "email address",
+      onChange: handleInputChange,
+      value: email,
+    },
+  ];
+
+  const formContents = {
+    title: "Signup with email",
+    textInputs: <TextInputGenerator definitions={textInputDefinitions} />,
+    alert: { message, severity },
+    submitButton: (
       <Button
         className={classes.formButton}
         color="primary"
@@ -68,13 +61,16 @@ const SignupForm = ({
       >
         {getButtonContent(message, loading)}
       </Button>
-      <Typography variant="subtitle1" className={classes.formSubtitle}>
-        OR
-      </Typography>
-      <GoogleButton setSeverity={setSeverity} setMessage={setMessage} />
-      <FaceBookButton setSeverity={setSeverity} setMessage={setMessage} />
-    </>
-  );
+    ),
+    SNSButtons: (
+      <>
+        <GoogleButton setSeverity={setSeverity} setMessage={setMessage} />
+        <FaceBookButton setSeverity={setSeverity} setMessage={setMessage} />
+      </>
+    ),
+  };
+
+  return <AuthFormContents contents={formContents} />;
 };
 
 export default SignupForm;

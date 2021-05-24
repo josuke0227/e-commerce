@@ -1,11 +1,7 @@
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  TextField,
-  Button,
-  CircularProgress,
-  Typography,
-} from "@material-ui/core";
-import Alert from "@material-ui/lab/Alert";
+import { Button, CircularProgress } from "@material-ui/core";
+import TextInputGenerator from "./shared/TextInputGenerator";
+import AuthFormContents from "./shared/AuthFormContents";
 
 const useStyles = makeStyles((theme) => ({
   formTitle: theme.formTitle,
@@ -26,35 +22,23 @@ const ForgotPasswordForm = ({
 }) => {
   const classes = useStyles();
 
-  const getButtonContent = (message, loading) => {
-    if (message && severity === "success") return "Resend";
+  const textInputDefinitions = [
+    {
+      autoFocus: true,
+      error: !!error.length,
+      helperText: error,
+      id: "email",
+      label: "email address",
+      onChange: handleInputChange,
+      value: email,
+    },
+  ];
 
-    return loading ? <CircularProgress color="inherit" size={20} /> : "Submit";
-  };
-
-  const shouldDisable = () =>
-    email === "" || !!error.length || severity === "error";
-
-  return (
-    <>
-      <Typography variant="h6" className={classes.formTitle}>
-        Forgot Password
-      </Typography>
-      <TextField
-        className={classes.inputForm}
-        error={!!error.length}
-        helperText={error}
-        id="email"
-        label="email address"
-        onChange={handleInputChange}
-        value={email}
-        autoFocus
-      />
-      {message && (
-        <Alert className={classes.formAlert} severity={severity}>
-          {message}
-        </Alert>
-      )}
+  const formContents = {
+    title: "Forgot Password",
+    textInputs: <TextInputGenerator definitions={textInputDefinitions} />,
+    alert: { message, severity },
+    submitButton: (
       <Button
         className={classes.formButton}
         color="primary"
@@ -64,8 +48,20 @@ const ForgotPasswordForm = ({
       >
         {getButtonContent(message, loading)}
       </Button>
-    </>
-  );
+    ),
+  };
+
+  function getButtonContent(message, loading) {
+    if (message && severity === "success") return "Resend";
+
+    return loading ? <CircularProgress color="inherit" size={20} /> : "Submit";
+  }
+
+  function shouldDisable() {
+    return email === "" || !!error.length || severity === "error";
+  }
+
+  return <AuthFormContents contents={formContents} />;
 };
 
 export default ForgotPasswordForm;

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { emailSchema } from "../schemas/authSchema";
 import { forgotPassword } from "../services/signupServices";
 import CenteredCardLayout from "../components/shared/CenteredCardLayout";
-import ForgotPassword from "../components/ForgotPasswordForm";
+import ForgotPasswordForm from "../components/ForgotPasswordForm";
 
 const SignupPage = () => {
   const testEmail = "y.motosugi0227@gmail.com";
@@ -46,7 +46,7 @@ const SignupPage = () => {
 
   return (
     <CenteredCardLayout>
-      <ForgotPassword
+      <ForgotPasswordForm
         email={email}
         error={error}
         handleInputChange={handleInputChange}

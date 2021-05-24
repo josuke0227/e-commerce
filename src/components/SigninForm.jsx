@@ -1,18 +1,12 @@
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  TextField,
-  Button,
-  CircularProgress,
-  Typography,
-  Link,
-} from "@material-ui/core";
-import Alert from "@material-ui/lab/Alert";
+import { Button, CircularProgress } from "@material-ui/core";
 import GoogleButton from "./shared/GoogleButton";
 import FaceBookButton from "./shared/FacebookButton";
+import TextInputGenerator from "./shared/TextInputGenerator";
+import AuthFormContents from "./shared/AuthFormContents";
 
 const useStyles = makeStyles((theme) => ({
   formTitle: theme.formTitle,
-  inputForm: theme.inputForm,
   formButton: theme.formButton,
   formAlert: theme.formAlert,
   formSubtitle: theme.formSubtitle,
@@ -32,39 +26,32 @@ const SigninForm = ({
 }) => {
   const classes = useStyles();
 
-  return (
-    <>
-      <Typography variant="h6" className={classes.formTitle}>
-        Signin with email
-      </Typography>
-      <TextField
-        className={classes.inputForm}
-        type="email"
-        id="email"
-        label="email address"
-        value={data.email}
-        helperText={errors.email}
-        onChange={handleInputChange}
-        error={!!errors.email && errors.email.length > 0}
-      />
-      <TextField
-        className={classes.inputForm}
-        type="password"
-        id="password"
-        label="password"
-        value={data.password}
-        helperText={errors.password}
-        onChange={handleInputChange}
-        error={!!errors.password && errors.password.length > 0}
-      />
-      {message && (
-        <Alert className={classes.formAlert} severity="error">
-          {message}
-        </Alert>
-      )}
-      <Link className={classes.formLink} href="/forgotpassword">
-        <Typography variant="subtitle2">Forgot password?</Typography>
-      </Link>
+  const textInputDefinitions = [
+    {
+      error: !!errors.email && !!errors.email.length,
+      helperText: errors.email,
+      id: "email",
+      label: "email address",
+      onChange: handleInputChange,
+      type: "email",
+      value: data.email,
+    },
+    {
+      error: !!errors.password && !!errors.password.length,
+      helperText: errors.password,
+      id: "password",
+      label: "password",
+      onChange: handleInputChange,
+      type: "password",
+      value: data.password,
+    },
+  ];
+
+  const formContents = {
+    title: "Signin with email",
+    textInputs: <TextInputGenerator definitions={textInputDefinitions} />,
+    alert: { message, severity: "error" },
+    submitButton: (
       <Button
         className={classes.formButton}
         variant="contained"
@@ -74,13 +61,16 @@ const SigninForm = ({
       >
         {loading ? <CircularProgress color="inherit" size={20} /> : "Submit"}
       </Button>
-      <Typography variant="subtitle1" className={classes.formSubtitle}>
-        OR
-      </Typography>
-      <GoogleButton setMessage={setMessage} label="Signin" />
-      <FaceBookButton setMessage={setMessage} label="Signin" />
-    </>
-  );
+    ),
+    SNSButtons: (
+      <>
+        <GoogleButton setMessage={setMessage} label="Signin" />
+        <FaceBookButton setMessage={setMessage} label="Signin" />
+      </>
+    ),
+  };
+
+  return <AuthFormContents contents={formContents} signin />;
 };
 
 export default SigninForm;
