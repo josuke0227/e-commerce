@@ -1,17 +1,8 @@
-import { makeStyles } from "@material-ui/core/styles";
-import { Button, CircularProgress } from "@material-ui/core";
 import GoogleButton from "./shared/GoogleButton";
 import FaceBookButton from "./shared/FacebookButton";
 import TextInputGenerator from "./shared/TextInputGenerator";
 import AuthFormContents from "./shared/AuthFormContents";
-
-const useStyles = makeStyles((theme) => ({
-  formTitle: theme.formTitle,
-  inputForm: theme.inputForm,
-  formButton: theme.formButton,
-  formAlert: theme.formAlert,
-  formSubtitle: theme.formSubtitle,
-}));
+import MultipleStateButton from "./shared/MultipleStateButton";
 
 const SignupForm = ({
   email,
@@ -23,17 +14,22 @@ const SignupForm = ({
   setMessage,
   setSeverity,
   severity,
+  path,
 }) => {
-  const classes = useStyles();
+  const isSignupPage = () => path === "/signup";
 
-  const getButtonContent = (message, loading) => {
-    if (message && severity === "success") return "Resend";
+  const setTitle = () =>
+    isSignupPage() ? "Signup with email" : "Forgot Password";
 
-    return loading ? <CircularProgress color="inherit" size={20} /> : "Signup";
-  };
+  const setSNSButtons = () =>
+    isSignupPage() && (
+      <>
+        <GoogleButton setSeverity={setSeverity} setMessage={setMessage} />
+        <FaceBookButton setSeverity={setSeverity} setMessage={setMessage} />
+      </>
+    );
 
-  const shouldDisable = () =>
-    email === "" || !!error.length || severity === "error";
+  const getDefaultLabel = () => (isSignupPage() ? "Signup" : "Submit");
 
   const textInputDefinitions = [
     {
@@ -48,26 +44,21 @@ const SignupForm = ({
   ];
 
   const formContents = {
-    title: "Signup with email",
+    title: setTitle(),
     textInputs: <TextInputGenerator definitions={textInputDefinitions} />,
     alert: { message, severity },
     submitButton: (
-      <Button
-        className={classes.formButton}
-        color="primary"
-        disabled={shouldDisable()}
-        onClick={handleSubmit}
-        variant="contained"
-      >
-        {getButtonContent(message, loading)}
-      </Button>
+      <MultipleStateButton
+        email={email}
+        handleSubmit={handleSubmit}
+        message={message}
+        loading={loading}
+        error={error}
+        severity={severity}
+        defaultLabel={getDefaultLabel()}
+      />
     ),
-    SNSButtons: (
-      <>
-        <GoogleButton setSeverity={setSeverity} setMessage={setMessage} />
-        <FaceBookButton setSeverity={setSeverity} setMessage={setMessage} />
-      </>
-    ),
+    SNSButtons: setSNSButtons(),
   };
 
   return <AuthFormContents contents={formContents} />;

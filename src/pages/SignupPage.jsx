@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { emailSchema } from "../schemas/authSchema";
-import { sendUserEmail } from "../services/signupServices";
+import { sendUserEmail, forgotPassword } from "../services/signupServices";
 import CenteredCardLayout from "../components/shared/CenteredCardLayout";
 import SignupForm from "../components/SignupForm";
 
@@ -11,6 +11,12 @@ const SignupPage = ({ match }) => {
   const [message, setMessage] = useState("");
   const [severity, setSeverity] = useState("success");
   const [loading, setLoading] = useState(false);
+  const [path, setPath] = useState("");
+
+  useEffect(() => {
+    const path = match.path;
+    setPath(path);
+  }, [path]);
 
   const handleInputChange = ({ target }) => {
     const email = target.value;
@@ -33,7 +39,8 @@ const SignupPage = ({ match }) => {
     }
 
     try {
-      const { data: successMessage } = await sendUserEmail(email);
+      const service = path === "/signup" ? sendUserEmail : forgotPassword;
+      const { data: successMessage } = await service(email);
       setMessage(successMessage);
     } catch (error) {
       const { data: errorMessage } = error.response;
@@ -47,6 +54,7 @@ const SignupPage = ({ match }) => {
   return (
     <CenteredCardLayout>
       <SignupForm
+        path={path}
         email={email}
         error={error}
         handleInputChange={handleInputChange}

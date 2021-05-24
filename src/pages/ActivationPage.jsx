@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import jwt from "jsonwebtoken";
 import { passwordSchema, schemaSelector } from "../schemas/authSchema";
 import { createUser } from "../services/activationServices";
+import { resetPassword } from "../services/resetPasswordServices";
 import CenteredCardLayout from "../components/shared/CenteredCardLayout";
 import ActivationForm from "../components/ActivationForm";
 
@@ -18,15 +19,23 @@ const ActivationPage = ({ match, history }) => {
   });
   const [loading, setLoading] = useState(false);
   const [createUserError, setCreateUserError] = useState("");
+  const [isActivationPage, setIsActivationPage] = useState(false);
 
   useEffect(() => {
-    if (match.params.token) {
-      const token = match.params.token;
+    const { path, params } = match;
+
+    const getFirstEndpont = () => path.split("/")[1];
+
+    try {
+      const token = params.token;
       const { email } = jwt.decode(token);
+      setIsActivationPage(getFirstEndpont() === "activate");
       setEmail(email);
       setToken(token);
+    } catch (error) {
+      console.log(error);
     }
-  }, [match.params, email]);
+  }, [match, email]);
 
   const handleInputChange = (e) => {
     e.preventDefault();
@@ -96,9 +105,11 @@ const ActivationPage = ({ match, history }) => {
   };
 
   const doSubmit = async (data) => {
+    const service = isActivationPage ? createUser : resetPassword;
+
     try {
       // TODO: right place to set user credential to global state.
-      await createUser(data);
+      await service(data);
       history.push("/");
       return setLoading(false);
     } catch (error) {

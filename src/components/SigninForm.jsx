@@ -1,19 +1,8 @@
-import { makeStyles } from "@material-ui/core/styles";
-import { Button, CircularProgress } from "@material-ui/core";
 import GoogleButton from "./shared/GoogleButton";
 import FaceBookButton from "./shared/FacebookButton";
 import TextInputGenerator from "./shared/TextInputGenerator";
 import AuthFormContents from "./shared/AuthFormContents";
-
-const useStyles = makeStyles((theme) => ({
-  formTitle: theme.formTitle,
-  formButton: theme.formButton,
-  formAlert: theme.formAlert,
-  formSubtitle: theme.formSubtitle,
-  formLink: {
-    marginBottom: "0.5rem",
-  },
-}));
+import ButtonWithLoader from "./shared/ButtonWIthLoader";
 
 const SigninForm = ({
   message,
@@ -24,8 +13,6 @@ const SigninForm = ({
   loading,
   setMessage,
 }) => {
-  const classes = useStyles();
-
   const textInputDefinitions = [
     {
       error: !!errors.email && !!errors.email.length,
@@ -52,15 +39,11 @@ const SigninForm = ({
     textInputs: <TextInputGenerator definitions={textInputDefinitions} />,
     alert: { message, severity: "error" },
     submitButton: (
-      <Button
-        className={classes.formButton}
-        variant="contained"
-        color="primary"
-        onClick={handleSubmit}
-        disabled={false}
-      >
-        {loading ? <CircularProgress color="inherit" size={20} /> : "Submit"}
-      </Button>
+      <ButtonWithLoader
+        label="Submit"
+        handleSubmit={handleSubmit}
+        loading={loading}
+      />
     ),
     SNSButtons: (
       <>

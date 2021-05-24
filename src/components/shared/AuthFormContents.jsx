@@ -5,7 +5,6 @@ import Alert from "@material-ui/lab/Alert";
 const useStyles = makeStyles((theme) => ({
   formTitle: theme.formTitle,
   inputForm: theme.inputForm,
-  formButton: theme.formButton,
   formAlert: theme.formAlert,
   formSubtitle: theme.formSubtitle,
 }));

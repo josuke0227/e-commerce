@@ -3,8 +3,6 @@ import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import SignupPage from "./pages/SignupPage";
 import ActivationPage from "./pages/ActivationPage";
 import SigninPage from "./pages/SigninPage";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage";
-import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 const theme = createMuiTheme({
   formTitle: {
@@ -34,8 +32,8 @@ const App = () => (
         <Route path="/signup" component={SignupPage} />
         <Route path="/signin" component={SigninPage} />
         <Route path="/activate/:token" component={ActivationPage} />
-        <Route path="/forgotpassword/" component={ForgotPasswordPage} />
-        <Route path="/resetpassword/:token" component={ResetPasswordPage} />
+        <Route path="/forgotpassword/" component={SignupPage} />
+        <Route path="/resetpassword/:token" component={ActivationPage} />
       </Switch>
     </BrowserRouter>
   </ThemeProvider>

@@ -1,15 +1,6 @@
-import { makeStyles } from "@material-ui/core/styles";
-import { Button, CircularProgress } from "@material-ui/core";
 import TextInputGenerator from "./shared/TextInputGenerator";
 import AuthFormContents from "./shared/AuthFormContents";
-
-const useStyles = makeStyles((theme) => ({
-  formTitle: theme.formTitle,
-  inputForm: theme.inputForm,
-  formButton: theme.formButton,
-  formAlert: theme.formAlert,
-  formSubtitle: theme.formSubtitle,
-}));
+import ButtonWithLoader from "./shared/ButtonWIthLoader";
 
 const ActivationForm = ({
   createUserError,
@@ -20,13 +11,11 @@ const ActivationForm = ({
   handleSubmit,
   loading,
 }) => {
-  const classes = useStyles();
-
   const shouldDisable = () =>
     error.password === "" ||
     error.confirmingPassword === "" ||
-    error.password.length > 0 ||
-    error.confirmingPassword.length > 0;
+    !!error.password.length ||
+    !!error.confirmingPassword.length;
 
   const textInputDefinitions = [
     {
@@ -57,19 +46,16 @@ const ActivationForm = ({
   ];
 
   const formContents = {
-    title: "Please set your password to activate your account.",
+    title: "Please set password",
     textInputs: <TextInputGenerator definitions={textInputDefinitions} />,
     alert: { message: createUserError, severity: "error" },
     submitButton: (
-      <Button
-        className={classes.formButton}
-        variant="contained"
-        color="primary"
-        onClick={handleSubmit}
+      <ButtonWithLoader
+        label="Submit"
+        handleSubmit={handleSubmit}
+        loading={loading}
         disabled={shouldDisable()}
-      >
-        {loading ? <CircularProgress color="inherit" size={20} /> : "Submit"}
-      </Button>
+      />
     ),
   };
 
