@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Typography, Link } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
@@ -9,9 +10,27 @@ const useStyles = makeStyles((theme) => ({
   formSubtitle: theme.formSubtitle,
 }));
 
-const AuthFormContents = ({ contents, signin }) => {
+const AuthCardLayout = ({ contents }) => {
   const classes = useStyles();
+  const [path, setPath] = useState("");
+
+  useEffect(() => {
+    const pathName = window.location.pathname.split("/")[1];
+    setPath(pathName);
+  }, []);
+
   const { title, textInputs, submitButton, SNSButtons, alert } = contents;
+
+  const authNavigation = {
+    signin: {
+      link: "/signup",
+      text: "Do not have an account? Signup",
+    },
+    signup: {
+      link: "/signin",
+      text: "Do not have an account? Signin",
+    },
+  };
 
   return (
     <>
@@ -24,7 +43,7 @@ const AuthFormContents = ({ contents, signin }) => {
           {alert.message}
         </Alert>
       )}
-      {signin && (
+      {path === "signin" && (
         <Link className={classes.formLink} href="/forgotpassword">
           <Typography variant="subtitle2">Forgot password?</Typography>
         </Link>
@@ -38,8 +57,15 @@ const AuthFormContents = ({ contents, signin }) => {
           {SNSButtons}
         </>
       )}
+      {(path === "signin" || path === "signup") && (
+        <Link className={classes.formLink} href={authNavigation[path].link}>
+          <Typography variant="subtitle2">
+            {authNavigation[path].text}
+          </Typography>
+        </Link>
+      )}
     </>
   );
 };
 
-export default AuthFormContents;
+export default AuthCardLayout;

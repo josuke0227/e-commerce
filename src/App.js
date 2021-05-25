@@ -3,6 +3,7 @@ import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import SignupPage from "./pages/SignupPage";
 import ActivationPage from "./pages/ActivationPage";
 import SigninPage from "./pages/SigninPage";
+import Header from "./components/Header";
 
 const theme = createMuiTheme({
   formTitle: {
@@ -27,6 +28,7 @@ const theme = createMuiTheme({
 
 const App = () => (
   <ThemeProvider theme={theme}>
+    <Header />
     <BrowserRouter>
       <Switch>
         <Route path="/signup" component={SignupPage} />

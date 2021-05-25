@@ -1,4 +1,4 @@
-import AuthFormContents from "./shared/AuthFormContents";
+import AuthCardLayout from "./shared/AuthCardLayout";
 import FaceBookButton from "./shared/FacebookButton";
 import GoogleButton from "./shared/GoogleButton";
 import MultipleStateButton from "./shared/MultipleStateButton";
@@ -61,7 +61,7 @@ const SignupForm = ({
     SNSButtons: setSNSButtons(),
   };
 
-  return <AuthFormContents contents={formContents} />;
+  return <AuthCardLayout contents={formContents} />;
 };
 
 export default SignupForm;

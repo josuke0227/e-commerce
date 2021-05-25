@@ -1,4 +1,4 @@
-import AuthFormContents from "./shared/AuthFormContents";
+import AuthCardLayout from "./shared/AuthCardLayout";
 import ButtonWithLoader from "./shared/ButtonWIthLoader";
 import TextInputGenerator from "./shared/TextInputGenerator";
 
@@ -59,7 +59,7 @@ const ActivationForm = ({
     ),
   };
 
-  return <AuthFormContents contents={formContents} />;
+  return <AuthCardLayout contents={formContents} />;
 };
 
 export default ActivationForm;

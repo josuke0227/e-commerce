@@ -1,4 +1,4 @@
-import AuthFormContents from "./shared/AuthFormContents";
+import AuthCardLayout from "./shared/AuthCardLayout";
 import ButtonWithLoader from "./shared/ButtonWIthLoader";
 import FaceBookButton from "./shared/FacebookButton";
 import GoogleButton from "./shared/GoogleButton";
@@ -53,7 +53,7 @@ const SigninForm = ({
     ),
   };
 
-  return <AuthFormContents contents={formContents} signin />;
+  return <AuthCardLayout contents={formContents} signin />;
 };
 
 export default SigninForm;
