@@ -27,8 +27,8 @@ const useStyles = makeStyles((theme) => ({
 const HeaderMenuRight = ({
   menuId,
   handleProfileMenuOpen,
-  mobileMenuId,
   handleMobileMenuOpen,
+  mobileMenuId,
 }) => {
   const classes = useStyles();
 

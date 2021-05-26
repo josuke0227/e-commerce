@@ -31,31 +31,21 @@ const PopupMenu = ({ anchorEl, menuId, isMenuOpen, handleMenuClose }) => {
       {/* TODO: first menu should deffer upon the role of user. */}
       {/* TODO: admin: dashboard / subscriber: My account */}
       <MenuItem onClick={handleMenuClose}>
-        <IconButton
-          aria-label="show 4 new mails"
-          color="inherit"
-          className={classes.iconWrapper}
-        >
+        <IconButton color="inherit" className={classes.iconWrapper}>
           <DashboardIcon className={classes.headerItem} />
-          <Typography className={classes.menuText} variant="subscript2">
-            Dashboard
-          </Typography>
+          <Typography className={classes.menuText}>Dashboard</Typography>
         </IconButton>
       </MenuItem>
       <MenuItem onClick={handleMenuClose}>
-        <IconButton aria-label="show 4 new mails" color="inherit">
+        <IconButton color="inherit">
           <SettingsIcon className={classes.headerItem} />
-          <Typography className={classes.menuText} variant="subscript2">
-            My account
-          </Typography>
+          <Typography className={classes.menuText}>My account</Typography>
         </IconButton>
       </MenuItem>
       <MenuItem onClick={handleMenuClose}>
-        <IconButton aria-label="show 4 new mails" color="inherit">
+        <IconButton color="inherit">
           <ExitToAppIcon className={classes.headerItem} />
-          <Typography className={classes.menuText} variant="subscript2">
-            Logout
-          </Typography>
+          <Typography className={classes.menuText}>Signout</Typography>
         </IconButton>
       </MenuItem>
     </Menu>

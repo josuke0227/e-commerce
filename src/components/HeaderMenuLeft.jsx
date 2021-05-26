@@ -24,9 +24,7 @@ const useStyles = makeStyles((theme) => ({
       marginRight: "1rem",
     },
   },
-  headerItem: {
-    marginRight: "0.3rem",
-  },
+  headerItem: theme.headerItem,
   menuText: theme.menuText,
 }));
 

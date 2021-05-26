@@ -29,6 +29,7 @@ const Header = () => {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
+  console.log("mobileMoreAnchorEl :>> ", mobileMoreAnchorEl);
 
   const menuId = "primary-search-account-menu";
   const mobileMenuId = "primary-search-account-menu-mobile";
@@ -62,8 +63,8 @@ const Header = () => {
           <HeaderMenuRight
             menuId={menuId}
             handleProfileMenuOpen={handleProfileMenuOpen}
-            mobileMenuId={mobileMenuId}
             handleMobileMenuOpen={handleMobileMenuOpen}
+            mobileMenuId={mobileMenuId}
           />
         </Toolbar>
       </AppBar>

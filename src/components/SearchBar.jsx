@@ -5,7 +5,6 @@ import InputBase from "@material-ui/core/InputBase";
 const useStyles = makeStyles((theme) => ({
   search: {
     gridArea: "search",
-
     position: "relative",
     borderRadius: theme.shape.borderRadius,
     backgroundColor: fade(theme.palette.common.white, 0.15),
