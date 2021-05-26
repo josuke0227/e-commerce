@@ -44,6 +44,7 @@ const SigninPage = ({ history }) => {
   const doSubmit = async (data) => {
     try {
       const response = await signin(data);
+      console.log("response.data :>> ", response.data);
       history.push("/");
       dispatch({
         type: "SIGN_IN_SUCCESS",

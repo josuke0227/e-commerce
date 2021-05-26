@@ -22,9 +22,60 @@ const PopupMenuMobile = ({
   isMobileMenuOpen,
   handleMobileMenuClose,
   mobileMenuId,
+  user,
 }) => {
   const classes = useStyles();
-  const [showUserMenu, setShowUserMenu] = useState(false);
+
+  const toggleMenuItemByRole = (user) => {
+    if (user.role === "admin")
+      return (
+        <IconButton color="inherit" className={classes.iconWrapper}>
+          <DashboardIcon className={classes.headerItem} />
+          <Typography className={classes.menuText}>Dashboard</Typography>
+        </IconButton>
+      );
+    if (user.role === "subscriber")
+      return (
+        <IconButton color="inherit">
+          <SettingsIcon className={classes.headerItem} />
+          <Typography className={classes.menuText}>My account</Typography>
+        </IconButton>
+      );
+  };
+
+  const toggleMenu = (user) => {
+    if (user)
+      return (
+        <>
+          <MenuItem onClick={handleMobileMenuClose}>
+            {toggleMenuItemByRole(user)}
+          </MenuItem>
+          <MenuItem onClick={handleMobileMenuClose}>
+            <IconButton color="inherit">
+              <ExitToAppIcon className={classes.headerItem} />
+              <Typography className={classes.menuText}>Signout</Typography>
+            </IconButton>
+          </MenuItem>
+        </>
+      );
+
+    return (
+      <>
+        <MenuItem onClick={handleMobileMenuClose}>
+          <IconButton color="inherit">
+            <PersonAddIcon />
+            <Typography className={classes.menuText}>Signup</Typography>
+          </IconButton>
+        </MenuItem>
+        <MenuItem onClick={handleMobileMenuClose}>
+          <IconButton color="inherit">
+            <PersonIcon />
+            <Typography className={classes.menuText}>Signin</Typography>
+          </IconButton>
+        </MenuItem>
+      </>
+    );
+  };
 
   return (
     <>
@@ -37,60 +88,7 @@ const PopupMenuMobile = ({
         open={isMobileMenuOpen}
         onClose={handleMobileMenuClose}
       >
-        {!showUserMenu && (
-          <>
-            <MenuItem onClick={handleMobileMenuClose}>
-              <IconButton color="inherit">
-                <PersonIcon />
-                <Typography className={classes.menuText}>Signin</Typography>
-              </IconButton>
-            </MenuItem>
-            <MenuItem onClick={handleMobileMenuClose}>
-              {/* TODO: Toggle IconButton to menu element when user is logged in */}
-              <IconButton color="inherit">
-                <PersonAddIcon />
-                <Typography className={classes.menuText}>Signup</Typography>
-              </IconButton>
-            </MenuItem>
-            {/* TODO: This navigation should have right chevron
-          and navigate to user menu when tapped.
-                */}
-            <MenuItem onClick={() => setShowUserMenu(true)}>
-              <IconButton color="inherit">
-                <AccountCircle className={classes.headerItem} />
-                <Typography className={classes.menuText}>User name</Typography>
-              </IconButton>
-            </MenuItem>
-          </>
-        )}
-        {showUserMenu && (
-          <>
-            <MenuItem onClick={() => setShowUserMenu(false)}>
-              <IconButton color="inherit" className={classes.iconWrapper}>
-                <ArrowBackIcon className={classes.headerItem} />
-                <Typography className={classes.menuText}>Back</Typography>
-              </IconButton>
-            </MenuItem>
-            <MenuItem onClick={handleMobileMenuClose}>
-              <IconButton color="inherit" className={classes.iconWrapper}>
-                <DashboardIcon className={classes.headerItem} />
-                <Typography className={classes.menuText}>Dashboard</Typography>
-              </IconButton>
-            </MenuItem>
-            <MenuItem onClick={handleMobileMenuClose}>
-              <IconButton color="inherit">
-                <SettingsIcon className={classes.headerItem} />
-                <Typography className={classes.menuText}>My account</Typography>
-              </IconButton>
-            </MenuItem>
-            <MenuItem onClick={handleMobileMenuClose}>
-              <IconButton color="inherit">
-                <ExitToAppIcon className={classes.headerItem} />
-                <Typography className={classes.menuText}>Signout</Typography>
-              </IconButton>
-            </MenuItem>
-          </>
-        )}
+        {toggleMenu(user)}
       </Menu>
     </>
   );
