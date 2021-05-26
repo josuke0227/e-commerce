@@ -109,7 +109,8 @@ const ActivationPage = ({ match, history }) => {
 
     try {
       // TODO: right place to set user credential to global state.
-      await service(data);
+      const { data } = await service(data);
+      console.log("data :>> ", data);
       history.push("/");
       return setLoading(false);
     } catch (error) {
