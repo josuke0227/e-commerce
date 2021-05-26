@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   menuText: theme.menuText,
 }));
 
-const HeaderMenuLeft = ({}) => {
+const HeaderMenuLeft = () => {
   const classes = useStyles();
 
   return (
