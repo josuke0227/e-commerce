@@ -42,52 +42,46 @@ const PopupMenuMobile = ({
 
   const toggleMenu = (user) => {
     if (user)
-      return (
-        <>
-          <MenuItem onClick={handleMobileMenuClose}>
-            {toggleMenuItemByRole(user)}
-          </MenuItem>
-          <MenuItem onClick={handleMobileMenuClose}>
-            <IconButton color="inherit">
-              <ExitToAppIcon className={classes.headerItem} />
-              <Typography className={classes.menuText}>Signout</Typography>
-            </IconButton>
-          </MenuItem>
-        </>
-      );
+      return [
+        <MenuItem key="userPageLink" onClick={handleMobileMenuClose}>
+          {toggleMenuItemByRole(user)}
+        </MenuItem>,
+        <MenuItem key="signout" onClick={handleMobileMenuClose}>
+          <IconButton color="inherit">
+            <ExitToAppIcon className={classes.headerItem} />
+            <Typography className={classes.menuText}>Signout</Typography>
+          </IconButton>
+        </MenuItem>,
+      ];
 
-    return (
-      <>
-        <MenuItem onClick={handleMobileMenuClose}>
-          <IconButton color="inherit">
-            <PersonAddIcon />
-            <Typography className={classes.menuText}>Signup</Typography>
-          </IconButton>
-        </MenuItem>
-        <MenuItem onClick={handleMobileMenuClose}>
-          <IconButton color="inherit">
-            <PersonIcon />
-            <Typography className={classes.menuText}>Signin</Typography>
-          </IconButton>
-        </MenuItem>
-      </>
-    );
+    return [
+      <MenuItem key="signup" onClick={handleMobileMenuClose}>
+        <IconButton color="inherit">
+          <PersonAddIcon />
+          <Typography className={classes.menuText}>Signup</Typography>
+        </IconButton>
+      </MenuItem>,
+      <MenuItem key="signin" onClick={handleMobileMenuClose}>
+        <IconButton color="inherit">
+          <PersonIcon />
+          <Typography className={classes.menuText}>Signin</Typography>
+        </IconButton>
+      </MenuItem>,
+    ];
   };
 
   return (
-    <>
-      <Menu
-        anchorEl={mobileMoreAnchorEl}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        id={mobileMenuId}
-        keepMounted
-        transformOrigin={{ vertical: "top", horizontal: "right" }}
-        open={isMobileMenuOpen}
-        onClose={handleMobileMenuClose}
-      >
-        {toggleMenu(user)}
-      </Menu>
-    </>
+    <Menu
+      anchorEl={mobileMoreAnchorEl}
+      anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      id={mobileMenuId}
+      keepMounted
+      transformOrigin={{ vertical: "top", horizontal: "right" }}
+      open={isMobileMenuOpen}
+      onClose={handleMobileMenuClose}
+    >
+      {toggleMenu(user)}
+    </Menu>
   );
 };
 
