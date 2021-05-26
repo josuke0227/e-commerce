@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -27,6 +27,8 @@ const useStyles = makeStyles((theme) => ({
 
 const Header = () => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+
   const { user } = useSelector((state) => ({ ...state }));
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -53,6 +55,13 @@ const Header = () => {
 
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
+  };
+
+  const handleSignoutButtonClick = () => {
+    handleMobileMenuClose();
+    dispatch({
+      type: "SIGN_OUT_SUCCESS",
+    });
   };
 
   return (
@@ -82,6 +91,7 @@ const Header = () => {
         isMobileMenuOpen={isMobileMenuOpen}
         handleMobileMenuClose={handleMobileMenuClose}
         handleProfileMenuOpen={handleProfileMenuOpen}
+        handleSignoutButtonClick={handleSignoutButtonClick}
       />
     </>
   );

@@ -4,7 +4,7 @@ export const userReducer = (state = null, action) => {
       return action.payload;
 
     case "SIGN_OUT_SUCCESS":
-      return action.payload;
+      return null;
 
     default:
       return state;

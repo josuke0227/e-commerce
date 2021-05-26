@@ -15,6 +15,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const PopupMenuMobile = ({
+  handleSignoutButtonClick,
   mobileMoreAnchorEl,
   isMobileMenuOpen,
   handleMobileMenuClose,
@@ -46,7 +47,7 @@ const PopupMenuMobile = ({
         <MenuItem key="userPageLink" onClick={handleMobileMenuClose}>
           {toggleMenuItemByRole(user)}
         </MenuItem>,
-        <MenuItem key="signout" onClick={handleMobileMenuClose}>
+        <MenuItem key="signout" onClick={handleSignoutButtonClick}>
           <IconButton color="inherit">
             <ExitToAppIcon className={classes.headerItem} />
             <Typography className={classes.menuText}>Signout</Typography>
