@@ -44,11 +44,12 @@ const SigninPage = ({ history }) => {
   const doSubmit = async (data) => {
     try {
       const response = await signin(data);
-      console.log("response.data :>> ", response.data);
+      const token = response.headers["x-auth-token"];
+      const userData = { ...response.data, token };
       history.push("/");
       dispatch({
         type: "SIGN_IN_SUCCESS",
-        payload: response.data,
+        payload: userData,
       });
     } catch (error) {
       setMessage(error.response.data);

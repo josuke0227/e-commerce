@@ -112,11 +112,13 @@ const ActivationPage = ({ match, history }) => {
 
     try {
       const response = await service(data);
+      const token = response.headers["x-auth-token"];
+      const userData = { ...response.data, token };
+      history.push("/");
       dispatch({
         type: "SIGN_IN_SUCCESS",
-        payload: response.data,
+        payload: userData,
       });
-      history.push("/");
       return setLoading(false);
     } catch (error) {
       const { data: message } = error.response;
