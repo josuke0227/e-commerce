@@ -5,8 +5,11 @@ import { createUser } from "../services/activationServices";
 import { resetPassword } from "../services/resetPasswordServices";
 import CenteredCardLayout from "../components/shared/CenteredCardLayout";
 import ActivationForm from "../components/ActivationForm";
+import { useDispatch } from "react-redux";
 
 const ActivationPage = ({ match, history }) => {
+  const dispatch = useDispatch();
+
   const [data, setData] = useState({
     password: "",
     confirmingPassword: "",
@@ -108,9 +111,11 @@ const ActivationPage = ({ match, history }) => {
     const service = isActivationPage ? createUser : resetPassword;
 
     try {
-      // TODO: right place to set user credential to global state.
-      const { data } = await service(data);
-      console.log("data :>> ", data);
+      const response = await service(data);
+      dispatch({
+        type: "SIGN_IN_SUCCESS",
+        payload: response.data,
+      });
       history.push("/");
       return setLoading(false);
     } catch (error) {

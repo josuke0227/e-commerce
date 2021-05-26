@@ -3,8 +3,11 @@ import { schemaSelector } from "../schemas/authSchema";
 import { signin } from "../services/signinServices";
 import CenteredCardLayout from "../components/shared/CenteredCardLayout";
 import SigninForm from "../components/SigninForm";
+import { useDispatch } from "react-redux";
 
 const SigninPage = ({ history }) => {
+  const dispatch = useDispatch();
+
   const [data, setData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
@@ -40,9 +43,12 @@ const SigninPage = ({ history }) => {
 
   const doSubmit = async (data) => {
     try {
-      await signin(data);
+      const response = await signin(data);
       history.push("/");
-      // TODO: set user credential to global state.
+      dispatch({
+        type: "SIGN_IN_SUCCESS",
+        payload: response.data,
+      });
     } catch (error) {
       setMessage(error.response.data);
       console.log(error);
