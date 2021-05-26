@@ -5,12 +5,9 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import PersonIcon from "@material-ui/icons/Person"; // signin
 import PersonAddIcon from "@material-ui/icons/PersonAdd"; // signup
-import AccountCircle from "@material-ui/icons/AccountCircle";
-import { useState } from "react";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import SettingsIcon from "@material-ui/icons/Settings";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 const useStyles = makeStyles((theme) => ({
   menuText: theme.menuText,
