@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Header = ({ handleDrawerToggle }) => {
+const Header = ({ handleDrawerOpen }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => ({ ...state }));
@@ -60,7 +60,7 @@ const Header = ({ handleDrawerToggle }) => {
     <>
       <AppBar position="static">
         <Toolbar className={classes.menuContainer}>
-          <HeaderMenuLeft handleDrawerToggle={handleDrawerToggle} />
+          <HeaderMenuLeft handleDrawerOpen={handleDrawerOpen} />
           <SearchBar />
           <HeaderMenuRight
             currentUser={currentUser}
