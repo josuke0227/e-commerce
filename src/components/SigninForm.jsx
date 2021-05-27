@@ -15,6 +15,7 @@ const SigninForm = ({
 }) => {
   const textInputDefinitions = [
     {
+      autoFocus: true,
       error: !!errors.email && !!errors.email.length,
       helperText: errors.email,
       id: "email",

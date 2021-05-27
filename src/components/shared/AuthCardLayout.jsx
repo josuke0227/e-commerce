@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Typography, Link } from "@material-ui/core";
+import { Link as RouterLink } from "react-router-dom";
 import Alert from "@material-ui/lab/Alert";
 
 const useStyles = makeStyles((theme) => ({
@@ -58,7 +59,11 @@ const AuthCardLayout = ({ contents }) => {
         </>
       )}
       {(path === "signin" || path === "signup") && (
-        <Link className={classes.formLink} href={authNavigation[path].link}>
+        <Link
+          component={RouterLink}
+          className={classes.formLink}
+          to={authNavigation[path].link}
+        >
           <Typography variant="subtitle2">
             {authNavigation[path].text}
           </Typography>

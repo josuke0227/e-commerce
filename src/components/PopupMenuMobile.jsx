@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
@@ -12,6 +13,7 @@ import SettingsIcon from "@material-ui/icons/Settings";
 const useStyles = makeStyles((theme) => ({
   menuText: theme.menuText,
   headerItem: theme.headerItem,
+  menuLink: theme.menuLink,
 }));
 
 const PopupMenuMobile = ({
@@ -27,17 +29,21 @@ const PopupMenuMobile = ({
   const toggleMenuItemByRole = (user) => {
     if (user.role === "admin")
       return (
-        <IconButton color="inherit" className={classes.iconWrapper}>
-          <DashboardIcon className={classes.headerItem} />
-          <Typography className={classes.menuText}>Dashboard</Typography>
-        </IconButton>
+        <Link to="/admin/dashboard" className={classes.menuLink}>
+          <IconButton color="inherit">
+            <DashboardIcon className={classes.headerItem} />
+            <Typography className={classes.menuText}>Dashboard</Typography>
+          </IconButton>
+        </Link>
       );
     if (user.role === "subscriber")
       return (
-        <IconButton color="inherit">
-          <SettingsIcon className={classes.headerItem} />
-          <Typography className={classes.menuText}>My account</Typography>
-        </IconButton>
+        <Link to="/mypage" className={classes.menuLink}>
+          <IconButton color="inherit">
+            <SettingsIcon className={classes.headerItem} />
+            <Typography className={classes.menuText}>My account</Typography>
+          </IconButton>
+        </Link>
       );
   };
 
@@ -57,16 +63,20 @@ const PopupMenuMobile = ({
 
     return [
       <MenuItem key="signup" onClick={handleMobileMenuClose}>
-        <IconButton color="inherit">
-          <PersonAddIcon />
-          <Typography className={classes.menuText}>Signup</Typography>
-        </IconButton>
+        <Link to="/signup" className={classes.menuLink}>
+          <IconButton color="inherit">
+            <PersonAddIcon className={classes.headerItem} />
+            <Typography className={classes.menuText}>Signup</Typography>
+          </IconButton>
+        </Link>
       </MenuItem>,
       <MenuItem key="signin" onClick={handleMobileMenuClose}>
-        <IconButton color="inherit">
-          <PersonIcon />
-          <Typography className={classes.menuText}>Signin</Typography>
-        </IconButton>
+        <Link to="/signin" className={classes.menuLink}>
+          <IconButton color="inherit">
+            <PersonIcon className={classes.headerItem} />
+            <Typography className={classes.menuText}>Signin</Typography>
+          </IconButton>
+        </Link>
       </MenuItem>,
     ];
   };

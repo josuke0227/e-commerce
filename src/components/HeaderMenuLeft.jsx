@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   menuText: theme.menuText,
 }));
 
-const HeaderMenuLeft = () => {
+const HeaderMenuLeft = ({ handleDrawerToggle }) => {
   const classes = useStyles();
 
   return (
@@ -39,6 +39,7 @@ const HeaderMenuLeft = () => {
         className={classes.menuButton}
         color="inherit"
         aria-label="open drawer"
+        onClick={handleDrawerToggle}
       >
         <MenuIcon />
       </IconButton>
@@ -47,12 +48,12 @@ const HeaderMenuLeft = () => {
         E-commerce site
       </Typography>
 
-      <IconButton aria-label="back to shop" color="inherit">
+      <IconButton color="inherit">
         <StorefrontIcon className={classes.headerItem} />
         <Typography className={classes.menuText}>Shop</Typography>
       </IconButton>
 
-      <IconButton aria-label="go to cart" color="inherit">
+      <IconButton color="inherit">
         <Badge
           badgeContent={4}
           color="secondary"

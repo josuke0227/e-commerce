@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
@@ -6,7 +6,6 @@ import Toolbar from "@material-ui/core/Toolbar";
 import HeaderMenuLeft from "./HeaderMenuLeft";
 import HeaderMenuRight from "./HeaderMenuRight";
 import SearchBar from "./SearchBar";
-import PopupMenu from "./PopupMenu";
 import PopupMenuMobile from "./PopupMenuMobile";
 
 const useStyles = makeStyles((theme) => ({
@@ -25,32 +24,25 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Header = () => {
+const Header = ({ handleDrawerToggle }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
-
   const { user } = useSelector((state) => ({ ...state }));
 
-  const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    setCurrentUser(user);
+  }, [user]);
 
   const menuId = "primary-search-account-menu";
   const mobileMenuId = "primary-search-account-menu-mobile";
 
-  const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
-  const handleProfileMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
 
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    handleMobileMenuClose();
   };
 
   const handleMobileMenuOpen = (event) => {
@@ -68,29 +60,23 @@ const Header = () => {
     <>
       <AppBar position="static">
         <Toolbar className={classes.menuContainer}>
-          <HeaderMenuLeft />
+          <HeaderMenuLeft handleDrawerToggle={handleDrawerToggle} />
           <SearchBar />
           <HeaderMenuRight
+            currentUser={currentUser}
             menuId={menuId}
-            handleProfileMenuOpen={handleProfileMenuOpen}
             handleMobileMenuOpen={handleMobileMenuOpen}
             mobileMenuId={mobileMenuId}
+            handleSignoutButtonClick={handleSignoutButtonClick}
           />
         </Toolbar>
       </AppBar>
-      <PopupMenu
-        menuId={menuId}
-        anchorEl={anchorEl}
-        isMenuOpen={isMenuOpen}
-        handleMenuClose={handleMenuClose}
-      />
       <PopupMenuMobile
         user={user}
         mobileMenuId={mobileMenuId}
         mobileMoreAnchorEl={mobileMoreAnchorEl}
         isMobileMenuOpen={isMobileMenuOpen}
         handleMobileMenuClose={handleMobileMenuClose}
-        handleProfileMenuOpen={handleProfileMenuOpen}
         handleSignoutButtonClick={handleSignoutButtonClick}
       />
     </>
