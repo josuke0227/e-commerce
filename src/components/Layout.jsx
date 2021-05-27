@@ -98,14 +98,13 @@ const useStyles = makeStyles((theme) => {
 
       [theme.breakpoints.up("sm")]: {
         display: "flex",
-        justifyContent: "space-between",
-        flexWrap: "initial",
+        // justifyContent: "space-between",
       },
     },
   };
 });
 
-const Layout = ({ children }) => {
+const Layout = ({ children, location }) => {
   const classes = useStyles();
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -196,21 +195,11 @@ const Layout = ({ children }) => {
           </IconButton>
         </div>
         <Divider />
-        <List>
-          {[
-            "Dashboard",
-            "Product",
-            "Products",
-            "Category",
-            "SubCategory",
-            "Coupon",
-            "Password",
-          ].map((text, index) => (
-            <ListItem button key={index}>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
+        {location.pathname === "/admin/dashboard" ? (
+          <DashboardMenuList />
+        ) : (
+          <div className="">Comming soon</div>
+        )}
       </Drawer>
       <PopupMenuMobile
         user={user}
@@ -229,6 +218,26 @@ const Layout = ({ children }) => {
         {children}
       </main>
     </div>
+  );
+};
+
+const DashboardMenuList = () => {
+  return (
+    <List>
+      {[
+        "Dashboard",
+        "Product",
+        "Products",
+        "Category",
+        "SubCategory",
+        "Coupon",
+        "Password",
+      ].map((text, index) => (
+        <ListItem button key={index}>
+          <ListItemText primary={text} />
+        </ListItem>
+      ))}
+    </List>
   );
 };
 

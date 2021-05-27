@@ -12,16 +12,16 @@ const App = () => (
   <ThemeProvider theme={theme}>
     <CssBaseline />
     <BrowserRouter>
-      <Layout>
-        <Switch>
+      <Switch>
+        <Layout>
           <Route path="/signup" component={SignupPage} />
           <Route path="/signin" component={SigninPage} />
           <Route path="/activate/:token" component={ActivationPage} />
           <Route path="/forgotpassword" component={SignupPage} />
           <Route path="/resetpassword/:token" component={ActivationPage} />
           <Route path="/admin/dashboard" component={Dashboard} />
-        </Switch>
-      </Layout>
+        </Layout>
+      </Switch>
     </BrowserRouter>
   </ThemeProvider>
 );

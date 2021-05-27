@@ -5,13 +5,16 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   headerMenuLeft: {
     gridArea: "icons",
     display: "flex",
     alignItems: "center",
-    justifyContent: "space-between",
+    [theme.breakpoints.up("md")]: {
+      flex: 1,
+    },
   },
   title: {
     display: "none",
@@ -22,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
   },
   headerItem: theme.headerItem,
   menuText: theme.menuText,
+  menuLink: theme.menuLink,
 }));
 
 const HeaderMenuLeft = () => {
@@ -29,15 +33,20 @@ const HeaderMenuLeft = () => {
 
   return (
     <div className={classes.headerMenuLeft}>
-      <Typography className={classes.title} variant="h6" noWrap>
-        E-commerce site
-      </Typography>
+      <Link to="/" className={classes.menuLink}>
+        <Typography className={classes.title} variant="h6" noWrap>
+          E-commerce site
+        </Typography>
+      </Link>
 
-      <IconButton color="inherit">
-        <StorefrontIcon className={classes.headerItem} />
-        <Typography className={classes.menuText}>Shop</Typography>
-      </IconButton>
+      <Link to="/shop" className={classes.menuLink}>
+        <IconButton color="inherit">
+          <StorefrontIcon className={classes.headerItem} />
+          <Typography className={classes.menuText}>Shop</Typography>
+        </IconButton>
+      </Link>
 
+      {/* TODO: Implement another drawer for cart */}
       <IconButton color="inherit">
         <Badge
           badgeContent={4}
