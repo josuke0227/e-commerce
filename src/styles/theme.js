@@ -37,6 +37,6 @@ export const theme = createMuiTheme({
   },
   menuLink: {
     textDecoration: "none",
-    color: "#333",
+    color: "#fff",
   },
 });

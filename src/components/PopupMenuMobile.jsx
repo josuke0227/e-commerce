@@ -13,7 +13,7 @@ import SettingsIcon from "@material-ui/icons/Settings";
 const useStyles = makeStyles((theme) => ({
   menuText: theme.menuText,
   headerItem: theme.headerItem,
-  menuLink: theme.menuLink,
+  menuLink: { ...theme.menuLink, color: "#333" },
 }));
 
 const PopupMenuMobile = ({
