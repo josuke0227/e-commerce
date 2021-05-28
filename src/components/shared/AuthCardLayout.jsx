@@ -45,7 +45,7 @@ const AuthCardLayout = ({ contents }) => {
         </Alert>
       )}
       {path === "signin" && (
-        <Link className={classes.formLink} href="/forgotpassword">
+        <Link href="/forgotpassword">
           <Typography variant="subtitle2">Forgot password?</Typography>
         </Link>
       )}
@@ -59,11 +59,7 @@ const AuthCardLayout = ({ contents }) => {
         </>
       )}
       {(path === "signin" || path === "signup") && (
-        <Link
-          component={RouterLink}
-          className={classes.formLink}
-          to={authNavigation[path].link}
-        >
+        <Link component={RouterLink} to={authNavigation[path].link}>
           <Typography variant="subtitle2">
             {authNavigation[path].text}
           </Typography>

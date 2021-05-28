@@ -40,3 +40,11 @@ export const theme = createMuiTheme({
     color: "#fff",
   },
 });
+
+theme.mixins.toolbar = {
+  ...theme.mixins.toolbar,
+  minHeight: 91,
+  [theme.breakpoints.up("sm")]: {
+    minHeight: 64,
+  },
+};

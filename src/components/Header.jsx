@@ -1,85 +1,87 @@
-import { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
+import { IconButton, Toolbar, AppBar } from "@material-ui/core/";
+import { Menu as MenuIcon } from "@material-ui/icons/";
+
 import HeaderMenuLeft from "./HeaderMenuLeft";
 import HeaderMenuRight from "./HeaderMenuRight";
 import SearchBar from "./SearchBar";
-import PopupMenuMobile from "./PopupMenuMobile";
+import { drawerWidth } from "./SideBar";
 
 const useStyles = makeStyles((theme) => ({
+  appBar: {
+    transition: theme.transitions.create(["margin", "width"], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+  },
+  appBarShift: {
+    width: `calc(100% - ${drawerWidth}px)`,
+    marginLeft: drawerWidth,
+    transition: theme.transitions.create(["margin", "width"], {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
   menuContainer: {
     display: "grid",
     gridTemplateAreas: `
-      "icons showMore"
-      "search search"
+      "drawerOpener icons showMore"
+      "search search search"
     `,
 
     [theme.breakpoints.up("sm")]: {
       display: "flex",
-      justifyContent: "space-between",
-      flexWrap: "initial",
     },
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+    gridArea: "drawerOpener",
+  },
+  hide: {
+    display: "none",
   },
 }));
 
-const Header = ({ handleDrawerOpen }) => {
+const Header = ({
+  handleDrawerOpen,
+  currentUser,
+  menuId,
+  handleMobileMenuOpen,
+  mobileMenuId,
+  handleSignoutButtonClick,
+  open,
+}) => {
   const classes = useStyles();
-  const dispatch = useDispatch();
-  const { user } = useSelector((state) => ({ ...state }));
-
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
-  const [currentUser, setCurrentUser] = useState(null);
-
-  useEffect(() => {
-    setCurrentUser(user);
-  }, [user]);
-
-  const menuId = "primary-search-account-menu";
-  const mobileMenuId = "primary-search-account-menu-mobile";
-
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
-  };
-
-  const handleMobileMenuOpen = (event) => {
-    setMobileMoreAnchorEl(event.currentTarget);
-  };
-
-  const handleSignoutButtonClick = () => {
-    handleMobileMenuClose();
-    dispatch({
-      type: "SIGN_OUT_SUCCESS",
-    });
-  };
 
   return (
-    <>
-      <AppBar position="static">
-        <Toolbar className={classes.menuContainer}>
-          <HeaderMenuLeft handleDrawerOpen={handleDrawerOpen} />
-          <SearchBar />
-          <HeaderMenuRight
-            currentUser={currentUser}
-            menuId={menuId}
-            handleMobileMenuOpen={handleMobileMenuOpen}
-            mobileMenuId={mobileMenuId}
-            handleSignoutButtonClick={handleSignoutButtonClick}
-          />
-        </Toolbar>
-      </AppBar>
-      <PopupMenuMobile
-        user={user}
-        mobileMenuId={mobileMenuId}
-        mobileMoreAnchorEl={mobileMoreAnchorEl}
-        isMobileMenuOpen={isMobileMenuOpen}
-        handleMobileMenuClose={handleMobileMenuClose}
-        handleSignoutButtonClick={handleSignoutButtonClick}
-      />
-    </>
+    <AppBar
+      position="fixed"
+      className={clsx(classes.appBar, {
+        [classes.appBarShift]: open,
+      })}
+    >
+      <Toolbar className={classes.menuContainer}>
+        <IconButton
+          color="inherit"
+          aria-label="open drawer"
+          onClick={handleDrawerOpen}
+          edge="start"
+          className={clsx(classes.menuButton, open && classes.hide)}
+        >
+          <MenuIcon />
+        </IconButton>
+        <HeaderMenuLeft />
+        <SearchBar />
+        <HeaderMenuRight
+          currentUser={currentUser}
+          menuId={menuId}
+          handleMobileMenuOpen={handleMobileMenuOpen}
+          mobileMenuId={mobileMenuId}
+          handleSignoutButtonClick={handleSignoutButtonClick}
+        />
+      </Toolbar>
+    </AppBar>
   );
 };
 
