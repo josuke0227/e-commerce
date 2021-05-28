@@ -1,11 +1,11 @@
 import { makeStyles } from "@material-ui/core/styles";
-import { IconButton, Divider, Drawer } from "@material-ui/core/";
+import { IconButton, Divider, Drawer, Typography } from "@material-ui/core/";
 import { ChevronLeft as ChevronLeftIcon } from "@material-ui/icons/";
 
 import DashboardMenuList from "./DashboardMenuList";
 import DefaultMenuList from "./DefaultMenuList";
 
-export const drawerWidth = 150;
+export const drawerWidth = 250;
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -42,6 +42,9 @@ const SideBar = ({ handleDrawerClose, location, open }) => {
       }}
     >
       <div className={classes.drawerHeader}>
+        <Typography variant="h6" component="p">
+          {isAdminPath() ? "Admin Menu" : "Additional Search"}
+        </Typography>
         <IconButton onClick={handleDrawerClose}>
           <ChevronLeftIcon />
         </IconButton>

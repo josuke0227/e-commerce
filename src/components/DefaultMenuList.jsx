@@ -5,6 +5,9 @@ import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import FilterByPrice from "./FilterByPrice";
+import FilterByCheckList from "./FilterByCheckList";
+import FilterByRating from "./FilterByRating";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -14,23 +17,25 @@ const useStyles = makeStyles((theme) => ({
     fontSize: theme.typography.pxToRem(15),
     fontWeight: theme.typography.fontWeightRegular,
   },
+  accordionDetailsRoot: {
+    display: "block",
+    padding: "0 1rem 0.5rem 1rem",
+  },
 }));
 
 const listItems = [
-  { label: "Price", content: <div>Here comes cool UI!</div> },
-  { label: "Categories", content: <div>Here comes cool UI!</div> },
-  { label: "Rating", content: <div>Here comes cool UI!</div> },
-  { label: "Sub Categories", content: <div>Here comes cool UI!</div> },
-  { label: "Brands", content: <div>Here comes cool UI!</div> },
-  { label: "Colors", content: <div>Here comes cool UI!</div> },
+  { label: "Price", content: <FilterByPrice /> },
+  { label: "Categories", content: <FilterByCheckList /> },
+  { label: "Rating", content: <FilterByRating /> },
+  { label: "Sub Categories", content: <FilterByCheckList /> },
+  { label: "Brands", content: <FilterByCheckList /> },
+  { label: "Colors", content: <FilterByCheckList /> },
 ];
 
 const DefaultMenuList = () => {
   const classes = useStyles();
   return (
     <div className={classes.root}>
-      <Typography>Search Options</Typography>
-
       {listItems.map(({ label, content }, index) => (
         <Accordion key={index}>
           <AccordionSummary
@@ -40,7 +45,7 @@ const DefaultMenuList = () => {
           >
             <Typography className={classes.heading}>{label}</Typography>
           </AccordionSummary>
-          <AccordionDetails>
+          <AccordionDetails classes={{ root: classes.accordionDetailsRoot }}>
             <Typography>{content}</Typography>
           </AccordionDetails>
         </Accordion>

@@ -1,4 +1,4 @@
-import { createMuiTheme } from "@material-ui/core/styles";
+import { createMuiTheme, makeStyles } from "@material-ui/core/styles";
 
 export const theme = createMuiTheme({
   overrides: {
@@ -48,3 +48,14 @@ theme.mixins.toolbar = {
     minHeight: 64,
   },
 };
+
+export const useMuiButtonBaseStyle = makeStyles(
+  {
+    root: {
+      "&:hover": {
+        background: "none",
+      },
+    },
+  },
+  { name: "MuiButtonBaseStyle" }
+);
