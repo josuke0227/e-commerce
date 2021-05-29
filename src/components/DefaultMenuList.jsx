@@ -37,7 +37,7 @@ const DefaultMenuList = () => {
   return (
     <div className={classes.root}>
       {listItems.map(({ label, content }, index) => (
-        <Accordion key={index}>
+        <Accordion key={index} expanded>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls={`panel${index}a-content`}
