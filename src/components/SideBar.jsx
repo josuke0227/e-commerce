@@ -2,7 +2,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { IconButton, Divider, Drawer, Typography } from "@material-ui/core/";
 import { ChevronLeft as ChevronLeftIcon } from "@material-ui/icons/";
 
-import DashboardMenuList from "./DashboardMenuList";
+import AdminMenuList from "./AdminMenuList";
 import DefaultMenuList from "./DefaultMenuList";
 
 export const drawerWidth = 250;
@@ -50,7 +50,7 @@ const SideBar = ({ handleDrawerClose, location, open }) => {
         </IconButton>
       </div>
       <Divider />
-      {isAdminPath() ? <DashboardMenuList /> : <DefaultMenuList />}
+      {isAdminPath() ? <AdminMenuList /> : <DefaultMenuList />}
     </Drawer>
   );
 };

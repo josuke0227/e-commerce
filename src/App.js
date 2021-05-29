@@ -7,6 +7,7 @@ import SigninPage from "./pages/SigninPage";
 import Dashboard from "./pages/Dashboard";
 import { theme } from "./styles/theme";
 import Layout from "./components/Layout";
+import CategoryPage from "./pages/CategoryPage";
 
 const App = () => (
   <ThemeProvider theme={theme}>
@@ -20,6 +21,7 @@ const App = () => (
           <Route path="/forgotpassword" component={SignupPage} />
           <Route path="/resetpassword/:token" component={ActivationPage} />
           <Route path="/admin/dashboard" component={Dashboard} />
+          <Route path="/admin/categories" component={CategoryPage} />
         </Layout>
       </Switch>
     </BrowserRouter>
