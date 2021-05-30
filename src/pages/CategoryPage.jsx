@@ -11,6 +11,9 @@ import {
   deleteCategory,
 } from "../services/categoriesServices";
 
+import CustomSnackBar from "../components/shared/CustomSnackBar";
+import ConfirmDialog from "../components/shared/ConfirmDialog";
+
 const useStyles = makeStyles((theme) => ({
   typographyRoot: {
     marginBottom: "1rem",
@@ -38,8 +41,15 @@ const CategoryPage = () => {
 
   const [query, setQuery] = useState("");
   const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [loading, setLoading] = useState(false);
   const [listLoading, setListLoading] = useState({});
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [showSnackBar, setShowSnackBar] = useState({
+    show: false,
+    severity: "",
+    message: "",
+  });
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -56,13 +66,23 @@ const CategoryPage = () => {
   const doCategoryCreate = async (categoryName) => {
     setLoading(true);
     try {
-      // TODO: add toasty when update is done successfully.
       const { data } = await createCategory(categoryName);
       const updatedCategory = [...categories, data];
       setCategories(updatedCategory);
       setLoading(false);
+      setShowSnackBar({
+        editing: false,
+        show: true,
+        severity: "success",
+        message: `New category "${categoryName}" was created successfully.`,
+      });
     } catch (error) {
-      console.log(`category update error`, error);
+      setShowSnackBar({
+        editing: false,
+        show: true,
+        severity: "error",
+        message: error.response.data,
+      });
       setLoading(false);
     }
   };
@@ -71,16 +91,27 @@ const CategoryPage = () => {
     setListLoading({ [category.slug]: true });
     try {
       // TODO: add toasty when update is done successfully.
-      // TODO: add modal instead of individual loader.
       const { data } = await updateCategory(category);
       const updatedCategory = categories.map((c) =>
         c._id === data._id ? data : c
       );
       setCategories(updatedCategory);
       setListLoading({ [category.slug]: false });
+      setShowSnackBar({
+        editing: true,
+        show: true,
+        severity: "success",
+        message: "Updated successfully.",
+      });
     } catch (error) {
       console.log(`category update error`, error);
       setListLoading({ [category.slug]: false });
+      setShowSnackBar({
+        editing: true,
+        show: true,
+        severity: "error",
+        message: "Update failed. Please try again later.",
+      });
     }
   };
 
@@ -88,15 +119,26 @@ const CategoryPage = () => {
     setListLoading({ [category.slug]: true });
     try {
       // TODO: add toasty when update is done successfully.
-      // TODO: add loader to list item.
       const { data } = await deleteCategory(category);
       const updatedCategory = categories.filter((c) => c.slug !== data.slug);
       setCategories(updatedCategory);
       setListLoading({ [category.slug]: false });
-      console.log(`data`, data);
+      setSelectedCategory(null);
+      setShowSnackBar({
+        editing: true,
+        show: true,
+        severity: "success",
+        message: "Deleted successfully.",
+      });
     } catch (error) {
-      console.log(`category update error`, error);
       setListLoading({ [category.slug]: false });
+      setDialogOpen(false);
+      setShowSnackBar({
+        editing: true,
+        show: true,
+        severity: "error",
+        message: "Deletion failed. Please try again later.",
+      });
     }
   };
 
@@ -108,6 +150,12 @@ const CategoryPage = () => {
 
   return (
     <div>
+      <ConfirmDialog
+        dialogOpen={dialogOpen}
+        selectedCategory={selectedCategory}
+        doCategoryDelete={doCategoryDelete}
+        setDialogOpen={setDialogOpen}
+      />
       <Typography
         classes={{ root: classes.typographyRoot }}
         variant="h5"
@@ -135,11 +183,17 @@ const CategoryPage = () => {
             categories={filteredCategories}
             doCategoryUpdate={doCategoryUpdate}
             doCategoryDelete={doCategoryDelete}
+            setDialogOpen={setDialogOpen}
             listLoading={listLoading}
             setListLoading={setListLoading}
+            setSelectedCategory={setSelectedCategory}
           />
         </div>
       </div>
+      <CustomSnackBar
+        showSnackBar={showSnackBar}
+        setShowSnackBar={setShowSnackBar}
+      />
     </div>
   );
 };

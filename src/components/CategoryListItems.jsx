@@ -18,6 +18,8 @@ const CategoryListItems = ({
   doCategoryDelete,
   listLoading,
   setListLoading,
+  setDialogOpen,
+  setSelectedCategory,
 }) => {
   const classes = useStyles();
 
@@ -31,6 +33,8 @@ const CategoryListItems = ({
           doCategoryDelete={doCategoryDelete}
           listLoading={listLoading}
           setListLoading={setListLoading}
+          setDialogOpen={setDialogOpen}
+          setSelectedCategory={setSelectedCategory}
         />
       ))}
     </List>

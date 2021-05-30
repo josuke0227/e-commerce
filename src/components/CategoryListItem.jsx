@@ -48,8 +48,9 @@ const useStyles = makeStyles((theme) => ({
 const CategoryListItem = ({
   category,
   doCategoryUpdate,
-  doCategoryDelete,
+  setSelectedCategory,
   listLoading,
+  setDialogOpen,
 }) => {
   const { name: categoryName } = category;
 
@@ -70,6 +71,7 @@ const CategoryListItem = ({
   };
 
   const onUndoButtonClick = () => {
+    if (name === categoryName) return setIsEditing(false);
     setName(categoryName);
     setIsEditing(false);
     setError("");
@@ -85,22 +87,21 @@ const CategoryListItem = ({
   };
 
   const handleDeleteButtonClick = () => {
-    doCategoryDelete(category);
+    setDialogOpen(true);
+    setSelectedCategory(category);
   };
 
   const toggleEditIcon = () =>
     isEditing ? (
       <>
-        {name !== categoryName && (
-          <IconButton
-            edge="end"
-            color="default"
-            aria-label="edit"
-            onClick={onUndoButtonClick}
-          >
-            <UndoIcon />
-          </IconButton>
-        )}
+        <IconButton
+          edge="end"
+          color="default"
+          aria-label="edit"
+          onClick={onUndoButtonClick}
+        >
+          <UndoIcon />
+        </IconButton>
         <IconButton
           classes={{ root: classes.buttonIconRoot }}
           edge="end"
