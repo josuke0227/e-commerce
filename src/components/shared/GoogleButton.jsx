@@ -5,6 +5,7 @@ import { useHistory } from "react-router-dom";
 import { signupWithGoogle } from "../../services/signupServices";
 import { signinWithGoogle } from "../../services/signinServices";
 import { ReactComponent as GoogleIcon } from "../../images/googleIcon.svg";
+import { useDispatch } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   formButton: {
@@ -20,6 +21,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const GoogleButton = ({ setSeverity, setMessage, label = "Signup" }) => {
+  const dispatch = useDispatch();
+
   const classes = useStyles();
   const history = useHistory();
 
@@ -30,11 +33,14 @@ const GoogleButton = ({ setSeverity, setMessage, label = "Signup" }) => {
 
   const handleResponse = async (response) => {
     try {
-      const { data } = await toggleService(label)(response);
-      console.log("data :>> ", data);
-      // TODO: Add data to global status;
-
+      const { data, headers } = await toggleService(label)(response);
+      const token = headers["x-auth-token"];
+      const userData = { ...data, token };
       history.push("/");
+      dispatch({
+        type: "SIGN_IN_SUCCESS",
+        payload: userData,
+      });
     } catch (error) {
       const message = error.response.data;
       setMessage(message);

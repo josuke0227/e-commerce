@@ -1,3 +1,4 @@
+import { useDispatch } from "react-redux";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { Button } from "@material-ui/core";
 import FacebookIcon from "@material-ui/icons/Facebook";
@@ -28,6 +29,7 @@ const SignupButton = withStyles((theme) => ({
 }))(Button);
 
 const FacebookButton = ({ setMessage, setSeverity, label = "Signup" }) => {
+  const dispatch = useDispatch();
   const classes = useStyles();
   const history = useHistory();
 
@@ -38,9 +40,14 @@ const FacebookButton = ({ setMessage, setSeverity, label = "Signup" }) => {
 
   const handleResponse = async (response) => {
     try {
-      const { data } = await toggleService(label)(response);
-      console.log("data :>> ", data);
-      // TODO: Add data to global status;
+      const { data, headers } = await toggleService(label)(response);
+      const token = headers["x-auth-token"];
+      const userData = { ...data, token };
+      history.push("/");
+      dispatch({
+        type: "SIGN_IN_SUCCESS",
+        payload: userData,
+      });
       history.push("/");
     } catch (error) {
       const message = error.response.data;

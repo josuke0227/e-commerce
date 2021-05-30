@@ -111,19 +111,19 @@ const ActivationPage = ({ match, history }) => {
     const service = isActivationPage ? createUser : resetPassword;
 
     try {
-      const response = await service(data);
-      const token = response.headers["x-auth-token"];
-      const userData = { ...response.data, token };
+      const { data, headers } = await service(data);
+      const token = headers["x-auth-token"];
+      const userData = { ...data, token };
       history.push("/");
       dispatch({
         type: "SIGN_IN_SUCCESS",
         payload: userData,
       });
-      return setLoading(false);
+      setLoading(false);
     } catch (error) {
       const { data: message } = error.response;
       setCreateUserError(message);
-      return setLoading(false);
+      setLoading(false);
     }
   };
 
