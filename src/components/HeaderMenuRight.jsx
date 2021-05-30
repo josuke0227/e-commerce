@@ -49,7 +49,6 @@ const HeaderMenuRight = ({
           <Typography className={classes.menuText}>Signup</Typography>
         </IconButton>
       </Link>
-      ,
       <Link to="/signin" className={classes.menuLink}>
         <IconButton color="inherit">
           <PersonIcon className={classes.headerItem} />

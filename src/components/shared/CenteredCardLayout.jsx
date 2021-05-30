@@ -1,17 +1,17 @@
 import { makeStyles } from "@material-ui/core/styles";
 import { Paper } from "@material-ui/core";
+import { headerHeight } from "../../styles/theme";
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    minWidth: "-webkit-fill-available",
-    minHeight: "-webkit-fill-available",
     display: "flex",
-    alignItems: "center",
     justifyContent: "center",
+    marginTop: "3rem",
 
     [theme.breakpoints.up("sm")]: {
-      minWidth: "100vw",
-      minHeight: "100vh",
+      marginTop: "0",
+      alignItems: "center",
+      minHeight: `calc(100vh - ${headerHeight}px)`,
     },
   },
 

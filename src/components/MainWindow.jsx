@@ -5,13 +5,17 @@ import { drawerWidth } from "./SideBar";
 
 const useStyles = makeStyles((theme) => ({
   content: {
+    height: "-webkit-fill-available",
     flexGrow: 1,
-    padding: theme.spacing(3),
     transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
     marginLeft: -drawerWidth,
+
+    [theme.breakpoints.up("sm")]: {
+      minHeight: "100vh",
+    },
   },
   contentShift: {
     transition: theme.transitions.create("margin", {

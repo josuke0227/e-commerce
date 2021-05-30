@@ -16,13 +16,16 @@ import {
 } from "../services/categoriesServices";
 
 const useStyles = makeStyles((theme) => ({
+  container: {
+    marginTop: "2rem",
+  },
   typographyRoot: {
     marginBottom: "1rem",
     [theme.breakpoints.up("sm")]: {
       marginBottom: "3rem",
     },
   },
-  container: {
+  uiContainer: {
     [theme.breakpoints.up("sm")]: {
       display: "grid",
       gridTemplateColumns: "1fr 1fr",
@@ -151,7 +154,7 @@ const CategoryPage = () => {
         doCategoryDelete={doCategoryDelete}
         setShowDialog={setShowDialog}
       />
-      <div>
+      <div className={classes.container}>
         <Typography
           classes={{ root: classes.typographyRoot }}
           variant="h5"
@@ -159,8 +162,8 @@ const CategoryPage = () => {
         >
           Category Management
         </Typography>
-        {/* <div className={classes.container}> */}
-        <Container className={classes.container}>
+
+        <Container className={classes.uiContainer}>
           <CreateCategory
             doCategoryCreate={doCategoryCreate}
             loading={loading}
@@ -177,7 +180,6 @@ const CategoryPage = () => {
             setSelectedCategory={setSelectedCategory}
           />
         </Container>
-        {/* </div> */}
       </div>
       <CustomSnackBar
         showSnackBar={showSnackBar}

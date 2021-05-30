@@ -41,11 +41,14 @@ export const theme = createMuiTheme({
   },
 });
 
+const headerHeightDefault = 91;
+export const headerHeight = 64;
+
 theme.mixins.toolbar = {
   ...theme.mixins.toolbar,
-  minHeight: 91,
+  minHeight: headerHeightDefault,
   [theme.breakpoints.up("sm")]: {
-    minHeight: 64,
+    minHeight: headerHeight,
   },
 };
 
