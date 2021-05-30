@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
+
 import { makeStyles } from "@material-ui/core/styles";
-import { Typography } from "@material-ui/core";
-import CategoryListItems from "../components/CategoryListItems";
-import CategoryCreateForm from "../components/CategoryCreateForm";
-import CategoryFilterInput from "../components/CategoryFilterInput";
+import { Typography, Container } from "@material-ui/core";
+
+import CustomSnackBar from "../components/shared/CustomSnackBar";
+import ConfirmDialog from "../components/shared/ConfirmDialog";
+import CreateCategory from "../components/CreateCategory";
+import EditCategory from "../components/EditCategory";
+
 import {
   getCategories,
   updateCategory,
@@ -11,28 +15,22 @@ import {
   deleteCategory,
 } from "../services/categoriesServices";
 
-import CustomSnackBar from "../components/shared/CustomSnackBar";
-import ConfirmDialog from "../components/shared/ConfirmDialog";
-
 const useStyles = makeStyles((theme) => ({
   typographyRoot: {
     marginBottom: "1rem",
+    [theme.breakpoints.up("sm")]: {
+      marginBottom: "3rem",
+    },
   },
-  createCategoryForm: {
-    marginBottom: "1rem",
-  },
-  demo: {
-    backgroundColor: theme.palette.background.paper,
-  },
-  list: {
-    overflowY: "scroll",
-    maxHeight: "250px",
-  },
-  listPadding: {
-    padding: 0,
-  },
-  buttonIconRoot: {
-    color: theme.palette.success.main,
+  container: {
+    [theme.breakpoints.up("sm")]: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gridGap: "2rem",
+    },
+    [theme.breakpoints.up("md")]: {
+      gridGap: "5rem",
+    },
   },
 }));
 
@@ -44,7 +42,7 @@ const CategoryPage = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [loading, setLoading] = useState(false);
   const [listLoading, setListLoading] = useState({});
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
   const [showSnackBar, setShowSnackBar] = useState({
     show: false,
     severity: "",
@@ -90,7 +88,6 @@ const CategoryPage = () => {
   const doCategoryUpdate = async (category) => {
     setListLoading({ [category.slug]: true });
     try {
-      // TODO: add toasty when update is done successfully.
       const { data } = await updateCategory(category);
       const updatedCategory = categories.map((c) =>
         c._id === data._id ? data : c
@@ -118,7 +115,6 @@ const CategoryPage = () => {
   const doCategoryDelete = async (category) => {
     setListLoading({ [category.slug]: true });
     try {
-      // TODO: add toasty when update is done successfully.
       const { data } = await deleteCategory(category);
       const updatedCategory = categories.filter((c) => c.slug !== data.slug);
       setCategories(updatedCategory);
@@ -132,7 +128,6 @@ const CategoryPage = () => {
       });
     } catch (error) {
       setListLoading({ [category.slug]: false });
-      setDialogOpen(false);
       setShowSnackBar({
         editing: true,
         show: true,
@@ -149,52 +144,46 @@ const CategoryPage = () => {
   });
 
   return (
-    <div>
+    <>
       <ConfirmDialog
-        dialogOpen={dialogOpen}
+        showDialog={showDialog}
         selectedCategory={selectedCategory}
         doCategoryDelete={doCategoryDelete}
-        setDialogOpen={setDialogOpen}
+        setShowDialog={setShowDialog}
       />
-      <Typography
-        classes={{ root: classes.typographyRoot }}
-        variant="h5"
-        component="h1"
-      >
-        Category Management
-      </Typography>
-      <CategoryCreateForm
-        doCategoryCreate={doCategoryCreate}
-        loading={loading}
-      />
-      <div className="">
-        <div className="">
-          <Typography
-            classes={{ root: classes.typographyRoot }}
-            variant="h6"
-            component="h2"
-          >
-            Categories
-          </Typography>
-          <CategoryFilterInput query={query} setQuery={setQuery} />
-        </div>
-        <div className={classes.demo}>
-          <CategoryListItems
-            categories={filteredCategories}
+      <div>
+        <Typography
+          classes={{ root: classes.typographyRoot }}
+          variant="h5"
+          component="h1"
+        >
+          Category Management
+        </Typography>
+        {/* <div className={classes.container}> */}
+        <Container className={classes.container}>
+          <CreateCategory
+            doCategoryCreate={doCategoryCreate}
+            loading={loading}
+          />
+          <EditCategory
+            query={query}
+            setQuery={setQuery}
+            filteredCategories={filteredCategories}
             doCategoryUpdate={doCategoryUpdate}
             doCategoryDelete={doCategoryDelete}
-            setDialogOpen={setDialogOpen}
+            setShowDialog={setShowDialog}
             listLoading={listLoading}
             setListLoading={setListLoading}
             setSelectedCategory={setSelectedCategory}
           />
-        </div>
+        </Container>
+        {/* </div> */}
       </div>
       <CustomSnackBar
         showSnackBar={showSnackBar}
         setShowSnackBar={setShowSnackBar}
       />
-    </div>
+    </>
   );
 };
 

@@ -6,6 +6,10 @@ const useStyles = makeStyles((theme) => ({
   list: {
     overflowY: "scroll",
     maxHeight: "250px",
+
+    [theme.breakpoints.up("sm")]: {
+      maxHeight: "400px",
+    },
   },
   listPadding: {
     padding: 0,
@@ -18,7 +22,7 @@ const CategoryListItems = ({
   doCategoryDelete,
   listLoading,
   setListLoading,
-  setDialogOpen,
+  setShowDialog,
   setSelectedCategory,
 }) => {
   const classes = useStyles();
@@ -33,7 +37,7 @@ const CategoryListItems = ({
           doCategoryDelete={doCategoryDelete}
           listLoading={listLoading}
           setListLoading={setListLoading}
-          setDialogOpen={setDialogOpen}
+          setShowDialog={setShowDialog}
           setSelectedCategory={setSelectedCategory}
         />
       ))}

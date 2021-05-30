@@ -1,60 +1,18 @@
 import { useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import {
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-  IconButton,
-  Divider,
-  CircularProgress,
-} from "@material-ui/core";
-import {
-  DeleteOutlineSharp as DeleteIcon,
-  EditOutlined as EditICon,
-  CheckCircleOutlined as DoneIcon,
-  Undo as UndoIcon,
-} from "@material-ui/icons/";
-import ListItemInput from "./ListItemInput";
+import ListHeader from "./ListHeader";
+import ListButtons from "./ListButtons";
+import { ListItem, Divider } from "@material-ui/core";
 
 import { categorySchema } from "../schemas/categorySchema";
-
-const useStyles = makeStyles((theme) => ({
-  typographyRoot: {
-    marginBottom: "1rem",
-  },
-  createCategoryForm: {
-    marginBottom: "1rem",
-  },
-  demo: {
-    backgroundColor: theme.palette.background.paper,
-  },
-  list: {
-    overflowY: "scroll",
-    maxHeight: "250px",
-  },
-  listPadding: {
-    padding: 0,
-  },
-  buttonIconRoot: {
-    color: theme.palette.success.main,
-  },
-  listItemText: {
-    maxWidth: "200px",
-    overflow: "hidden",
-    overflowX: "scroll",
-  },
-}));
 
 const CategoryListItem = ({
   category,
   doCategoryUpdate,
   setSelectedCategory,
   listLoading,
-  setDialogOpen,
+  setShowDialog,
 }) => {
   const { name: categoryName } = category;
-
-  const classes = useStyles();
 
   const [name, setName] = useState(categoryName);
   const [error, setError] = useState("");
@@ -87,82 +45,33 @@ const CategoryListItem = ({
   };
 
   const handleDeleteButtonClick = () => {
-    setDialogOpen(true);
+    setShowDialog(true);
     setSelectedCategory(category);
-  };
-
-  const toggleEditIcon = () =>
-    isEditing ? (
-      <>
-        <IconButton
-          edge="end"
-          color="default"
-          aria-label="edit"
-          onClick={onUndoButtonClick}
-        >
-          <UndoIcon />
-        </IconButton>
-        <IconButton
-          classes={{ root: classes.buttonIconRoot }}
-          edge="end"
-          aria-label="edit"
-          onClick={handleDoneButtonClick}
-          disabled={!!error || name === categoryName}
-        >
-          <DoneIcon />
-        </IconButton>
-      </>
-    ) : (
-      <IconButton
-        edge="end"
-        color="primary"
-        aria-label="edit"
-        onClick={() => setIsEditing(true)}
-      >
-        <EditICon />
-      </IconButton>
-    );
-
-  const toggleListHeader = () =>
-    isEditing ? (
-      <ListItemInput
-        defaultValue={categoryName}
-        name={name}
-        handleInputChange={handleInputChange}
-        error={error}
-        showTooltip={showTooltip}
-      />
-    ) : (
-      <ListItemText className={classes.listItemText} primary={name} />
-    );
-
-  const showLoader = () => {
-    return listLoading[category.slug] === true;
   };
 
   return (
     <>
       <ListItem key={categoryName}>
-        {toggleListHeader()}
-        <ListItemSecondaryAction>
-          {showLoader() ? (
-            <IconButton>
-              <CircularProgress size={22} />
-            </IconButton>
-          ) : (
-            <>
-              {toggleEditIcon()}
-              <IconButton
-                edge="end"
-                color="secondary"
-                aria-label="delete"
-                onClick={handleDeleteButtonClick}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </>
-          )}
-        </ListItemSecondaryAction>
+        <ListHeader
+          isEditing={isEditing}
+          categoryName={categoryName}
+          handleInputChange={handleInputChange}
+          error={error}
+          showTooltip={showTooltip}
+          name={name}
+        />
+        <ListButtons
+          handleDeleteButtonClick={handleDeleteButtonClick}
+          isEditing={isEditing}
+          onUndoButtonClick={onUndoButtonClick}
+          handleDoneButtonClick={handleDoneButtonClick}
+          name={name}
+          categoryName={categoryName}
+          error={error}
+          listLoading={listLoading}
+          category={category}
+          setIsEditing={setIsEditing}
+        />
       </ListItem>
       <Divider />
     </>

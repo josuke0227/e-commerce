@@ -62,7 +62,7 @@ const HeaderMenuRight = ({
   const renderUserMenu = (currentUser) => (
     <>
       {currentUser.role === "admin" ? (
-        <Link to="/dashboard" className={classes.menuLink}>
+        <Link to="/admin/dashboard" className={classes.menuLink}>
           <IconButton color="inherit" className={classes.iconWrapper}>
             <DashboardIcon className={classes.headerItem} />
             <Typography className={classes.menuText}>Dashboard</Typography>

@@ -5,23 +5,23 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
 const ConfirmDialog = ({
-  dialogOpen,
-  setDialogOpen,
+  showDialog,
+  setShowDialog,
   selectedCategory,
   doCategoryDelete,
 }) => {
   const handleCancel = () => {
-    setDialogOpen(false);
+    setShowDialog(false);
   };
 
   const handleConfirm = () => {
-    setDialogOpen(false);
+    setShowDialog(false);
     doCategoryDelete(selectedCategory);
   };
 
   return (
     <Dialog
-      open={dialogOpen}
+      open={showDialog}
       onClose={handleCancel}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"

@@ -6,24 +6,8 @@ import TextInputGenerator from "../components/shared/TextInputGenerator";
 import { categorySchema } from "../schemas/categorySchema";
 
 const useStyles = makeStyles((theme) => ({
-  typographyRoot: {
-    marginBottom: "1rem",
-  },
   createCategoryForm: {
     marginBottom: "1rem",
-  },
-  demo: {
-    backgroundColor: theme.palette.background.paper,
-  },
-  list: {
-    overflowY: "scroll",
-    maxHeight: "250px",
-  },
-  listPadding: {
-    padding: 0,
-  },
-  buttonIconRoot: {
-    color: theme.palette.success.main,
   },
 }));
 
