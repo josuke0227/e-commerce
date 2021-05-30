@@ -39,6 +39,7 @@ const CategoryPage = () => {
   const [query, setQuery] = useState("");
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [listLoading, setListLoading] = useState({});
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -56,7 +57,6 @@ const CategoryPage = () => {
     setLoading(true);
     try {
       // TODO: add toasty when update is done successfully.
-      // TODO: add loader to list item.
       const { data } = await createCategory(categoryName);
       const updatedCategory = [...categories, data];
       setCategories(updatedCategory);
@@ -68,26 +68,35 @@ const CategoryPage = () => {
   };
 
   const doCategoryUpdate = async (category) => {
+    setListLoading({ [category.slug]: true });
     try {
       // TODO: add toasty when update is done successfully.
-      // TODO: add loader to list item.
+      // TODO: add modal instead of individual loader.
       const { data } = await updateCategory(category);
-      console.log(`data`, data);
+      const updatedCategory = categories.map((c) =>
+        c._id === data._id ? data : c
+      );
+      setCategories(updatedCategory);
+      setListLoading({ [category.slug]: false });
     } catch (error) {
       console.log(`category update error`, error);
+      setListLoading({ [category.slug]: false });
     }
   };
 
   const doCategoryDelete = async (category) => {
+    setListLoading({ [category.slug]: true });
     try {
       // TODO: add toasty when update is done successfully.
       // TODO: add loader to list item.
       const { data } = await deleteCategory(category);
       const updatedCategory = categories.filter((c) => c.slug !== data.slug);
       setCategories(updatedCategory);
+      setListLoading({ [category.slug]: false });
       console.log(`data`, data);
     } catch (error) {
       console.log(`category update error`, error);
+      setListLoading({ [category.slug]: false });
     }
   };
 
@@ -126,6 +135,8 @@ const CategoryPage = () => {
             categories={filteredCategories}
             doCategoryUpdate={doCategoryUpdate}
             doCategoryDelete={doCategoryDelete}
+            listLoading={listLoading}
+            setListLoading={setListLoading}
           />
         </div>
       </div>

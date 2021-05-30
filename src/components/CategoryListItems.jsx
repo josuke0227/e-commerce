@@ -16,6 +16,8 @@ const CategoryListItems = ({
   categories,
   doCategoryUpdate,
   doCategoryDelete,
+  listLoading,
+  setListLoading,
 }) => {
   const classes = useStyles();
 
@@ -27,6 +29,8 @@ const CategoryListItems = ({
           category={c}
           doCategoryUpdate={doCategoryUpdate}
           doCategoryDelete={doCategoryDelete}
+          listLoading={listLoading}
+          setListLoading={setListLoading}
         />
       ))}
     </List>

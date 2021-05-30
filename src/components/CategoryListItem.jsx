@@ -6,6 +6,7 @@ import {
   ListItemSecondaryAction,
   IconButton,
   Divider,
+  CircularProgress,
 } from "@material-ui/core";
 import {
   DeleteOutlineSharp as DeleteIcon,
@@ -44,7 +45,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CategoryListItem = ({ category, doCategoryUpdate, doCategoryDelete }) => {
+const CategoryListItem = ({
+  category,
+  doCategoryUpdate,
+  doCategoryDelete,
+  listLoading,
+}) => {
   const { name: categoryName } = category;
 
   const classes = useStyles();
@@ -53,8 +59,6 @@ const CategoryListItem = ({ category, doCategoryUpdate, doCategoryDelete }) => {
   const [error, setError] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
-
-  const originalName = categoryName;
 
   const handleInputChange = (e) => {
     e.preventDefault();
@@ -66,7 +70,7 @@ const CategoryListItem = ({ category, doCategoryUpdate, doCategoryDelete }) => {
   };
 
   const onUndoButtonClick = () => {
-    setName(originalName);
+    setName(categoryName);
     setIsEditing(false);
     setError("");
   };
@@ -87,20 +91,22 @@ const CategoryListItem = ({ category, doCategoryUpdate, doCategoryDelete }) => {
   const toggleEditIcon = () =>
     isEditing ? (
       <>
-        <IconButton
-          edge="end"
-          color="default"
-          aria-label="edit"
-          onClick={onUndoButtonClick}
-        >
-          <UndoIcon />
-        </IconButton>
+        {name !== categoryName && (
+          <IconButton
+            edge="end"
+            color="default"
+            aria-label="edit"
+            onClick={onUndoButtonClick}
+          >
+            <UndoIcon />
+          </IconButton>
+        )}
         <IconButton
           classes={{ root: classes.buttonIconRoot }}
           edge="end"
           aria-label="edit"
           onClick={handleDoneButtonClick}
-          disabled={!!error || name === originalName}
+          disabled={!!error || name === categoryName}
         >
           <DoneIcon />
         </IconButton>
@@ -129,20 +135,32 @@ const CategoryListItem = ({ category, doCategoryUpdate, doCategoryDelete }) => {
       <ListItemText className={classes.listItemText} primary={name} />
     );
 
+  const showLoader = () => {
+    return listLoading[category.slug] === true;
+  };
+
   return (
     <>
       <ListItem key={categoryName}>
         {toggleListHeader()}
         <ListItemSecondaryAction>
-          {toggleEditIcon()}
-          <IconButton
-            edge="end"
-            color="secondary"
-            aria-label="delete"
-            onClick={handleDeleteButtonClick}
-          >
-            <DeleteIcon />
-          </IconButton>
+          {showLoader() ? (
+            <IconButton>
+              <CircularProgress size={22} />
+            </IconButton>
+          ) : (
+            <>
+              {toggleEditIcon()}
+              <IconButton
+                edge="end"
+                color="secondary"
+                aria-label="delete"
+                onClick={handleDeleteButtonClick}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </>
+          )}
         </ListItemSecondaryAction>
       </ListItem>
       <Divider />
