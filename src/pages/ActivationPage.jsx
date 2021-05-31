@@ -111,9 +111,9 @@ const ActivationPage = ({ match, history }) => {
     const service = isActivationPage ? createUser : resetPassword;
 
     try {
-      const { data, headers } = await service(data);
-      const token = headers["x-auth-token"];
-      const userData = { ...data, token };
+      const response = await service(data);
+      const token = response.headers["x-auth-token"];
+      const userData = { ...response.data, token };
       history.push("/");
       dispatch({
         type: "SIGN_IN_SUCCESS",
