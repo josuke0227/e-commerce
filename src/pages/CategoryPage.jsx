@@ -17,7 +17,7 @@ import {
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    marginTop: "2rem",
+    margin: "2rem",
   },
   typographyRoot: {
     marginBottom: "1rem",
