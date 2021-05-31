@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 
 import { makeStyles } from "@material-ui/core/styles";
 import { Typography, Container } from "@material-ui/core";
@@ -39,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
 
 const CategoryPage = () => {
   const classes = useStyles();
+  const { user } = useSelector((state) => state);
 
   const [query, setQuery] = useState("");
   const [categories, setCategories] = useState([]);
@@ -59,6 +61,7 @@ const CategoryPage = () => {
         setCategories(data);
       } catch (error) {
         console.log(`category fetching error`, error);
+        return;
       }
     };
     fetchCategories();
@@ -67,7 +70,7 @@ const CategoryPage = () => {
   const doCategoryCreate = async (categoryName) => {
     setLoading(true);
     try {
-      const { data } = await createCategory(categoryName);
+      const { data } = await createCategory(categoryName, user);
       const updatedCategory = [...categories, data];
       setCategories(updatedCategory);
       setLoading(false);
@@ -91,7 +94,7 @@ const CategoryPage = () => {
   const doCategoryUpdate = async (category) => {
     setListLoading({ [category.slug]: true });
     try {
-      const { data } = await updateCategory(category);
+      const { data } = await updateCategory(category, user);
       const updatedCategory = categories.map((c) =>
         c._id === data._id ? data : c
       );
@@ -118,7 +121,7 @@ const CategoryPage = () => {
   const doCategoryDelete = async (category) => {
     setListLoading({ [category.slug]: true });
     try {
-      const { data } = await deleteCategory(category);
+      const { data } = await deleteCategory(category, user);
       const updatedCategory = categories.filter((c) => c.slug !== data.slug);
       setCategories(updatedCategory);
       setListLoading({ [category.slug]: false });
