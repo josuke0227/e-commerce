@@ -17,8 +17,9 @@ const SimpleRating = () => {
 
   return (
     <div>
-      {ratings.map((r) => (
+      {ratings.map((r, i) => (
         <Box
+          key={i}
           classes={{ root: classes.boxRoot }}
           component="fieldset"
           mb={r}

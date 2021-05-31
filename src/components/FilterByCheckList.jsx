@@ -18,6 +18,7 @@ const CategoriesCheckList = () => {
         {categories.map((c) => (
           <FormControlLabel
             value={c.id}
+            key={c.id}
             control={<Checkbox color="primary" />}
             label={c.name}
             labelPlacement="end"

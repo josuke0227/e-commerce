@@ -45,7 +45,10 @@ const DefaultMenuList = () => {
           >
             <Typography className={classes.heading}>{label}</Typography>
           </AccordionSummary>
-          <AccordionDetails classes={{ root: classes.accordionDetailsRoot }}>
+          <AccordionDetails
+            key={index}
+            classes={{ root: classes.accordionDetailsRoot }}
+          >
             <Typography>{content}</Typography>
           </AccordionDetails>
         </Accordion>
