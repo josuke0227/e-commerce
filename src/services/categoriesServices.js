@@ -12,7 +12,7 @@ export const updateCategory = async (category, user) =>
     url: `${process.env.REACT_APP_API}/categories/update/${category.slug}`,
     data: { name: category.name },
     headers: {
-      ["x-auth-token"]: user.token,
+      "x-auth-token": user.token,
     },
   });
 
@@ -22,7 +22,7 @@ export const createCategory = async (categoryName, user) =>
     url: `${process.env.REACT_APP_API}/categories/create`,
     data: { name: categoryName },
     headers: {
-      ["x-auth-token"]: user.token,
+      "x-auth-token": user.token,
     },
   });
 
@@ -31,6 +31,6 @@ export const deleteCategory = async (category, user) =>
     method: "DELETE",
     url: `${process.env.REACT_APP_API}/categories/remove/${category.slug}`,
     headers: {
-      ["x-auth-token"]: user.token,
+      "x-auth-token": user.token,
     },
   });
