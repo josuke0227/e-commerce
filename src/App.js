@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import { theme } from "./styles/theme";
 import Layout from "./components/Layout";
 import CategoryPage from "./pages/CategoryPage";
+import AdminRoute from "./components/shared/AdminRoute";
 
 const App = () => (
   <ThemeProvider theme={theme}>
@@ -20,8 +21,8 @@ const App = () => (
           <Route path="/activate/:token" component={ActivationPage} />
           <Route path="/forgotpassword" component={SignupPage} />
           <Route path="/resetpassword/:token" component={ActivationPage} />
-          <Route path="/admin/dashboard" component={Dashboard} />
-          <Route path="/admin/categories" component={CategoryPage} />
+          <AdminRoute exact path="/admin/dashboard" component={Dashboard} />
+          <AdminRoute exact path="/admin/categories" component={CategoryPage} />
         </Layout>
       </Switch>
     </BrowserRouter>
