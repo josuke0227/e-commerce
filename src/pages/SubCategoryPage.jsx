@@ -9,10 +9,11 @@ import {
 } from "@material-ui/core";
 import { Menu as MenuIcon } from "@material-ui/icons";
 import CategoryFilterInput from "../components/CategoryFilterInput";
+import Layout from "../components/Layout";
 
 const useStyles = makeStyles((theme) => {});
 
-const SubCategoryPage = () => {
+const SubCategoryPage = ({ location }) => {
   const [query, setQuery] = useState("");
   const [listItemClicked, setListItemClicked] = useState(false);
   // const [categoryClicked, listItemClicked] = useState({
@@ -33,7 +34,7 @@ const SubCategoryPage = () => {
   const open = false;
 
   return (
-    <>
+    <Layout location={location}>
       <Grid container spacing={3}>
         <Grid item xs={8}>
           <CategoryFilterInput query={query} setQuery={setQuery} />
@@ -53,7 +54,7 @@ const SubCategoryPage = () => {
           <MenuIcon />
         </IconButton>
       </ListItem>
-    </>
+    </Layout>
   );
 };
 

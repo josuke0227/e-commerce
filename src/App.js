@@ -6,17 +6,17 @@ import ActivationPage from "./pages/ActivationPage";
 import SigninPage from "./pages/SigninPage";
 import Dashboard from "./pages/Dashboard";
 import { theme } from "./styles/theme";
-import Layout from "./components/Layout";
 import CategoryPage from "./pages/CategoryPage";
 import SubCategoryPage from "./pages/SubCategoryPage";
 import AdminRoute from "./components/shared/AdminRoute";
+import HomePage from "./pages/HomePage";
 
 const App = () => (
   <ThemeProvider theme={theme}>
     <CssBaseline />
     <BrowserRouter>
       <Switch>
-        {/* <Layout> */}
+        <Route exact path="/" component={HomePage} />
         <Route exact path="/signup" component={SignupPage} />
         <Route exact path="/signin" component={SigninPage} />
         <Route exact path="/activate/:token" component={ActivationPage} />
@@ -25,7 +25,6 @@ const App = () => (
         <AdminRoute exact path="/admin/dashboard" component={Dashboard} />
         <Route exact path="/admin/categories" component={CategoryPage} />
         <Route exact path="/admin/subcategories" component={SubCategoryPage} />
-        {/* </Layout> */}
       </Switch>
     </BrowserRouter>
   </ThemeProvider>

@@ -3,8 +3,9 @@ import { emailSchema } from "../schemas/authSchema";
 import { sendUserEmail, forgotPassword } from "../services/signupServices";
 import CenteredCardLayout from "../components/shared/CenteredCardLayout";
 import SignupForm from "../components/SignupForm";
+import Layout from "../components/Layout";
 
-const SignupPage = ({ match }) => {
+const SignupPage = ({ match, location }) => {
   const testEmail = "y.motosugi0227@gmail.com";
   const [email, setEmail] = useState(testEmail);
   const [error, setError] = useState("");
@@ -52,20 +53,22 @@ const SignupPage = ({ match }) => {
   };
 
   return (
-    <CenteredCardLayout>
-      <SignupForm
-        email={email}
-        error={error}
-        handleInputChange={handleInputChange}
-        handleSubmit={handleSubmit}
-        loading={loading}
-        message={message}
-        path={path}
-        setMessage={setMessage}
-        setSeverity={setSeverity}
-        severity={severity}
-      />
-    </CenteredCardLayout>
+    <Layout location={location}>
+      <CenteredCardLayout>
+        <SignupForm
+          email={email}
+          error={error}
+          handleInputChange={handleInputChange}
+          handleSubmit={handleSubmit}
+          loading={loading}
+          message={message}
+          path={path}
+          setMessage={setMessage}
+          setSeverity={setSeverity}
+          severity={severity}
+        />
+      </CenteredCardLayout>
+    </Layout>
   );
 };
 

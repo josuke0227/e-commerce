@@ -8,6 +8,7 @@ import CustomSnackBar from "../components/shared/CustomSnackBar";
 import ConfirmDialog from "../components/shared/ConfirmDialog";
 import CreateCategory from "../components/CreateCategory";
 import EditCategory from "../components/EditCategory";
+import Layout from "../components/Layout";
 
 import {
   getCategories,
@@ -38,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CategoryPage = () => {
+const CategoryPage = ({ location }) => {
   const classes = useStyles();
   const { user } = useSelector((state) => state);
 
@@ -150,7 +151,7 @@ const CategoryPage = () => {
   });
 
   return (
-    <>
+    <Layout location={location}>
       <ConfirmDialog
         showDialog={showDialog}
         selectedCategory={selectedCategory}
@@ -188,7 +189,7 @@ const CategoryPage = () => {
         showSnackBar={showSnackBar}
         setShowSnackBar={setShowSnackBar}
       />
-    </>
+    </Layout>
   );
 };
 

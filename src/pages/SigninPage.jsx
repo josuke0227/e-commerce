@@ -4,8 +4,9 @@ import { signin } from "../services/signinServices";
 import CenteredCardLayout from "../components/shared/CenteredCardLayout";
 import SigninForm from "../components/SigninForm";
 import { useDispatch } from "react-redux";
+import Layout from "../components/Layout";
 
-const SigninPage = ({ history }) => {
+const SigninPage = ({ history, location }) => {
   const dispatch = useDispatch();
 
   const [data, setData] = useState({ email: "", password: "" });
@@ -59,17 +60,19 @@ const SigninPage = ({ history }) => {
   };
 
   return (
-    <CenteredCardLayout>
-      <SigninForm
-        data={data}
-        errors={errors}
-        handleInputChange={handleInputChange}
-        handleSubmit={handleSubmit}
-        loading={loading}
-        message={message}
-        setMessage={setMessage}
-      />
-    </CenteredCardLayout>
+    <Layout location={location}>
+      <CenteredCardLayout>
+        <SigninForm
+          data={data}
+          errors={errors}
+          handleInputChange={handleInputChange}
+          handleSubmit={handleSubmit}
+          loading={loading}
+          message={message}
+          setMessage={setMessage}
+        />
+      </CenteredCardLayout>
+    </Layout>
   );
 };
 

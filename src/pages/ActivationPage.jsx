@@ -6,8 +6,9 @@ import { resetPassword } from "../services/resetPasswordServices";
 import CenteredCardLayout from "../components/shared/CenteredCardLayout";
 import ActivationForm from "../components/ActivationForm";
 import { useDispatch } from "react-redux";
+import Layout from "../components/Layout";
 
-const ActivationPage = ({ match, history }) => {
+const ActivationPage = ({ match, history, location }) => {
   const dispatch = useDispatch();
 
   const [data, setData] = useState({
@@ -128,17 +129,19 @@ const ActivationPage = ({ match, history }) => {
   };
 
   return (
-    <CenteredCardLayout>
-      <ActivationForm
-        createUserError={createUserError}
-        data={data}
-        email={email}
-        error={error}
-        handleInputChange={handleInputChange}
-        handleSubmit={handleSubmit}
-        loading={loading}
-      />
-    </CenteredCardLayout>
+    <Layout location={location}>
+      <CenteredCardLayout>
+        <ActivationForm
+          createUserError={createUserError}
+          data={data}
+          email={email}
+          error={error}
+          handleInputChange={handleInputChange}
+          handleSubmit={handleSubmit}
+          loading={loading}
+        />
+      </CenteredCardLayout>
+    </Layout>
   );
 };
 
