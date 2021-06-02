@@ -2,7 +2,7 @@ import Layout from "../components/Layout";
 
 const Dashboard = ({ location }) => {
   return (
-    <Layout loction={location}>
+    <Layout location={location}>
       <div className="">Dashboard page.</div>
     </Layout>
   );
