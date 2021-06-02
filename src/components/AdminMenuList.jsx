@@ -10,7 +10,7 @@ const AdminMenuList = () => {
         { label: "Dashboard", path: "/admin/dashboard" },
         { label: "Product", path: "/admin/product" },
         { label: "Category Management", path: "/admin/categories" },
-        { label: "SubCategory", path: "/admin/sub" },
+        { label: "SubCategory", path: "/admin/subcategories" },
         { label: "Coupon", path: "/admin/coupon" },
         { label: "Password", path: "/admin/password" },
       ].map(({ label, path }, index) => (
