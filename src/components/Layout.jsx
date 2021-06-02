@@ -5,6 +5,7 @@ import PopupMenuMobile from "./PopupMenuMobile";
 import Header from "./Header";
 import SideBar from "./SideBar";
 import MainWindow from "./MainWindow";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -13,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Layout = ({ children, location }) => {
+  const history = useHistory();
   const classes = useStyles();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => ({ ...state }));
@@ -43,6 +45,7 @@ const Layout = ({ children, location }) => {
     dispatch({
       type: "SIGN_OUT_SUCCESS",
     });
+    history.push("/");
   };
 
   const handleDrawerOpen = () => {
