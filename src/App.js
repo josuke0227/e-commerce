@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import { theme } from "./styles/theme";
 import Layout from "./components/Layout";
 import CategoryPage from "./pages/CategoryPage";
+import SubCategoryPage from "./pages/SubCategoryPage";
 import AdminRoute from "./components/shared/AdminRoute";
 
 const App = () => (
@@ -15,15 +16,16 @@ const App = () => (
     <CssBaseline />
     <BrowserRouter>
       <Switch>
-        <Layout>
-          <Route path="/signup" component={SignupPage} />
-          <Route path="/signin" component={SigninPage} />
-          <Route path="/activate/:token" component={ActivationPage} />
-          <Route path="/forgotpassword" component={SignupPage} />
-          <Route path="/resetpassword/:token" component={ActivationPage} />
-          <AdminRoute exact path="/admin/dashboard" component={Dashboard} />
-          <AdminRoute exact path="/admin/categories" component={CategoryPage} />
-        </Layout>
+        {/* <Layout> */}
+        <Route exact path="/signup" component={SignupPage} />
+        <Route exact path="/signin" component={SigninPage} />
+        <Route exact path="/activate/:token" component={ActivationPage} />
+        <Route exact path="/forgotpassword" component={SignupPage} />
+        <Route exact path="/resetpassword/:token" component={ActivationPage} />
+        <AdminRoute exact path="/admin/dashboard" component={Dashboard} />
+        <Route exact path="/admin/categories" component={CategoryPage} />
+        <Route exact path="/admin/subcategories" component={SubCategoryPage} />
+        {/* </Layout> */}
       </Switch>
     </BrowserRouter>
   </ThemeProvider>

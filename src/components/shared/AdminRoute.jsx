@@ -1,17 +1,28 @@
-import { Route, Redirect } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Route } from "react-router-dom";
 import { useSelector } from "react-redux";
+import LoadingToRedirect from "../LoadingToRedirect";
+import { currentAdmin } from "../../services/authServices";
 
-const AdminRoute = ({ path, component: Component }) => {
+const AdminRoute = ({ children, ...props }) => {
   const { user } = useSelector((state) => ({ ...state }));
+  const [isAuthorized, setIsAuthorized] = useState(false);
 
-  const authorizedPath = <Route path={path} component={Component} />;
+  useEffect(() => {
+    if (user && user.token) {
+      currentAdmin(user.token)
+        .then((res) => {
+          console.log("currentAdmin res: >>", res);
+          setIsAuthorized(true);
+        })
+        .catch((err) => {
+          console.log(`currentAdmin error`, err);
+          return;
+        });
+    }
+  }, [user]);
 
-  const unauthorizedPath = <Redirect to="/" />;
-
-  if (user && user.role === "admin") {
-    return authorizedPath;
-  }
-  return unauthorizedPath;
+  return isAuthorized ? <Route {...props} /> : <LoadingToRedirect />;
 };
 
 export default AdminRoute;
