@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Button,
@@ -6,54 +6,88 @@ import {
   ListItemText,
   Grid,
   IconButton,
+  List,
 } from "@material-ui/core";
 import { Menu as MenuIcon } from "@material-ui/icons";
 import CategoryFilterInput from "../components/CategoryFilterInput";
 import Layout from "../components/Layout";
+import { getCategories } from "../services/categoriesServices";
 
 const useStyles = makeStyles((theme) => {});
 
 const SubCategoryPage = ({ location }) => {
-  const [query, setQuery] = useState("");
-  const [listItemClicked, setListItemClicked] = useState(false);
-  // const [categoryClicked, listItemClicked] = useState({
-  //   slug: null,
-  //   isClicked: false,
-  // });
+  const [isCategorySelected, setIsCategorySelected] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [category, setCategory] = useState(null);
+  const [inputValue, setInpuValue] = useState("");
 
-  const handleClick = () => {};
-
-  const handleMenuIconClick = () => {
-    setListItemClicked(true);
+  const handleCategorySelect = (selectedCategory) => {
+    setInpuValue("");
+    setIsCategorySelected(true);
+    setCategory(selectedCategory);
   };
 
-  // const handleMenuIconClick = (slug) => {
-  //   listItemClicked({ slug, isClicked: true });
-  // };
+  const handleCancel = () => {
+    setInpuValue("");
+    setIsCategorySelected(false);
+    setCategory(null);
+  };
 
-  const open = false;
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data } = await getCategories();
+        setCategories(data);
+      } catch (error) {
+        console.log("category fetching error", error);
+        return;
+      }
+    };
+    fetchCategories();
+  }, []);
 
   return (
     <Layout location={location}>
-      <Grid container spacing={3}>
-        <Grid item xs={8}>
-          <CategoryFilterInput query={query} setQuery={setQuery} />
+      <Grid container>
+        <Grid item xs={12}>
+          <CategoryFilterInput
+            value={inputValue}
+            onChange={setInpuValue}
+            isCategorySelected={isCategorySelected}
+          />
         </Grid>
-        {listItemClicked && (
-          <Grid item xs={4}>
-            <Button variant="contained" color="primary">
-              Submit
-            </Button>
-          </Grid>
-        )}
+        <Grid container spacing={1}>
+          {isCategorySelected && (
+            <>
+              <Grid item xs={6}>
+                <Button variant="contained" color="primary" fullWidth>
+                  Submit
+                </Button>
+              </Grid>
+              <Grid item xs={6}>
+                <Button
+                  variant="contained"
+                  color="default"
+                  onClick={handleCancel}
+                  fullWidth
+                >
+                  Cancel
+                </Button>
+              </Grid>
+            </>
+          )}
+        </Grid>
       </Grid>
-      <ListItem button onClick={handleClick}>
-        <ListItemText primary="Inbox" />
-        {/* <IconButton onClick={() => handleMenuIconClick("slug")}> */}
-        <IconButton onClick={handleMenuIconClick}>
-          <MenuIcon />
-        </IconButton>
-      </ListItem>
+      <List>
+        {categories.map((c) => (
+          <ListItem button>
+            <ListItemText primary={c.name} />
+            <IconButton onClick={() => handleCategorySelect(c)}>
+              <MenuIcon />
+            </IconButton>
+          </ListItem>
+        ))}
+      </List>
     </Layout>
   );
 };
