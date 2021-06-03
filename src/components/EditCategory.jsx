@@ -34,7 +34,7 @@ const EditCategory = ({
       >
         Categories
       </Typography>
-      <CategoryFilterInput query={query} setQuery={setQuery} />
+      <CategoryFilterInput value={query} onChange={setQuery} />
       <div className={classes.listContainer}>
         <CategoryListItems
           categories={filteredCategories}
