@@ -2,18 +2,22 @@ import { InputAdornment } from "@material-ui/core";
 import { SearchOutlined as SearchIcon } from "@material-ui/icons/";
 import TextInputGenerator from "./shared/TextInputGenerator";
 
-const CategoryFilterInput = ({ query, setQuery }) => {
+const CategoryFilterInput = ({ value, onChange, isCategorySelected }) => {
+  const toggleIcon = () => {
+    if (isCategorySelected === undefined) return <SearchIcon />;
+
+    return isCategorySelected ? null : <SearchIcon />;
+  };
+
   const categoryFilterInput = [
     {
       id: "categoryQuery",
-      onChange: (e) => setQuery(e.target.value),
+      onChange: (e) => onChange(e.target.value),
       type: "text",
-      value: query,
+      value,
       InputProps: {
         startAdornment: (
-          <InputAdornment position="start">
-            <SearchIcon />
-          </InputAdornment>
+          <InputAdornment position="start">{toggleIcon()}</InputAdornment>
         ),
       },
     },
