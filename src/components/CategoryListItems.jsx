@@ -1,5 +1,6 @@
 import { makeStyles } from "@material-ui/core/styles";
 import { List } from "@material-ui/core/";
+import Alert from "@material-ui/lab/Alert";
 import CategoryListItem from "./CategoryListItem";
 
 const useStyles = makeStyles((theme) => ({
@@ -26,6 +27,9 @@ const CategoryListItems = ({
   setSelectedCategory,
 }) => {
   const classes = useStyles();
+
+  if (!categories.length)
+    return <Alert severity="info">No Category registered.</Alert>;
 
   return (
     <List className={classes.list} classes={{ padding: classes.listPadding }}>
