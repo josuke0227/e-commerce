@@ -9,7 +9,7 @@ export const getCategories = async (user) =>
 export const updateCategory = async (category, user) =>
   axios({
     method: "PUT",
-    url: `${process.env.REACT_APP_API}/categories/update/${category.slug}`,
+    url: `${process.env.REACT_APP_API}/categories/${category.slug}`,
     data: { name: category.name },
     headers: {
       "x-auth-token": user.token,
@@ -19,7 +19,7 @@ export const updateCategory = async (category, user) =>
 export const createCategory = async (categoryName, user) =>
   axios({
     method: "POST",
-    url: `${process.env.REACT_APP_API}/categories/create`,
+    url: `${process.env.REACT_APP_API}/categories/`,
     data: { name: categoryName },
     headers: {
       "x-auth-token": user.token,
@@ -29,7 +29,7 @@ export const createCategory = async (categoryName, user) =>
 export const deleteCategory = async (category, user) =>
   axios({
     method: "DELETE",
-    url: `${process.env.REACT_APP_API}/categories/remove/${category.slug}`,
+    url: `${process.env.REACT_APP_API}/categories/${category.slug}`,
     headers: {
       "x-auth-token": user.token,
     },

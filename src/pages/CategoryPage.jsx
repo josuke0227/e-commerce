@@ -15,7 +15,7 @@ import {
   updateCategory,
   createCategory,
   deleteCategory,
-} from "../services/categoriesServices";
+} from "../services/categoryServices";
 
 const useStyles = makeStyles((theme) => ({
   container: {
