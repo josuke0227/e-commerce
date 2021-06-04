@@ -1,7 +1,7 @@
 import { makeStyles } from "@material-ui/core/styles";
 import { TextField, Tooltip } from "@material-ui/core";
 
-const useStylesBootstrap = makeStyles((theme) => ({
+const useStyle = makeStyles((theme) => ({
   arrow: {
     color: theme.palette.common.black,
   },
@@ -10,8 +10,13 @@ const useStylesBootstrap = makeStyles((theme) => ({
   },
 }));
 
-const ListItemInput = ({ name, handleInputChange, error, showTooltip }) => {
-  const tooltipStyle = useStylesBootstrap();
+const ListItemInput = ({
+  inputValue,
+  handleInputChange,
+  error,
+  showTooltip,
+}) => {
+  const tooltipStyle = useStyle();
 
   return (
     <Tooltip
@@ -21,7 +26,7 @@ const ListItemInput = ({ name, handleInputChange, error, showTooltip }) => {
       title={error}
       open={showTooltip}
     >
-      <TextField autoFocus value={name} onChange={handleInputChange} />
+      <TextField autoFocus value={inputValue} onChange={handleInputChange} />
     </Tooltip>
   );
 };

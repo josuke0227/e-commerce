@@ -12,25 +12,25 @@ const useStyles = makeStyles((theme) => ({
 
 const ListHeader = ({
   isEditing,
-  categoryName,
+  itemName,
   handleInputChange,
   error,
   showTooltip,
-  name,
+  inputValue,
 }) => {
   const classes = useStyles();
 
   const toggleListHeader = () =>
     isEditing ? (
       <ListItemInput
-        defaultValue={categoryName}
-        name={name}
+        defaultValue={itemName}
+        inputValue={inputValue}
         handleInputChange={handleInputChange}
         error={error}
         showTooltip={showTooltip}
       />
     ) : (
-      <ListItemText className={classes.listItemText} primary={name} />
+      <ListItemText className={classes.listItemText} primary={itemName} />
     );
 
   return toggleListHeader();

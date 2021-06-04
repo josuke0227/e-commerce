@@ -22,11 +22,11 @@ const ListButtons = ({
   isEditing,
   onUndoButtonClick,
   handleDoneButtonClick,
-  name,
-  categoryName,
+  inputValue,
+  itemName,
   error,
   listLoading,
-  category,
+  item,
   setIsEditing,
 }) => {
   const classes = useStyles();
@@ -47,7 +47,7 @@ const ListButtons = ({
           edge="end"
           aria-label="edit"
           onClick={handleDoneButtonClick}
-          disabled={!!error || name === categoryName}
+          disabled={!!error || inputValue === itemName}
         >
           <DoneIcon />
         </IconButton>
@@ -64,7 +64,7 @@ const ListButtons = ({
     );
 
   const showLoader = () => {
-    return listLoading[category.slug] === true;
+    return listLoading[item.slug] === true;
   };
 
   return (

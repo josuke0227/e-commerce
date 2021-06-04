@@ -2,6 +2,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { List } from "@material-ui/core/";
 import Alert from "@material-ui/lab/Alert";
 import CategoryListItem from "./CategoryListItem";
+import InteractiveListItem from "./shared/InteractiveListItem";
 
 const useStyles = makeStyles((theme) => ({
   list: {
@@ -35,7 +36,7 @@ const CategoryListItems = ({
     <List className={classes.list} classes={{ padding: classes.listPadding }}>
       {categories.map((c) => (
         <CategoryListItem
-          key={c.slug}
+          key={c._id}
           category={c}
           doCategoryUpdate={doCategoryUpdate}
           doCategoryDelete={doCategoryDelete}

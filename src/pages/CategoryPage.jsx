@@ -152,10 +152,14 @@ const CategoryPage = ({ location }) => {
 
   return (
     <Layout location={location}>
+      <CustomSnackBar
+        showSnackBar={showSnackBar}
+        setShowSnackBar={setShowSnackBar}
+      />
       <ConfirmDialog
         showDialog={showDialog}
-        selectedCategory={selectedCategory}
-        doCategoryDelete={doCategoryDelete}
+        item={selectedCategory}
+        handleConfirm={doCategoryDelete}
         setShowDialog={setShowDialog}
       />
       <div className={classes.container}>
@@ -185,10 +189,6 @@ const CategoryPage = ({ location }) => {
           />
         </Container>
       </div>
-      <CustomSnackBar
-        showSnackBar={showSnackBar}
-        setShowSnackBar={setShowSnackBar}
-      />
     </Layout>
   );
 };

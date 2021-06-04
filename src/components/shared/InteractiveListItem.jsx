@@ -1,20 +1,20 @@
 import { useState } from "react";
-import ListHeader from "./ListHeader";
-import ListButtons from "./ListButtons";
+import ListHeader from "../ListHeader";
+import ListButtons from "../ListButtons";
 import { ListItem, Divider } from "@material-ui/core";
 
-import { categorySchema } from "../schemas/categorySchema";
+import { categorySchema } from "../../schemas/categorySchema";
 
-const CategoryListItem = ({
-  category,
-  doCategoryUpdate,
-  setSelectedCategory,
-  listLoading,
-  setShowDialog,
+const InteractiveListItem = ({
+  item,
+  updateHandler,
+  itemSetter,
+  isLoading,
+  notificationSetter,
 }) => {
-  const { name: categoryName } = category;
+  const { name: itemName, _id } = item;
 
-  const [name, setName] = useState(categoryName);
+  const [inputValue, setInputValue] = useState(itemName);
   const [error, setError] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
@@ -25,51 +25,51 @@ const CategoryListItem = ({
     const { error } = categorySchema.validate(value);
     setError(error ? error.message : "");
     setShowTooltip(!!error);
-    setName(value);
+    setInputValue(value);
   };
 
   const onUndoButtonClick = () => {
-    if (name === categoryName) return setIsEditing(false);
-    setName(categoryName);
+    if (inputValue === itemName) return setIsEditing(false);
+    setInputValue(itemName);
     setIsEditing(false);
     setError("");
   };
 
   const handleDoneButtonClick = () => {
-    const { error } = categorySchema.validate(name);
+    const { error } = categorySchema.validate(inputValue);
     if (error) return setError(error.message);
     setIsEditing(false);
     setError("");
-    const updatedCategory = { ...category, name };
-    doCategoryUpdate(updatedCategory);
+    const updatedItem = { ...item, name: inputValue };
+    updateHandler(updatedItem);
   };
 
   const handleDeleteButtonClick = () => {
-    setShowDialog(true);
-    setSelectedCategory(category);
+    notificationSetter(true);
+    itemSetter(item);
   };
 
   return (
     <>
-      <ListItem key={categoryName}>
+      <ListItem key={_id}>
         <ListHeader
           isEditing={isEditing}
-          itemName={categoryName}
+          itemName={itemName}
           handleInputChange={handleInputChange}
           error={error}
           showTooltip={showTooltip}
-          inputValue={name}
+          inputValue={inputValue}
         />
         <ListButtons
           handleDeleteButtonClick={handleDeleteButtonClick}
           isEditing={isEditing}
           onUndoButtonClick={onUndoButtonClick}
           handleDoneButtonClick={handleDoneButtonClick}
-          inputValue={name}
-          itemName={categoryName}
+          inputValue={inputValue}
+          itemName={itemName}
           error={error}
-          listLoading={listLoading}
-          item={category}
+          isLoading={isLoading}
+          suCategory={item}
           setIsEditing={setIsEditing}
         />
       </ListItem>
@@ -78,4 +78,4 @@ const CategoryListItem = ({
   );
 };
 
-export default CategoryListItem;
+export default InteractiveListItem;

@@ -6,15 +6,15 @@ import { ListItem, Divider } from "@material-ui/core";
 import { categorySchema } from "../schemas/categorySchema";
 
 const CategoryListItem = ({
-  category,
-  doCategoryUpdate,
-  setSelectedCategory,
+  subCategory,
+  doSubCategoryUpdate,
+  setSubCategory,
   listLoading,
   setShowDialog,
 }) => {
-  const { name: categoryName } = category;
+  const { name: subCategoryName } = subCategory;
 
-  const [name, setName] = useState(categoryName);
+  const [name, setName] = useState(subCategoryName);
   const [error, setError] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
@@ -29,8 +29,8 @@ const CategoryListItem = ({
   };
 
   const onUndoButtonClick = () => {
-    if (name === categoryName) return setIsEditing(false);
-    setName(categoryName);
+    if (name === subCategoryName) return setIsEditing(false);
+    setName(subCategoryName);
     setIsEditing(false);
     setError("");
   };
@@ -40,21 +40,21 @@ const CategoryListItem = ({
     if (error) return setError(error.message);
     setIsEditing(false);
     setError("");
-    const updatedCategory = { ...category, name };
-    doCategoryUpdate(updatedCategory);
+    const updatedCategory = { ...subCategory, name };
+    doSubCategoryUpdate(updatedCategory);
   };
 
   const handleDeleteButtonClick = () => {
     setShowDialog(true);
-    setSelectedCategory(category);
+    setSubCategory(subCategory);
   };
 
   return (
     <>
-      <ListItem key={categoryName}>
+      <ListItem key={subCategoryName}>
         <ListHeader
           isEditing={isEditing}
-          itemName={categoryName}
+          itemName={subCategoryName}
           handleInputChange={handleInputChange}
           error={error}
           showTooltip={showTooltip}
@@ -66,10 +66,10 @@ const CategoryListItem = ({
           onUndoButtonClick={onUndoButtonClick}
           handleDoneButtonClick={handleDoneButtonClick}
           inputValue={name}
-          itemName={categoryName}
+          itemName={subCategoryName}
           error={error}
           listLoading={listLoading}
-          item={category}
+          item={subCategory}
           setIsEditing={setIsEditing}
         />
       </ListItem>
