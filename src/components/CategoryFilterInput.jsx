@@ -3,10 +3,14 @@ import { SearchOutlined as SearchIcon } from "@material-ui/icons/";
 import TextInputGenerator from "./shared/TextInputGenerator";
 
 const CategoryFilterInput = ({ value, onChange, isCategorySelected }) => {
-  const toggleIcon = () => {
-    if (isCategorySelected === undefined) return <SearchIcon />;
-
-    return isCategorySelected ? "" : <SearchIcon />;
+  const toggleInputField = () => {
+    if (isCategorySelected) {
+      const definition = categoryFilterInput[0];
+      definition.label = "New sub category name";
+      delete definition.InputProps;
+      return categoryFilterInput;
+    }
+    return categoryFilterInput;
   };
 
   const categoryFilterInput = [
@@ -17,12 +21,14 @@ const CategoryFilterInput = ({ value, onChange, isCategorySelected }) => {
       value,
       InputProps: {
         startAdornment: (
-          <InputAdornment position="start">{toggleIcon()}</InputAdornment>
+          <InputAdornment position="start">
+            <SearchIcon />
+          </InputAdornment>
         ),
       },
     },
   ];
-  return <TextInputGenerator definitions={categoryFilterInput} />;
+  return <TextInputGenerator definitions={toggleInputField()} />;
 };
 
 export default CategoryFilterInput;

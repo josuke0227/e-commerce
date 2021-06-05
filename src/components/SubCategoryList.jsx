@@ -1,12 +1,12 @@
 import { useState } from "react";
 import {
   ListItem,
-  IconButton,
   List,
   InputAdornment,
   makeStyles,
+  LinearProgress,
 } from "@material-ui/core";
-import { ChevronLeftOutlined, SearchOutlined } from "@material-ui/icons";
+import { SearchOutlined as SearchIcon } from "@material-ui/icons";
 import SubCategoryListItem from "../components/SubCategoryListItem";
 import TextInputGenerator from "../components/shared/TextInputGenerator";
 import { getSearchResult } from "../util/search.util";
@@ -19,6 +19,9 @@ const useStyles = makeStyles((theme) => ({
     //   minHeight: "400px",
     // },
   },
+  alert: {
+    margin: "0.5rem",
+  },
 }));
 
 const SubCategoryList = ({
@@ -28,6 +31,7 @@ const SubCategoryList = ({
   listLoading,
   setShowDialog,
   handleBack,
+  loading,
 }) => {
   const [query, setQuery] = useState("");
 
@@ -42,18 +46,18 @@ const SubCategoryList = ({
       InputProps: {
         startAdornment: (
           <InputAdornment position="start">
-            <SearchOutlined />
+            <SearchIcon />
           </InputAdornment>
         ),
       },
     },
   ];
 
-  if (!subCategories.length)
+  if (!loading && !subCategories.length)
     return (
-      <Alert severity="info">
+      <Alert severity="info" className={classes.alert}>
         <p>
-          No Sub Categories registered. <br />
+          No Sub Category registered. <br />
           Tap <strong onClick={handleBack}>here</strong> to chooseanother
           category or create new one.
         </p>
@@ -64,22 +68,26 @@ const SubCategoryList = ({
 
   return (
     <List className={classes.list}>
-      <ListItem>
-        <IconButton onClick={handleBack}>
-          <ChevronLeftOutlined />
-        </IconButton>
-        <TextInputGenerator definitions={subCategoryFilterInput} />
-      </ListItem>
-      {filteredSubCategory.map((c, i) => (
-        <SubCategoryListItem
-          key={c._id}
-          subCategory={c}
-          doSubCategoryUpdate={doSubCategoryUpdate}
-          setSubCategory={setSubCategory}
-          listLoading={listLoading}
-          setShowDialog={setShowDialog}
-        />
-      ))}
+      {loading ? (
+        <LinearProgress />
+      ) : (
+        <>
+          <ListItem className={classes.searchBar}>
+            <TextInputGenerator definitions={subCategoryFilterInput} />
+          </ListItem>
+
+          {filteredSubCategory.map((c) => (
+            <SubCategoryListItem
+              key={c._id}
+              subCategory={c}
+              doSubCategoryUpdate={doSubCategoryUpdate}
+              setSubCategory={setSubCategory}
+              listLoading={listLoading}
+              setShowDialog={setShowDialog}
+            />
+          ))}
+        </>
+      )}
     </List>
   );
 };

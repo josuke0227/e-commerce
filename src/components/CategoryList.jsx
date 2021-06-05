@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
-import { List } from "@material-ui/core/";
+import { List, LinearProgress } from "@material-ui/core/";
 import Alert from "@material-ui/lab/Alert";
 import CategoryListItem from "./CategoryListItem";
 
@@ -16,7 +16,9 @@ const useStyles = makeStyles((theme) => ({
   listPadding: {
     padding: 0,
   },
-
+  alert: {
+    margin: "0.5rem",
+  },
   listTaller: {
     maxHeight: "100%",
   },
@@ -34,11 +36,16 @@ const CategoryList = ({
   variant,
   handleSelect,
   taller,
+  loading,
 }) => {
   const classes = useStyles();
 
-  if (!categories.length)
-    return <Alert severity="info">No Category registered.</Alert>;
+  if (!loading && !categories.length)
+    return (
+      <Alert className={classes.alert} severity="info">
+        No Category registered.
+      </Alert>
+    );
 
   return (
     <List
@@ -47,20 +54,25 @@ const CategoryList = ({
         [classes.listTaller]: taller,
       })}
     >
-      {categories.map((c, i) => (
-        <CategoryListItem
-          key={c._id}
-          category={c}
-          doCategoryUpdate={doCategoryUpdate}
-          doCategoryDelete={doCategoryDelete}
-          listLoading={listLoading}
-          setListLoading={setListLoading}
-          setShowDialog={setShowDialog}
-          setSelectedCategory={setSelectedCategory}
-          variant={variant}
-          handleSelect={handleSelect}
-        />
-      ))}
+      {loading ? (
+        <LinearProgress />
+      ) : (
+        categories.map((c) => (
+          <CategoryListItem
+            key={c._id}
+            category={c}
+            doCategoryUpdate={doCategoryUpdate}
+            doCategoryDelete={doCategoryDelete}
+            listLoading={listLoading}
+            setListLoading={setListLoading}
+            setShowDialog={setShowDialog}
+            setSelectedCategory={setSelectedCategory}
+            variant={variant}
+            handleSelect={handleSelect}
+            loading={loading}
+          />
+        ))
+      )}
     </List>
   );
 };

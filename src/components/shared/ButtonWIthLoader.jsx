@@ -11,6 +11,8 @@ const ButtonWithLoader = ({
   handleSubmit,
   loading,
   disabled = false,
+  fullWidth,
+  loaderSize,
 }) => {
   const classes = useStyles();
   return (
@@ -20,8 +22,9 @@ const ButtonWithLoader = ({
       disabled={disabled}
       onClick={handleSubmit}
       variant="contained"
+      fullWidth={fullWidth}
     >
-      {loading ? <SmallLoader /> : label}
+      {loading ? <SmallLoader loaderSize={loaderSize} /> : label}
     </Button>
   );
 };

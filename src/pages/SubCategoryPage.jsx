@@ -1,3 +1,4 @@
+import { makeStyles, Typography } from "@material-ui/core";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import Layout from "../components/Layout";
@@ -17,8 +18,17 @@ import SubCategoryList from "../components/SubCategoryList";
 import TogglingInput from "../components/TogglingInput";
 import CategoryList from "../components/CategoryList";
 
-import { Paper } from "@material-ui/core";
+import { Container, Paper } from "@material-ui/core";
 import Slide from "../components/Slide";
+
+const useStyles = makeStyles({
+  caption: {
+    marginTop: "1rem",
+  },
+  panel: {
+    marginTop: "1rem",
+  },
+});
 
 const SubCategoryPage = ({ location }) => {
   const [isCategorySelected, setIsCategorySelected] = useState(false);
@@ -35,18 +45,22 @@ const SubCategoryPage = ({ location }) => {
     message: "",
   });
   const [slide, setSlide] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { user } = useSelector((state) => ({ ...state }));
+  const classes = useStyles();
 
   useEffect(() => {
+    setLoading(true);
     const fetchCategories = async () => {
       try {
         const { data } = await getCategories();
         setCategories(data);
       } catch (error) {
         console.log("category fetching error", error);
-        return;
       }
+      setLoading(false);
     };
 
     fetchCategories();
@@ -54,13 +68,14 @@ const SubCategoryPage = ({ location }) => {
 
   useEffect(() => {
     const fetchSubCategoryByParent = async () => {
+      setLoading(true);
       try {
         const { data } = await pickByParentId(category._id);
         setSubCategories(data);
       } catch (error) {
         console.log("sub category fetching error", error);
-        return;
       }
+      setLoading(false);
     };
 
     if (category === null) return;
@@ -68,10 +83,21 @@ const SubCategoryPage = ({ location }) => {
   }, [category]);
 
   const handleCategorySelect = (selectedCategory) => {
-    setInputValue("");
-    setIsCategorySelected(true);
-    setCategory(selectedCategory);
-    setSlide(true);
+    const toggleRestStates = () => {
+      setInputValue("");
+      setIsCategorySelected(true);
+      setSlide(true);
+    };
+
+    if (category === null) {
+      setCategory(selectedCategory);
+      toggleRestStates();
+    } else if (selectedCategory.name === category.name) {
+      toggleRestStates();
+    } else {
+      setCategory(selectedCategory);
+      toggleRestStates();
+    }
   };
 
   const handleBack = () => {
@@ -82,7 +108,6 @@ const SubCategoryPage = ({ location }) => {
   const handleCancel = () => {
     setInputValue("");
     setIsCategorySelected(false);
-    setCategory(null);
     setSlide(false);
   };
 
@@ -97,6 +122,7 @@ const SubCategoryPage = ({ location }) => {
   };
 
   const doSubCategoryCreate = async (subCategory) => {
+    setIsSubmitting(true);
     try {
       const { data } = await createSubCategory(subCategory, user);
       setSubCategories([...subCategories, data]);
@@ -110,6 +136,7 @@ const SubCategoryPage = ({ location }) => {
     } catch (error) {
       console.log(error);
     }
+    setIsSubmitting(false);
   };
 
   const doSubCategoryUpdate = async (subCategory) => {
@@ -176,38 +203,48 @@ const SubCategoryPage = ({ location }) => {
         handleConfirm={doSubCategoryDelete}
         setShowDialog={setShowDialog}
       />
-      <TogglingInput
-        inputValue={inputValue}
-        setInputValue={setInputValue}
-        isCategorySelected={isCategorySelected}
-        handleSubmit={handleSubmit}
-        handleCancel={handleCancel}
-      />
-      <Paper elevation={3} style={{ margin: 16 }}>
-        <Slide
-          slide={slide}
-          frameWidth="100%"
-          frameHeight="70vh"
-          defaultContent={
-            <CategoryList
-              categories={filteredCategories}
-              variant="selector"
-              handleSelect={handleCategorySelect}
-              taller
-            />
-          }
-          alternativeContent={
-            <SubCategoryList
-              handleBack={handleBack}
-              subCategories={subCategories}
-              doSubCategoryUpdate={doSubCategoryUpdate}
-              setSubCategory={setSubCategory}
-              listLoading={listLoading}
-              setShowDialog={setShowDialog}
-            />
-          }
+      <Container>
+        <Typography className={classes.caption} variant="subtitle1">
+          {!isCategorySelected
+            ? "Please select category to create sub category."
+            : `Selected category: ${category.name}`}
+        </Typography>
+        <TogglingInput
+          inputValue={inputValue}
+          setInputValue={setInputValue}
+          isCategorySelected={isCategorySelected}
+          handleSubmit={handleSubmit}
+          handleCancel={handleCancel}
+          isSubmitting={isSubmitting}
         />
-      </Paper>
+        <Paper elevation={3} className={classes.panel}>
+          <Slide
+            slide={slide}
+            frameWidth="100%"
+            frameHeight="45vh"
+            defaultContent={
+              <CategoryList
+                categories={filteredCategories}
+                variant="selector"
+                handleSelect={handleCategorySelect}
+                taller
+                loading={loading}
+              />
+            }
+            alternativeContent={
+              <SubCategoryList
+                handleBack={handleBack}
+                subCategories={subCategories}
+                doSubCategoryUpdate={doSubCategoryUpdate}
+                setSubCategory={setSubCategory}
+                listLoading={listLoading}
+                setShowDialog={setShowDialog}
+                loading={loading}
+              />
+            }
+          />
+        </Paper>
+      </Container>
       <CustomSnackBar
         showSnackBar={showSnackBar}
         setShowSnackBar={setShowSnackBar}

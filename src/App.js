@@ -24,7 +24,8 @@ const App = () => (
         <Route exact path="/activate/:token" component={ActivationPage} />
         <Route exact path="/forgotpassword" component={SignupPage} />
         <Route exact path="/resetpassword/:token" component={ActivationPage} />
-        <AdminRoute exact path="/admin/dashboard" component={Dashboard} />
+        <Route exact path="/admin/dashboard" component={Dashboard} />
+        {/* <AdminRoute exact path="/admin/dashboard" component={Dashboard} /> */}
         <Route exact path="/admin/categories" component={CategoryPage} />
         <Route exact path="/admin/subcategories" component={SubCategoryPage} />
       </Switch>
