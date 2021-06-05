@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import { List } from "@material-ui/core/";
 import Alert from "@material-ui/lab/Alert";
@@ -6,14 +7,18 @@ import CategoryListItem from "./CategoryListItem";
 const useStyles = makeStyles((theme) => ({
   list: {
     overflowY: "scroll",
-    maxHeight: "250px",
+    maxHeight: "400px",
 
     [theme.breakpoints.up("sm")]: {
-      maxHeight: "400px",
+      minHeight: "400px",
     },
   },
   listPadding: {
     padding: 0,
+  },
+
+  listTaller: {
+    maxHeight: "100%",
   },
 }));
 
@@ -28,6 +33,7 @@ const CategoryList = ({
   setSelectedCategory,
   variant,
   handleSelect,
+  taller,
 }) => {
   const classes = useStyles();
 
@@ -35,8 +41,13 @@ const CategoryList = ({
     return <Alert severity="info">No Category registered.</Alert>;
 
   return (
-    <List className={classes.list} classes={{ padding: classes.listPadding }}>
-      {categories.map((c) => (
+    <List
+      classes={{ padding: classes.listPadding }}
+      className={clsx(classes.list, {
+        [classes.listTaller]: taller,
+      })}
+    >
+      {categories.map((c, i) => (
         <CategoryListItem
           key={c._id}
           category={c}

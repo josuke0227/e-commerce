@@ -73,7 +73,6 @@ const SubCategoryListItem = ({
           setIsEditing={setIsEditing}
         />
       </ListItem>
-      <Divider />
     </>
   );
 };

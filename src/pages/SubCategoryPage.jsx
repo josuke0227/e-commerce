@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import { useSelector } from "react-redux";
 import Layout from "../components/Layout";
 import {
@@ -18,7 +17,8 @@ import SubCategoryList from "../components/SubCategoryList";
 import TogglingInput from "../components/TogglingInput";
 import CategoryList from "../components/CategoryList";
 
-const useStyles = makeStyles((theme) => {});
+import { Paper } from "@material-ui/core";
+import Slide from "../components/Slide";
 
 const SubCategoryPage = ({ location }) => {
   const [isCategorySelected, setIsCategorySelected] = useState(false);
@@ -34,6 +34,7 @@ const SubCategoryPage = ({ location }) => {
     severity: "",
     message: "",
   });
+  const [slide, setSlide] = useState(false);
 
   const { user } = useSelector((state) => ({ ...state }));
 
@@ -70,12 +71,19 @@ const SubCategoryPage = ({ location }) => {
     setInputValue("");
     setIsCategorySelected(true);
     setCategory(selectedCategory);
+    setSlide(true);
+  };
+
+  const handleBack = () => {
+    setIsCategorySelected(false);
+    setSlide(false);
   };
 
   const handleCancel = () => {
     setInputValue("");
     setIsCategorySelected(false);
     setCategory(null);
+    setSlide(false);
   };
 
   const handleSubmit = () => {
@@ -175,18 +183,31 @@ const SubCategoryPage = ({ location }) => {
         handleSubmit={handleSubmit}
         handleCancel={handleCancel}
       />
-      <CategoryList
-        categories={filteredCategories}
-        variant="selector"
-        handleSelect={handleCategorySelect}
-      />
-      <SubCategoryList
-        subCategories={subCategories}
-        doSubCategoryUpdate={doSubCategoryUpdate}
-        setSubCategory={setSubCategory}
-        listLoading={listLoading}
-        setShowDialog={setShowDialog}
-      />
+      <Paper elevation={3} style={{ margin: 16 }}>
+        <Slide
+          slide={slide}
+          frameWidth="100%"
+          frameHeight="70vh"
+          defaultContent={
+            <CategoryList
+              categories={filteredCategories}
+              variant="selector"
+              handleSelect={handleCategorySelect}
+              taller
+            />
+          }
+          alternativeContent={
+            <SubCategoryList
+              handleBack={handleBack}
+              subCategories={subCategories}
+              doSubCategoryUpdate={doSubCategoryUpdate}
+              setSubCategory={setSubCategory}
+              listLoading={listLoading}
+              setShowDialog={setShowDialog}
+            />
+          }
+        />
+      </Paper>
       <CustomSnackBar
         showSnackBar={showSnackBar}
         setShowSnackBar={setShowSnackBar}

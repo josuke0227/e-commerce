@@ -1,5 +1,5 @@
 import { makeStyles } from "@material-ui/core/styles";
-import { Typography } from "@material-ui/core";
+import { Typography, Paper } from "@material-ui/core";
 import CategoryList from "./CategoryList";
 import CategoryFilterInput from "../components/CategoryFilterInput";
 
@@ -36,15 +36,17 @@ const EditCategory = ({
       </Typography>
       <CategoryFilterInput value={query} onChange={setQuery} />
       <div className={classes.listContainer}>
-        <CategoryList
-          categories={filteredCategories}
-          doCategoryUpdate={doCategoryUpdate}
-          doCategoryDelete={doCategoryDelete}
-          setShowDialog={setShowDialog}
-          listLoading={listLoading}
-          setListLoading={setListLoading}
-          setSelectedCategory={setSelectedCategory}
-        />
+        <Paper elevation={3}>
+          <CategoryList
+            categories={filteredCategories}
+            doCategoryUpdate={doCategoryUpdate}
+            doCategoryDelete={doCategoryDelete}
+            setShowDialog={setShowDialog}
+            listLoading={listLoading}
+            setListLoading={setListLoading}
+            setSelectedCategory={setSelectedCategory}
+          />
+        </Paper>
       </div>
     </section>
   );

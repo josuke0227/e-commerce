@@ -86,7 +86,6 @@ const CategoryListItem = ({
           setIsEditing={setIsEditing}
         />
       </ListItem>
-      <Divider />
     </>
   );
 };
