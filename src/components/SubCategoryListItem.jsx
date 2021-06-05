@@ -5,7 +5,7 @@ import { ListItem, Divider } from "@material-ui/core";
 
 import { categorySchema } from "../schemas/categorySchema";
 
-const CategoryListItem = ({
+const SubCategoryListItem = ({
   subCategory,
   doSubCategoryUpdate,
   setSubCategory,
@@ -78,4 +78,4 @@ const CategoryListItem = ({
   );
 };
 
-export default CategoryListItem;
+export default SubCategoryListItem;

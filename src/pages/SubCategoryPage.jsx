@@ -1,16 +1,6 @@
 import { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { useSelector } from "react-redux";
-import {
-  Button,
-  ListItem,
-  ListItemText,
-  Grid,
-  IconButton,
-  List,
-} from "@material-ui/core";
-import { Menu as MenuIcon } from "@material-ui/icons";
-import CategoryFilterInput from "../components/CategoryFilterInput";
 import Layout from "../components/Layout";
 import {
   createSubCategory,
@@ -22,7 +12,11 @@ import { getCategories } from "../services/categoryServices";
 import { subCategorySchema } from "../schemas/subCategorySchema";
 import CustomSnackBar from "../components/shared/CustomSnackBar";
 import ConfirmDialog from "../components/shared/ConfirmDialog";
-import SubCategoryListItem from "../components/SubCategoryListItem";
+
+import { getSearchResult } from "../util/search.util";
+import SubCategoryList from "../components/SubCategoryList";
+import TogglingInput from "../components/TogglingInput";
+import CategoryList from "../components/CategoryList";
 
 const useStyles = makeStyles((theme) => {});
 
@@ -32,7 +26,7 @@ const SubCategoryPage = ({ location }) => {
   const [subCategory, setSubCategory] = useState([]);
   const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState(null);
-  const [inputValue, setInpuValue] = useState("");
+  const [inputValue, setInputValue] = useState("");
   const [listLoading, setListLoading] = useState({});
   const [showDialog, setShowDialog] = useState(false);
   const [showSnackBar, setShowSnackBar] = useState({
@@ -73,13 +67,13 @@ const SubCategoryPage = ({ location }) => {
   }, [category]);
 
   const handleCategorySelect = (selectedCategory) => {
-    setInpuValue("");
+    setInputValue("");
     setIsCategorySelected(true);
     setCategory(selectedCategory);
   };
 
   const handleCancel = () => {
-    setInpuValue("");
+    setInputValue("");
     setIsCategorySelected(false);
     setCategory(null);
   };
@@ -104,7 +98,7 @@ const SubCategoryPage = ({ location }) => {
         severity: "success",
         message: `New category "${data.name}" was created successfully.`,
       });
-      setInpuValue("");
+      setInputValue("");
     } catch (error) {
       console.log(error);
     }
@@ -164,6 +158,8 @@ const SubCategoryPage = ({ location }) => {
     }
   };
 
+  const filteredCategories = getSearchResult(categories, inputValue);
+
   return (
     <Layout location={location}>
       <ConfirmDialog
@@ -172,63 +168,25 @@ const SubCategoryPage = ({ location }) => {
         handleConfirm={doSubCategoryDelete}
         setShowDialog={setShowDialog}
       />
-      <Grid container>
-        <Grid item xs={12}>
-          <CategoryFilterInput
-            value={inputValue}
-            onChange={setInpuValue}
-            isCategorySelected={isCategorySelected}
-          />
-        </Grid>
-        <Grid container spacing={1}>
-          {isCategorySelected && (
-            <>
-              <Grid item xs={6}>
-                <Button
-                  onClick={handleSubmit}
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                >
-                  Submit
-                </Button>
-              </Grid>
-              <Grid item xs={6}>
-                <Button
-                  variant="contained"
-                  color="default"
-                  onClick={handleCancel}
-                  fullWidth
-                >
-                  Cancel
-                </Button>
-              </Grid>
-            </>
-          )}
-        </Grid>
-      </Grid>
-      <List>
-        {categories.map((c) => (
-          <ListItem key={c._id}>
-            <ListItemText primary={c.name} />
-            <IconButton onClick={() => handleCategorySelect(c)}>
-              <MenuIcon />
-            </IconButton>
-          </ListItem>
-        ))}
-      </List>
-      <List>
-        {subCategories.map((c) => (
-          <SubCategoryListItem
-            key={c._id}
-            subCategory={c}
-            doSubCategoryUpdate={doSubCategoryUpdate}
-            setSubCategory={setSubCategory}
-            listLoading={listLoading}
-            setShowDialog={setShowDialog}
-          />
-        ))}
-      </List>
+      <TogglingInput
+        inputValue={inputValue}
+        setInputValue={setInputValue}
+        isCategorySelected={isCategorySelected}
+        handleSubmit={handleSubmit}
+        handleCancel={handleCancel}
+      />
+      <CategoryList
+        categories={filteredCategories}
+        variant="selector"
+        handleSelect={handleCategorySelect}
+      />
+      <SubCategoryList
+        subCategories={subCategories}
+        doSubCategoryUpdate={doSubCategoryUpdate}
+        setSubCategory={setSubCategory}
+        listLoading={listLoading}
+        setShowDialog={setShowDialog}
+      />
       <CustomSnackBar
         showSnackBar={showSnackBar}
         setShowSnackBar={setShowSnackBar}

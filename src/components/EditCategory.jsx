@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core/styles";
 import { Typography } from "@material-ui/core";
-import CategoryListItems from "../components/CategoryListItems";
+import CategoryList from "./CategoryList";
 import CategoryFilterInput from "../components/CategoryFilterInput";
 
 const useStyles = makeStyles((theme) => ({
@@ -36,7 +36,7 @@ const EditCategory = ({
       </Typography>
       <CategoryFilterInput value={query} onChange={setQuery} />
       <div className={classes.listContainer}>
-        <CategoryListItems
+        <CategoryList
           categories={filteredCategories}
           doCategoryUpdate={doCategoryUpdate}
           doCategoryDelete={doCategoryDelete}

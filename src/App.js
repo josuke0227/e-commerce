@@ -11,6 +11,8 @@ import SubCategoryPage from "./pages/SubCategoryPage";
 import AdminRoute from "./components/shared/AdminRoute";
 import HomePage from "./pages/HomePage";
 
+import Playground from "./Playground";
+
 const App = () => (
   <ThemeProvider theme={theme}>
     <CssBaseline />
@@ -28,6 +30,7 @@ const App = () => (
       </Switch>
     </BrowserRouter>
   </ThemeProvider>
+  // <Playground />
 );
 
 export default App;

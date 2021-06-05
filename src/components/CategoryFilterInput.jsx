@@ -6,7 +6,7 @@ const CategoryFilterInput = ({ value, onChange, isCategorySelected }) => {
   const toggleIcon = () => {
     if (isCategorySelected === undefined) return <SearchIcon />;
 
-    return isCategorySelected ? null : <SearchIcon />;
+    return isCategorySelected ? "" : <SearchIcon />;
   };
 
   const categoryFilterInput = [

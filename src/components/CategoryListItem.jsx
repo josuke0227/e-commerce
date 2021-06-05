@@ -1,7 +1,8 @@
 import { useState } from "react";
 import ListHeader from "./ListHeader";
 import ListButtons from "./ListButtons";
-import { ListItem, Divider } from "@material-ui/core";
+import { ListItem, ListItemText, IconButton, Divider } from "@material-ui/core";
+import { Menu as MenuIcon } from "@material-ui/icons";
 
 import { categorySchema } from "../schemas/categorySchema";
 
@@ -11,6 +12,8 @@ const CategoryListItem = ({
   setSelectedCategory,
   listLoading,
   setShowDialog,
+  variant,
+  handleSelect,
 }) => {
   const { name: categoryName } = category;
 
@@ -48,6 +51,16 @@ const CategoryListItem = ({
     setShowDialog(true);
     setSelectedCategory(category);
   };
+
+  if (variant === "selector")
+    return (
+      <ListItem>
+        <ListItemText primary={category.name} />
+        <IconButton onClick={() => handleSelect(category)}>
+          <MenuIcon />
+        </IconButton>
+      </ListItem>
+    );
 
   return (
     <>

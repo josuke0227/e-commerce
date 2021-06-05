@@ -2,7 +2,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import { List } from "@material-ui/core/";
 import Alert from "@material-ui/lab/Alert";
 import CategoryListItem from "./CategoryListItem";
-import InteractiveListItem from "./shared/InteractiveListItem";
 
 const useStyles = makeStyles((theme) => ({
   list: {
@@ -18,7 +17,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CategoryListItems = ({
+// TODO: use contextAPI to make it cleaner.
+const CategoryList = ({
   categories,
   doCategoryUpdate,
   doCategoryDelete,
@@ -26,6 +26,8 @@ const CategoryListItems = ({
   setListLoading,
   setShowDialog,
   setSelectedCategory,
+  variant,
+  handleSelect,
 }) => {
   const classes = useStyles();
 
@@ -44,10 +46,12 @@ const CategoryListItems = ({
           setListLoading={setListLoading}
           setShowDialog={setShowDialog}
           setSelectedCategory={setSelectedCategory}
+          variant={variant}
+          handleSelect={handleSelect}
         />
       ))}
     </List>
   );
 };
 
-export default CategoryListItems;
+export default CategoryList;

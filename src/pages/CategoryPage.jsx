@@ -16,6 +16,7 @@ import {
   createCategory,
   deleteCategory,
 } from "../services/categoryServices";
+import { getSearchResult } from "../util/search.util";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -144,11 +145,7 @@ const CategoryPage = ({ location }) => {
     }
   };
 
-  const filteredCategories = categories.filter((c) => {
-    const categoryName = c.name.toLowerCase();
-    const term = query.toLowerCase();
-    return categoryName.includes(term);
-  });
+  const filteredCategories = getSearchResult(categories, query);
 
   return (
     <Layout location={location}>
