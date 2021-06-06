@@ -9,7 +9,7 @@ const SubCategoryListItem = ({
   subCategory,
   doSubCategoryUpdate,
   setSubCategory,
-  listLoading,
+  listItemLoading,
   setShowDialog,
 }) => {
   const { name: subCategoryName } = subCategory;
@@ -68,7 +68,7 @@ const SubCategoryListItem = ({
           inputValue={name}
           itemName={subCategoryName}
           error={error}
-          listLoading={listLoading}
+          listItemLoading={listItemLoading}
           item={subCategory}
           setIsEditing={setIsEditing}
         />

@@ -28,7 +28,7 @@ const SubCategoryList = ({
   subCategories,
   doSubCategoryUpdate,
   setSubCategory,
-  listLoading,
+  listItemLoading,
   setShowDialog,
   handleBack,
   loading,
@@ -82,7 +82,7 @@ const SubCategoryList = ({
               subCategory={c}
               doSubCategoryUpdate={doSubCategoryUpdate}
               setSubCategory={setSubCategory}
-              listLoading={listLoading}
+              listItemLoading={listItemLoading}
               setShowDialog={setShowDialog}
             />
           ))}

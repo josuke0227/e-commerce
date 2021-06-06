@@ -36,11 +36,11 @@ const CategoryList = ({
   variant,
   handleSelect,
   taller,
-  listLoading,
+  loading,
 }) => {
   const classes = useStyles();
 
-  if (!listLoading && !categories.length)
+  if (!loading && !categories.length)
     return (
       <Alert className={classes.alert} severity="info">
         No Category registered.
@@ -54,7 +54,7 @@ const CategoryList = ({
         [classes.listTaller]: taller,
       })}
     >
-      {listLoading ? (
+      {loading ? (
         <LinearProgress />
       ) : (
         categories.map((c) => (

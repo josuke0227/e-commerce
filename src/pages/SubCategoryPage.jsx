@@ -8,7 +8,6 @@ import {
   pickByParentId,
   updateSubCategory,
 } from "../services/subCategoryServices";
-import { getCategories } from "../services/categoryServices";
 import { subCategorySchema } from "../schemas/subCategorySchema";
 import CustomSnackBar from "../components/shared/CustomSnackBar";
 import ConfirmDialog from "../components/shared/ConfirmDialog";
@@ -37,7 +36,7 @@ const SubCategoryPage = ({ location }) => {
   const [subCategory, setSubCategory] = useState([]);
   const [category, setCategory] = useState(null);
   const [inputValue, setInputValue] = useState("");
-  const [listLoading, setListLoading] = useState({});
+  const [listItemLoading, setListItemLoading] = useState({});
   const [showDialog, setShowDialog] = useState(false);
   const [showSnackBar, setShowSnackBar] = useState({
     show: false,
@@ -45,23 +44,23 @@ const SubCategoryPage = ({ location }) => {
     message: "",
   });
   const [slide, setSlide] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [subCategoryListLoading, setSubCategoryListLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [categories, isFetchingCategories] = useCategory();
+  const [categories, listLoading] = useCategory();
 
   const { user } = useSelector((state) => ({ ...state }));
   const classes = useStyles();
 
   useEffect(() => {
     const fetchSubCategoryByParent = async () => {
-      setLoading(true);
+      setSubCategoryListLoading(true);
       try {
         const { data } = await pickByParentId(category._id);
         setSubCategories(data);
       } catch (error) {
         console.log("sub category fetching error", error);
       }
-      setLoading(false);
+      setSubCategoryListLoading(false);
     };
 
     if (category === null) return;
@@ -126,7 +125,7 @@ const SubCategoryPage = ({ location }) => {
   };
 
   const doSubCategoryUpdate = async (subCategory) => {
-    setListLoading({ [subCategory.slug]: true });
+    setListItemLoading({ [subCategory.slug]: true });
     const { name, parent, slug } = subCategory;
     subCategory = { name, parent, slug };
     try {
@@ -135,7 +134,7 @@ const SubCategoryPage = ({ location }) => {
         c._id === data._id ? data : c
       );
       setSubCategories(updatedCategory);
-      setListLoading({ [subCategory.slug]: false });
+      setListItemLoading({ [subCategory.slug]: false });
       setShowSnackBar({
         editing: true,
         show: true,
@@ -144,7 +143,7 @@ const SubCategoryPage = ({ location }) => {
       });
     } catch (error) {
       console.log(`category update error`, error);
-      setListLoading({ [subCategory.slug]: false });
+      setListItemLoading({ [subCategory.slug]: false });
       setShowSnackBar({
         editing: true,
         show: true,
@@ -155,12 +154,12 @@ const SubCategoryPage = ({ location }) => {
   };
 
   const doSubCategoryDelete = async (category) => {
-    setListLoading({ [category.slug]: true });
+    setListItemLoading({ [category.slug]: true });
     try {
       const { data } = await deleteSubCategory(category, user);
       const updatedCategory = subCategories.filter((c) => c.slug !== data.slug);
       setSubCategories(updatedCategory);
-      setListLoading({ [category.slug]: false });
+      setListItemLoading({ [category.slug]: false });
       setSubCategory(null);
       setShowSnackBar({
         editing: true,
@@ -169,7 +168,7 @@ const SubCategoryPage = ({ location }) => {
         message: "Deleted successfully.",
       });
     } catch (error) {
-      setListLoading({ [category.slug]: false });
+      setListItemLoading({ [category.slug]: false });
       setShowSnackBar({
         editing: true,
         show: true,
@@ -217,7 +216,7 @@ const SubCategoryPage = ({ location }) => {
                 categories={filteredCategories}
                 variant="selector"
                 handleSelect={handleCategorySelect}
-                loading={isFetchingCategories}
+                loading={listLoading}
                 taller
               />
             }
@@ -227,9 +226,9 @@ const SubCategoryPage = ({ location }) => {
                 subCategories={subCategories}
                 doSubCategoryUpdate={doSubCategoryUpdate}
                 setSubCategory={setSubCategory}
-                listLoading={listLoading}
+                listItemLoading={listItemLoading}
                 setShowDialog={setShowDialog}
-                loading={loading}
+                loading={subCategoryListLoading}
               />
             }
           />
