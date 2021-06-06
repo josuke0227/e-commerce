@@ -25,7 +25,7 @@ const ListButtons = ({
   inputValue,
   itemName,
   error,
-  listLoading,
+  listItemLoading,
   item,
   setIsEditing,
 }) => {
@@ -64,7 +64,7 @@ const ListButtons = ({
     );
 
   const showLoader = () => {
-    return listLoading[item.slug] === true;
+    return listItemLoading[item.slug] === true;
   };
 
   return (

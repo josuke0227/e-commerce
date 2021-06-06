@@ -19,8 +19,9 @@ const EditCategory = ({
   doCategoryUpdate,
   doCategoryDelete,
   setShowDialog,
+  listItemLoading,
   listLoading,
-  setListLoading,
+  setListItemLoading,
   setSelectedCategory,
 }) => {
   const classes = useStyles();
@@ -42,9 +43,10 @@ const EditCategory = ({
             doCategoryUpdate={doCategoryUpdate}
             doCategoryDelete={doCategoryDelete}
             setShowDialog={setShowDialog}
-            listLoading={listLoading}
-            setListLoading={setListLoading}
+            listItemLoading={listItemLoading}
+            setListItemLoading={setListItemLoading}
             setSelectedCategory={setSelectedCategory}
+            listLoading={listLoading}
           />
         </Paper>
       </div>

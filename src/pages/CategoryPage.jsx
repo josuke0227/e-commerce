@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 
 import { makeStyles } from "@material-ui/core/styles";
-import { Typography, Container, Paper } from "@material-ui/core";
+import { Typography, Container } from "@material-ui/core";
 
 import CustomSnackBar from "../components/shared/CustomSnackBar";
 import ConfirmDialog from "../components/shared/ConfirmDialog";
@@ -11,12 +11,12 @@ import EditCategory from "../components/EditCategory";
 import Layout from "../components/Layout";
 
 import {
-  getCategories,
   updateCategory,
   createCategory,
   deleteCategory,
 } from "../services/categoryServices";
 import { getSearchResult } from "../util/search.util";
+import useCategory from "../hooks/useCategory";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -45,29 +45,16 @@ const CategoryPage = ({ location }) => {
   const { user } = useSelector((state) => state);
 
   const [query, setQuery] = useState("");
-  const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [listLoading, setListLoading] = useState({});
+  const [listItemLoading, setListItemLoading] = useState({});
   const [showDialog, setShowDialog] = useState(false);
   const [showSnackBar, setShowSnackBar] = useState({
     show: false,
     severity: "",
     message: "",
   });
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const { data } = await getCategories();
-        setCategories(data);
-      } catch (error) {
-        console.log(`category fetching error`, error);
-        return;
-      }
-    };
-    fetchCategories();
-  }, []);
+  const [categories, listLoading, setCategories] = useCategory();
 
   const doCategoryCreate = async (categoryName) => {
     setLoading(true);
@@ -94,14 +81,14 @@ const CategoryPage = ({ location }) => {
   };
 
   const doCategoryUpdate = async (category) => {
-    setListLoading({ [category.slug]: true });
+    setListItemLoading({ [category.slug]: true });
     try {
       const { data } = await updateCategory(category, user);
       const updatedCategory = categories.map((c) =>
         c._id === data._id ? data : c
       );
       setCategories(updatedCategory);
-      setListLoading({ [category.slug]: false });
+      setListItemLoading({ [category.slug]: false });
       setShowSnackBar({
         editing: true,
         show: true,
@@ -110,7 +97,7 @@ const CategoryPage = ({ location }) => {
       });
     } catch (error) {
       console.log(`category update error`, error);
-      setListLoading({ [category.slug]: false });
+      setListItemLoading({ [category.slug]: false });
       setShowSnackBar({
         editing: true,
         show: true,
@@ -121,12 +108,12 @@ const CategoryPage = ({ location }) => {
   };
 
   const doCategoryDelete = async (category) => {
-    setListLoading({ [category.slug]: true });
+    setListItemLoading({ [category.slug]: true });
     try {
       const { data } = await deleteCategory(category, user);
       const updatedCategory = categories.filter((c) => c.slug !== data.slug);
       setCategories(updatedCategory);
-      setListLoading({ [category.slug]: false });
+      setListItemLoading({ [category.slug]: false });
       setSelectedCategory(null);
       setShowSnackBar({
         editing: true,
@@ -135,7 +122,7 @@ const CategoryPage = ({ location }) => {
         message: "Deleted successfully.",
       });
     } catch (error) {
-      setListLoading({ [category.slug]: false });
+      setListItemLoading({ [category.slug]: false });
       setShowSnackBar({
         editing: true,
         show: true,
@@ -180,9 +167,10 @@ const CategoryPage = ({ location }) => {
             doCategoryUpdate={doCategoryUpdate}
             doCategoryDelete={doCategoryDelete}
             setShowDialog={setShowDialog}
-            listLoading={listLoading}
-            setListLoading={setListLoading}
+            listItemLoading={listItemLoading}
+            setListItemLoading={setListItemLoading}
             setSelectedCategory={setSelectedCategory}
+            listLoading={listLoading}
           />
         </Container>
       </div>

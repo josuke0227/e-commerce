@@ -10,7 +10,7 @@ const CategoryListItem = ({
   category,
   doCategoryUpdate,
   setSelectedCategory,
-  listLoading,
+  listItemLoading,
   setShowDialog,
   variant,
   handleSelect,
@@ -81,7 +81,7 @@ const CategoryListItem = ({
           inputValue={name}
           itemName={categoryName}
           error={error}
-          listLoading={listLoading}
+          listItemLoading={listItemLoading}
           item={category}
           setIsEditing={setIsEditing}
         />

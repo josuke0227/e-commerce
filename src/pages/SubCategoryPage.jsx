@@ -20,6 +20,7 @@ import CategoryList from "../components/CategoryList";
 
 import { Container, Paper } from "@material-ui/core";
 import Slide from "../components/Slide";
+import useCategory from "../hooks/useCategory";
 
 const useStyles = makeStyles({
   caption: {
@@ -34,7 +35,6 @@ const SubCategoryPage = ({ location }) => {
   const [isCategorySelected, setIsCategorySelected] = useState(false);
   const [subCategories, setSubCategories] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [listLoading, setListLoading] = useState({});
@@ -47,24 +47,10 @@ const SubCategoryPage = ({ location }) => {
   const [slide, setSlide] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [categories, isFetchingCategories] = useCategory();
 
   const { user } = useSelector((state) => ({ ...state }));
   const classes = useStyles();
-
-  useEffect(() => {
-    setLoading(true);
-    const fetchCategories = async () => {
-      try {
-        const { data } = await getCategories();
-        setCategories(data);
-      } catch (error) {
-        console.log("category fetching error", error);
-      }
-      setLoading(false);
-    };
-
-    fetchCategories();
-  }, []);
 
   useEffect(() => {
     const fetchSubCategoryByParent = async () => {
@@ -231,8 +217,8 @@ const SubCategoryPage = ({ location }) => {
                 categories={filteredCategories}
                 variant="selector"
                 handleSelect={handleCategorySelect}
+                loading={isFetchingCategories}
                 taller
-                loading={loading}
               />
             }
             alternativeContent={

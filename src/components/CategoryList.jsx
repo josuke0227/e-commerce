@@ -29,18 +29,18 @@ const CategoryList = ({
   categories,
   doCategoryUpdate,
   doCategoryDelete,
-  listLoading,
-  setListLoading,
+  listItemLoading,
+  setListItemLoading,
   setShowDialog,
   setSelectedCategory,
   variant,
   handleSelect,
   taller,
-  loading,
+  listLoading,
 }) => {
   const classes = useStyles();
 
-  if (!loading && !categories.length)
+  if (!listLoading && !categories.length)
     return (
       <Alert className={classes.alert} severity="info">
         No Category registered.
@@ -54,7 +54,7 @@ const CategoryList = ({
         [classes.listTaller]: taller,
       })}
     >
-      {loading ? (
+      {listLoading ? (
         <LinearProgress />
       ) : (
         categories.map((c) => (
@@ -63,13 +63,12 @@ const CategoryList = ({
             category={c}
             doCategoryUpdate={doCategoryUpdate}
             doCategoryDelete={doCategoryDelete}
-            listLoading={listLoading}
-            setListLoading={setListLoading}
+            listItemLoading={listItemLoading}
+            setListItemLoading={setListItemLoading}
             setShowDialog={setShowDialog}
             setSelectedCategory={setSelectedCategory}
             variant={variant}
             handleSelect={handleSelect}
-            loading={loading}
           />
         ))
       )}
