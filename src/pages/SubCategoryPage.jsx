@@ -204,11 +204,15 @@ const SubCategoryPage = ({ location }) => {
         setShowDialog={setShowDialog}
       />
       <Container>
-        <Typography className={classes.caption} variant="subtitle1">
-          {!isCategorySelected
-            ? "Please select category to create sub category."
-            : `Selected category: ${category.name}`}
-        </Typography>
+        {!isCategorySelected ? (
+          <Typography className={classes.caption} variant="subtitle1">
+            Please select category to work with sub category.
+          </Typography>
+        ) : (
+          <Typography className={classes.caption} variant="subtitle1">
+            Selected category: {<strong>{category.name}</strong>}
+          </Typography>
+        )}
         <TogglingInput
           inputValue={inputValue}
           setInputValue={setInputValue}

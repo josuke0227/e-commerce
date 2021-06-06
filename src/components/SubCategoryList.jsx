@@ -58,8 +58,8 @@ const SubCategoryList = ({
       <Alert severity="info" className={classes.alert}>
         <p>
           No Sub Category registered. <br />
-          Tap <strong onClick={handleBack}>here</strong> to chooseanother
-          category or create new one.
+          Tap <strong onClick={handleBack}>here</strong> to choose another
+          category or create a new one.
         </p>
       </Alert>
     );
