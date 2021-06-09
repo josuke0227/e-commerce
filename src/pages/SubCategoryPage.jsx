@@ -18,11 +18,9 @@ import CustomSnackBar from "../components/shared/CustomSnackBar";
 import ConfirmDialog from "../components/shared/ConfirmDialog";
 
 import { getSearchResult } from "../util/search.util";
-import SubCategoryList from "../components/SubCategoryList";
 import TogglingInput from "../components/TogglingInput";
-import CategoryList from "../components/CategoryList";
 
-import { Container, Paper } from "@material-ui/core";
+import { Container } from "@material-ui/core";
 import useCategory from "../hooks/useCategory";
 import PanelMobile from "../components/PanelMobile";
 import PanelLaptop from "../components/PanelLaptop";
