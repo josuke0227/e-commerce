@@ -19,6 +19,9 @@ const useStyles = makeStyles((theme) => ({
     //   minHeight: "400px",
     // },
   },
+  alert: {
+    margin: "1rem",
+  },
 }));
 
 const SubCategoryList = ({
@@ -27,8 +30,8 @@ const SubCategoryList = ({
   setSubCategory,
   listItemLoading,
   setShowDialog,
-  handleBack,
   loading,
+  category,
 }) => {
   const [query, setQuery] = useState("");
 
@@ -50,14 +53,10 @@ const SubCategoryList = ({
     },
   ];
 
-  if (!loading && !subCategories.length)
+  if (!category)
     return (
-      <Alert severity="info" className={classes.alert}>
-        <p>
-          No Sub Category registered. <br />
-          Tap <strong onClick={handleBack}>here</strong> to choose another
-          category or create a new one.
-        </p>
+      <Alert severity="info">
+        <p>Please select catergory.</p>
       </Alert>
     );
 
@@ -72,17 +71,24 @@ const SubCategoryList = ({
           <ListItem className={classes.searchBar}>
             <TextInputGenerator definitions={subCategoryFilterInput} />
           </ListItem>
-
-          {filteredSubCategory.map((c) => (
-            <SubCategoryListItem
-              key={c._id}
-              subCategory={c}
-              doSubCategoryUpdate={doSubCategoryUpdate}
-              setSubCategory={setSubCategory}
-              listItemLoading={listItemLoading}
-              setShowDialog={setShowDialog}
-            />
-          ))}
+          {category && !subCategories.length ? (
+            <Alert severity="info" className={classes.alert}>
+              <p>
+                No Sub Category registered. <br />
+              </p>
+            </Alert>
+          ) : (
+            filteredSubCategory.map((c) => (
+              <SubCategoryListItem
+                key={c._id}
+                subCategory={c}
+                doSubCategoryUpdate={doSubCategoryUpdate}
+                setSubCategory={setSubCategory}
+                listItemLoading={listItemLoading}
+                setShowDialog={setShowDialog}
+              />
+            ))
+          )}
         </>
       )}
     </List>

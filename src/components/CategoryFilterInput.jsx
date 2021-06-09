@@ -2,9 +2,9 @@ import { InputAdornment } from "@material-ui/core";
 import { SearchOutlined as SearchIcon } from "@material-ui/icons/";
 import TextInputGenerator from "./shared/TextInputGenerator";
 
-const CategoryFilterInput = ({ value, onChange, isCategorySelected }) => {
+const CategoryFilterInput = ({ value, onChange, category }) => {
   const toggleInputField = () => {
-    if (isCategorySelected) {
+    if (category) {
       const definition = categoryFilterInput[0];
       definition.label = "New sub category name";
       delete definition.InputProps;
@@ -19,6 +19,9 @@ const CategoryFilterInput = ({ value, onChange, isCategorySelected }) => {
       onChange: (e) => onChange(e.target.value),
       type: "text",
       value,
+      InputLabelProps: {
+        shrink: false,
+      },
       InputProps: {
         startAdornment: (
           <InputAdornment position="start">

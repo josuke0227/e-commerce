@@ -9,13 +9,13 @@ const PanelLaptop = ({
   filteredCategories,
   handleCategorySelect,
   listLoading,
-  handleBack,
   subCategories,
   doSubCategoryUpdate,
   setSubCategory,
   listItemLoading,
   setShowDialog,
   subCategoryListLoading,
+  category,
 }) => {
   return (
     <Grid container spacing={3}>
@@ -33,13 +33,13 @@ const PanelLaptop = ({
       <Grid item sm={6}>
         <Paper>
           <SubCategoryList
-            handleBack={handleBack}
             subCategories={subCategories}
             doSubCategoryUpdate={doSubCategoryUpdate}
             setSubCategory={setSubCategory}
             listItemLoading={listItemLoading}
             setShowDialog={setShowDialog}
             loading={subCategoryListLoading}
+            category={category}
           />
         </Paper>
       </Grid>

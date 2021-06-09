@@ -35,7 +35,6 @@ const useStyles = makeStyles({
 });
 
 const SubCategoryPage = ({ location }) => {
-  const [isCategorySelected, setIsCategorySelected] = useState(false);
   const [subCategories, setSubCategories] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
   const [category, setCategory] = useState(null);
@@ -76,7 +75,6 @@ const SubCategoryPage = ({ location }) => {
   const handleCategorySelect = (selectedCategory) => {
     const toggleRestStates = () => {
       setInputValue("");
-      setIsCategorySelected(true);
       setSlide(true);
     };
 
@@ -91,14 +89,10 @@ const SubCategoryPage = ({ location }) => {
     }
   };
 
-  const handleBack = () => {
-    setIsCategorySelected(false);
-    setSlide(false);
-  };
-
   const handleCancel = () => {
     setInputValue("");
-    setIsCategorySelected(false);
+    setSubCategories([]);
+    setCategory(null);
     setSlide(false);
   };
 
@@ -195,7 +189,7 @@ const SubCategoryPage = ({ location }) => {
         setShowDialog={setShowDialog}
       />
       <Container>
-        {!isCategorySelected ? (
+        {!category ? (
           <Typography className={classes.caption} variant="subtitle1">
             Please select category to work with sub category.
           </Typography>
@@ -207,7 +201,7 @@ const SubCategoryPage = ({ location }) => {
         <TogglingInput
           inputValue={inputValue}
           setInputValue={setInputValue}
-          isCategorySelected={isCategorySelected}
+          category={category}
           handleSubmit={handleSubmit}
           handleCancel={handleCancel}
           isSubmitting={isSubmitting}
@@ -217,7 +211,6 @@ const SubCategoryPage = ({ location }) => {
             filteredCategories={filteredCategories}
             handleCategorySelect={handleCategorySelect}
             listLoading={listLoading}
-            handleBack={handleBack}
             subCategories={subCategories}
             doSubCategoryUpdate={doSubCategoryUpdate}
             setSubCategory={setSubCategory}
@@ -225,13 +218,13 @@ const SubCategoryPage = ({ location }) => {
             setShowDialog={setShowDialog}
             subCategoryListLoading={subCategoryListLoading}
             slide={slide}
+            category={category}
           />
         ) : (
           <PanelMobile
             filteredCategories={filteredCategories}
             handleCategorySelect={handleCategorySelect}
             listLoading={listLoading}
-            handleBack={handleBack}
             subCategories={subCategories}
             doSubCategoryUpdate={doSubCategoryUpdate}
             setSubCategory={setSubCategory}
@@ -239,6 +232,7 @@ const SubCategoryPage = ({ location }) => {
             setShowDialog={setShowDialog}
             subCategoryListLoading={subCategoryListLoading}
             slide={slide}
+            category={category}
           />
         )}
       </Container>

@@ -18,7 +18,6 @@ const PanelMobile = ({
   filteredCategories,
   handleCategorySelect,
   listLoading,
-  handleBack,
   subCategories,
   doSubCategoryUpdate,
   setSubCategory,
@@ -26,6 +25,7 @@ const PanelMobile = ({
   setShowDialog,
   subCategoryListLoading,
   slide,
+  category,
 }) => {
   const classes = useStyles();
 
@@ -46,7 +46,7 @@ const PanelMobile = ({
         }
         alternativeContent={
           <SubCategoryList
-            handleBack={handleBack}
+            category={category}
             subCategories={subCategories}
             doSubCategoryUpdate={doSubCategoryUpdate}
             setSubCategory={setSubCategory}

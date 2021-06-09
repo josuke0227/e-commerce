@@ -5,23 +5,22 @@ import ButtonWithLoader from "./shared/ButtonWIthLoader";
 const useStyle = makeStyles({
   container: {
     marginTop: "1rem",
-    paddingTop: (isCategorySelected) => (!isCategorySelected ? "1rem" : "0"),
+    paddingTop: (category) => (!category ? "1rem" : "0"),
   },
   buttons: {
-    visibility: (isCategorySelected) =>
-      isCategorySelected ? "visible" : "hidden",
+    display: (category) => (category ? "flex" : "none"),
   },
 });
 
 const TogglingInput = ({
   inputValue,
   setInputValue,
-  isCategorySelected,
+  category,
   handleSubmit,
   handleCancel,
   isSubmitting,
 }) => {
-  const classes = useStyle(isCategorySelected);
+  const classes = useStyle(!!category);
 
   return (
     <Grid container className={classes.container}>
@@ -29,7 +28,7 @@ const TogglingInput = ({
         <CategoryFilterInput
           value={inputValue}
           onChange={setInputValue}
-          isCategorySelected={isCategorySelected}
+          category={category}
         />
       </Grid>
       <Grid className={classes.buttons} container spacing={3}>
