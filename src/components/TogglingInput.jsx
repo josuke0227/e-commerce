@@ -32,7 +32,7 @@ const TogglingInput = ({
           isCategorySelected={isCategorySelected}
         />
       </Grid>
-      <Grid className={classes.buttons} container spacing={1}>
+      <Grid className={classes.buttons} container spacing={3}>
         <Grid item xs={6}>
           <ButtonWithLoader
             label="Submit"

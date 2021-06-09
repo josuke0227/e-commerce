@@ -19,9 +19,6 @@ const useStyles = makeStyles((theme) => ({
     //   minHeight: "400px",
     // },
   },
-  alert: {
-    margin: "0.5rem",
-  },
 }));
 
 const SubCategoryList = ({

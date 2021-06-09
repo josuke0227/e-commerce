@@ -1,4 +1,9 @@
-import { makeStyles, Typography } from "@material-ui/core";
+import {
+  makeStyles,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@material-ui/core";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import Layout from "../components/Layout";
@@ -18,8 +23,9 @@ import TogglingInput from "../components/TogglingInput";
 import CategoryList from "../components/CategoryList";
 
 import { Container, Paper } from "@material-ui/core";
-import Slide from "../components/Slide";
 import useCategory from "../hooks/useCategory";
+import PanelMobile from "../components/PanelMobile";
+import PanelLaptop from "../components/PanelLaptop";
 
 const useStyles = makeStyles({
   caption: {
@@ -50,6 +56,8 @@ const SubCategoryPage = ({ location }) => {
 
   const { user } = useSelector((state) => ({ ...state }));
   const classes = useStyles();
+  const theme = useTheme();
+  const match = useMediaQuery(theme.breakpoints.up("sm"));
 
   useEffect(() => {
     const fetchSubCategoryByParent = async () => {
@@ -206,33 +214,35 @@ const SubCategoryPage = ({ location }) => {
           handleCancel={handleCancel}
           isSubmitting={isSubmitting}
         />
-        <Paper elevation={3} className={classes.panel}>
-          <Slide
+        {match ? (
+          <PanelLaptop
+            filteredCategories={filteredCategories}
+            handleCategorySelect={handleCategorySelect}
+            listLoading={listLoading}
+            handleBack={handleBack}
+            subCategories={subCategories}
+            doSubCategoryUpdate={doSubCategoryUpdate}
+            setSubCategory={setSubCategory}
+            listItemLoading={listItemLoading}
+            setShowDialog={setShowDialog}
+            subCategoryListLoading={subCategoryListLoading}
             slide={slide}
-            frameWidth="100%"
-            frameHeight="45vh"
-            defaultContent={
-              <CategoryList
-                categories={filteredCategories}
-                variant="selector"
-                handleSelect={handleCategorySelect}
-                loading={listLoading}
-                taller
-              />
-            }
-            alternativeContent={
-              <SubCategoryList
-                handleBack={handleBack}
-                subCategories={subCategories}
-                doSubCategoryUpdate={doSubCategoryUpdate}
-                setSubCategory={setSubCategory}
-                listItemLoading={listItemLoading}
-                setShowDialog={setShowDialog}
-                loading={subCategoryListLoading}
-              />
-            }
           />
-        </Paper>
+        ) : (
+          <PanelMobile
+            filteredCategories={filteredCategories}
+            handleCategorySelect={handleCategorySelect}
+            listLoading={listLoading}
+            handleBack={handleBack}
+            subCategories={subCategories}
+            doSubCategoryUpdate={doSubCategoryUpdate}
+            setSubCategory={setSubCategory}
+            listItemLoading={listItemLoading}
+            setShowDialog={setShowDialog}
+            subCategoryListLoading={subCategoryListLoading}
+            slide={slide}
+          />
+        )}
       </Container>
       <CustomSnackBar
         showSnackBar={showSnackBar}
