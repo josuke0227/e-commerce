@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-import { Avatar, Badge, Grid } from "@material-ui/core";
+import { Avatar, Badge, Grid, Typography } from "@material-ui/core";
 import ImagePreviewer from "./ImagePreviewer";
 
 const useStyles = makeStyles((theme) => ({
@@ -118,7 +118,7 @@ const ImageSelector = ({ values, setValues }) => {
     }
 
     return (
-      <div className="">Total file size: {getMegaByte(totalSize)} / 3 MB</div>
+      <Typography>Total file size: {getMegaByte(totalSize)} / 3 MB</Typography>
     );
   };
 
@@ -154,7 +154,9 @@ const ImageSelector = ({ values, setValues }) => {
                 src={imageUrl}
                 onClick={(e) => handleImageClick(imageUrl, e)}
               />
-              <p>{getMegaByte(file.size)}</p>
+              <Typography variant="caption" display="block">
+                {getMegaByte(file.size)}
+              </Typography>
             </Badge>
           );
         })}
