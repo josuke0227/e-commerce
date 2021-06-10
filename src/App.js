@@ -12,6 +12,7 @@ import AdminRoute from "./components/shared/AdminRoute";
 import HomePage from "./pages/HomePage";
 
 import Playground from "./Playground";
+import ProductPage from "./pages/ProductPage";
 
 const App = () => (
   <ThemeProvider theme={theme}>
@@ -28,6 +29,7 @@ const App = () => (
         {/* <AdminRoute exact path="/admin/dashboard" component={Dashboard} /> */}
         <Route exact path="/admin/categories" component={CategoryPage} />
         <Route exact path="/admin/subcategories" component={SubCategoryPage} />
+        <Route exact path="/admin/newproduct" component={ProductPage} />
       </Switch>
     </BrowserRouter>
   </ThemeProvider>
