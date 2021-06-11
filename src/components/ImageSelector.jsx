@@ -6,7 +6,7 @@ import ImagePreviewer from "./ImagePreviewer";
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    margin: "2rem",
+    marginTop: theme.spacing(1),
   },
   input: {
     display: "none",
@@ -53,62 +53,6 @@ const ImageSelector = ({ values, setValues }) => {
     setSelectedImageUrl(imageUrl);
     setOpen(true);
   };
-
-  //   if (files) {
-  //     setLoading(false);
-  //     for (let i = 0; i < files.length; i++) {
-  //       Resizer.imageFileResizer(files[i], 720, 720, "JPEG", 100, 0, (url) => {
-  //         axios
-  //           .post(
-  //             `${process.env.REACT_APP_API}/images/upload`,
-  //             { image: url },
-  //             {
-  //               headers: {
-  //                 "x-auth-token": user ? user.token : "",
-  //               },
-  //             }
-  //           )
-  //           .then((res) => {
-  //             console.log("IMAGE UPLOAD RES DATA", res);
-  //             setLoading(false);
-  //             allUploadedFiles.push(res.data);
-
-  //             setValues({ ...values, images: allUploadedFiles });
-  //           })
-  //           .catch((err) => {
-  //             setLoading(false);
-  //             console.log("Coudinary upload error", err);
-  //           }, "base64");
-  //       });
-  //     }
-  //   }
-  // };
-
-  // const handleImageRemove = (public_id) => {
-  //   setLoading(true);
-  //   axios
-  //     .post(
-  //       `${process.env.REACT_APP_API}/images/remove`,
-  //       { public_id },
-  //       {
-  //         headers: {
-  //           "x-auth-token": user ? user.token : "",
-  //         },
-  //       }
-  //     )
-  //     .then((res) => {
-  //       setLoading(false);
-  //       const { images } = values;
-  //       const filteredImages = images.filter((item) => {
-  //         return item.public_id !== public_id;
-  //       });
-  //       setValues({ ...values, images: filteredImages });
-  //     })
-  //     .catch((err) => {
-  //       console.log("Coudinary delete request error", err);
-  //       setLoading(false);
-  //     });
-  // };
 
   const renderedTotalFileSize = () => {
     let totalSize = 0;
