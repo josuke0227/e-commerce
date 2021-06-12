@@ -2,17 +2,33 @@ import Layout from "../components/Layout";
 import React, { useState, useEffect } from "react";
 import { getCategories } from "../services/categoryServices";
 import { pickByParentId } from "../services/subCategoryServices";
-
 import ImageSelector from "../components/ImageSelector";
 import { createProduct, uploadImage } from "../services/productServices";
-
-//
-import { TextField, MenuItem, Typography, Container } from "@material-ui/core";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import {
+  TextField,
+  MenuItem,
+  Typography,
+  Container,
+  makeStyles,
+  Button,
+} from "@material-ui/core";
 import { useSelector } from "react-redux";
 import { imageResizer } from "../util/imageResizer";
-import { imageSchema, productSchema } from "../schemas/productSchema";
+import { productSchema } from "../schemas/productSchema";
+import { imageSchema } from "../schemas/imagesSchema";
+import RichTextField from "../components/shared/RichTextField";
+
+const useStyles = makeStyles((theme) => ({
+  descriptionPreview: {
+    padding: "0 0.5rem",
+    width: "100%",
+    maxHeight: "30vh",
+    overflowX: "scroll",
+  },
+  formParts: {
+    marginTop: theme.spacing(3),
+  },
+}));
 
 const initialState = {
   title: "test",
@@ -21,7 +37,7 @@ const initialState = {
   category: "60c00dbf4cb336f57aff244b",
   subCategory: "60b85ba36fc3f936c09728b1",
   quantity: 1,
-  images: [],
+  images: {},
   color: "brown",
   brand: "toshiba",
 };
@@ -58,15 +74,15 @@ const colors = [
 
 const ProductPage = ({ location }) => {
   const [values, setValues] = useState(initialState);
+  const [description, setDescription] = useState("");
   const [error, setError] = useState(objectSignature);
-  const [subOptions, setSubOptions] = useState([]);
-  const [showSub, setShowSub] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
 
   const { user } = useSelector((state) => ({ ...state }));
+  const classes = useStyles();
 
   useEffect(() => {
     loadCategories();
@@ -102,15 +118,18 @@ const ProductPage = ({ location }) => {
     setValues({ ...values, [name]: value });
   };
 
-  const handleTextAreaChange = (inputValue) => {
-    setValues({ ...values, description: inputValue });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = productSchema.validate(values, {
+
+    const submittingData = { ...values, description };
+
+    const images = [...submittingData.images];
+    delete submittingData.images;
+
+    const result = productSchema.validate(submittingData, {
       abortEarly: false,
     });
+
     if (result.error) {
       let updatedError = { ...error };
       result.error.details.forEach((e) => {
@@ -119,42 +138,31 @@ const ProductPage = ({ location }) => {
       });
       return setError(updatedError);
     }
-    const images = [...values.images];
-
-    const uploadedImageData = await Promise.all(
-      images.map(async (i) => {
-        try {
-          return handleImageSubmit(i);
-        } catch (error) {
-          return null;
-        }
-      })
-    );
-    console.log(`uploadedImageData`, uploadedImageData);
-
-    for (let obj of uploadedImageData) {
-      if (!obj) return;
-    }
-
-    const submittingData = { ...values, images: uploadedImageData };
 
     try {
-      await createProduct(submittingData, user);
+      console.log(images);
+      const { data } = await createProduct(submittingData, user);
+      const productId = data._id;
+      images.forEach(async (i) => {
+        try {
+          await handleImageSubmit(i, productId);
+        } catch (error) {
+          console.log("Product creation error", error);
+          console.log("Product creation failed. Try again.");
+          // TODO: send delete requiest to delete product data.
+        }
+      });
       setValues(initialState);
     } catch (error) {
-      console.log(error);
+      console.log("Product creation failed. Try again.");
     }
   };
 
-  const handleImageSubmit = async (image) => {
+  const handleImageSubmit = async (image, productId) => {
     const resizedImageUri = await imageResizer(image);
     const { error } = imageSchema.validate(resizedImageUri);
-    if (error) {
-      setError({ ...error, image: error });
-      return;
-    }
-    const { data } = await uploadImage(resizedImageUri, user);
-    return data;
+    if (error) throw new Error("Invalid image URI.");
+    await uploadImage(resizedImageUri, productId, user);
   };
 
   const toggleSubCategoryFormStatus = () => {
@@ -181,6 +189,7 @@ const ProductPage = ({ location }) => {
           error={error.image}
         />
         <TextField
+          className={classes.formParts}
           error={toggleStatus("title").error}
           helperText={toggleStatus("title").helperText}
           id="title"
@@ -190,9 +199,10 @@ const ProductPage = ({ location }) => {
           type="text"
           value={values.title}
           fullWidth
+          variant="outlined"
         />
-        {/* Price** */}
         <TextField
+          className={classes.formParts}
           error={toggleStatus("price").error}
           helperText={toggleStatus("price").helperText}
           id="price"
@@ -201,10 +211,11 @@ const ProductPage = ({ location }) => {
           onChange={handleInputChange}
           type="number"
           value={values.price}
+          variant="outlined"
           fullWidth
         />
-        {/* Quantitiy** */}
         <TextField
+          className={classes.formParts}
           error={toggleStatus("quantity").error}
           helperText={toggleStatus("quantity").helperText}
           id="quantity"
@@ -213,11 +224,11 @@ const ProductPage = ({ location }) => {
           onChange={handleInputChange}
           type="number"
           value={values.quantity}
+          variant="outlined"
           fullWidth
         />
-        {/* Color */}
         <TextField
-          select
+          className={classes.formParts}
           error={toggleStatus("color").error}
           helperText={toggleStatus("color").helperText}
           id="color"
@@ -225,6 +236,7 @@ const ProductPage = ({ location }) => {
           label="Color"
           onChange={handleInputChange}
           value={values.color}
+          variant="outlined"
           fullWidth
           select
         >
@@ -237,9 +249,8 @@ const ProductPage = ({ location }) => {
             </MenuItem>
           ))}
         </TextField>
-        {/* Parent category** */}
         <TextField
-          select
+          className={classes.formParts}
           error={toggleStatus("category").error}
           helperText={toggleStatus("category").helperText}
           id="category"
@@ -247,6 +258,7 @@ const ProductPage = ({ location }) => {
           label="Category"
           onChange={handleInputChange}
           value={values.category}
+          variant="outlined"
           fullWidth
           select
         >
@@ -259,18 +271,18 @@ const ProductPage = ({ location }) => {
             </MenuItem>
           ))}
         </TextField>
-        {/* Sub category** */}
         {!!values.category.length && (
           <TextField
-            select
+            className={classes.formParts}
             disabled={toggleSubCategoryFormStatus().disable}
-            error={false}
-            helperText="this is error message."
+            error={toggleStatus().error}
+            helperText={toggleStatus().helperText}
             id="subCategory"
             name="subCategory"
             label={toggleSubCategoryFormStatus().label}
             onChange={handleInputChange}
             value={values.subCategory}
+            variant="outlined"
             fullWidth
             select
           >
@@ -281,8 +293,8 @@ const ProductPage = ({ location }) => {
             ))}
           </TextField>
         )}
-        {/* Brand */}
         <TextField
+          className={classes.formParts}
           error={toggleStatus("brand").error}
           helperText={toggleStatus("brand").helperText}
           id="brand"
@@ -291,15 +303,20 @@ const ProductPage = ({ location }) => {
           onChange={handleInputChange}
           type="text"
           value={values.brand}
+          variant="outlined"
           fullWidth
         />
-        {/* Description** */}
-        <Typography>Product description</Typography>
-        <ReactQuill
-          value={values.description}
-          onChange={handleTextAreaChange}
+        <Typography className={classes.formParts}>
+          Product description
+        </Typography>
+        <RichTextField
+          setValue={setDescription}
+          characters={description}
+          count={2000}
         />
-        <button type="submit">submit</button>
+        <Button variant="contained" type="submit" color="primary">
+          Submit
+        </Button>
       </Container>
     </Layout>
   );

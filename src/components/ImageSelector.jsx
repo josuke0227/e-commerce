@@ -32,7 +32,6 @@ const ImageSelector = ({ values, setValues, error }) => {
   const classes = useStyles();
   const [selectedImageUrl, setSelectedImageUrl] = useState("");
   const [open, setOpen] = useState(false);
-  const [fileSize, setFileSize] = useState(0);
 
   const handleImageRemove = (fileName) => {
     const images = { ...values.images };
@@ -59,7 +58,7 @@ const ImageSelector = ({ values, setValues, error }) => {
     const keys = Object.keys(values.images);
     if (keys.length > 0) {
       keys.forEach((key) => (totalSize += values.images[key].size));
-    }
+    } else if (keys.length < 1) return;
 
     return (
       <Typography>Total file size: {getMegaByte(totalSize)} / 3 MB</Typography>
@@ -76,7 +75,14 @@ const ImageSelector = ({ values, setValues, error }) => {
       <ImagePreviewer
         open={open}
         setOpen={setOpen}
-        selectedImageUrl={selectedImageUrl}
+        content={
+          <img
+            src={selectedImageUrl}
+            width="100%"
+            onClick={() => setOpen(false)}
+            alt="small selected images."
+          />
+        }
       />
       <Grid item xs={12}>
         {Object.keys(values.images).map((key, index) => {
@@ -116,8 +122,8 @@ const ImageSelector = ({ values, setValues, error }) => {
           onChange={handleInputChange}
         />
         <label htmlFor="contained-button-file">
-          <Button variant="contained" color="primary" component="span">
-            Upload Image(s)
+          <Button variant="outlined" color="primary" component="span">
+            Choose Image(s)
           </Button>
         </label>
       </Grid>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import ListHeader from "./ListHeader";
 import ListButtons from "./ListButtons";
-import { ListItem, Divider } from "@material-ui/core";
+import { ListItem } from "@material-ui/core";
 
 import { categorySchema } from "../schemas/categorySchema";
 

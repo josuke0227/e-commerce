@@ -26,7 +26,6 @@ export const productSchema = Joi.object({
   category: categorySchema,
   color: colorSchema,
   description: descriptionSchema,
-  images: imagesSchema,
   price: priceSchema,
   quantity: quantitySchema,
   subCategory: subCategorySchema,
@@ -40,7 +39,6 @@ export {
   categorySchema,
   subCategorySchema,
   quantitySchema,
-  imagesSchema,
   imageSchema, //done
   colorSchema,
   brandSchema,
