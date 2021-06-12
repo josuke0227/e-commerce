@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ImageSelector = ({ values, setValues }) => {
+const ImageSelector = ({ values, setValues, error }) => {
   const classes = useStyles();
   const [selectedImageUrl, setSelectedImageUrl] = useState("");
   const [open, setOpen] = useState(false);
@@ -121,6 +121,7 @@ const ImageSelector = ({ values, setValues }) => {
           </Button>
         </label>
       </Grid>
+      <Typography color="error">{error && "Invalid data."}</Typography>
     </Grid>
   );
 };

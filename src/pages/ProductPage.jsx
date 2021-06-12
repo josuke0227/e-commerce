@@ -12,37 +12,53 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useSelector } from "react-redux";
 import { imageResizer } from "../util/imageResizer";
+import { imageSchema, productSchema } from "../schemas/productSchema";
 
 const initialState = {
   title: "test",
   description: "<p>sugoi</p>",
-  price: "1",
+  price: 1,
   category: "60c00dbf4cb336f57aff244b",
   subCategory: "60b85ba36fc3f936c09728b1",
-  quantity: "1",
+  quantity: 1,
   images: [],
-  colors: [
-    { value: "white", label: "white" },
-    { value: "black", label: "black" },
-    { value: "gray", label: "gray" },
-    { value: "brown", label: "brown" },
-    { value: "baige", label: "baige" },
-    { value: "green", label: "green" },
-    { value: "blue", label: "blue" },
-    { value: "purple", label: "purple" },
-    { value: "yellow", label: "yellow" },
-    { value: "pink", label: "pink" },
-    { value: "red", label: "red" },
-    { value: "orange", label: "orange" },
-    { value: "silver", label: "silver" },
-    { value: "gold", label: "gold" },
-  ],
   color: "brown",
   brand: "toshiba",
 };
 
+const objectSignature = {
+  brand: "",
+  category: "",
+  color: "",
+  description: "",
+  images: [],
+  image: "",
+  price: 0,
+  quantity: 0,
+  subCategory: "",
+  title: "",
+};
+
+const colors = [
+  { value: "white", label: "white" },
+  { value: "black", label: "black" },
+  { value: "gray", label: "gray" },
+  { value: "brown", label: "brown" },
+  { value: "baige", label: "baige" },
+  { value: "green", label: "green" },
+  { value: "blue", label: "blue" },
+  { value: "purple", label: "purple" },
+  { value: "yellow", label: "yellow" },
+  { value: "pink", label: "pink" },
+  { value: "red", label: "red" },
+  { value: "orange", label: "orange" },
+  { value: "silver", label: "silver" },
+  { value: "gold", label: "gold" },
+];
+
 const ProductPage = ({ location }) => {
   const [values, setValues] = useState(initialState);
+  const [error, setError] = useState(objectSignature);
   const [subOptions, setSubOptions] = useState([]);
   const [showSub, setShowSub] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -86,7 +102,62 @@ const ProductPage = ({ location }) => {
     setValues({ ...values, [name]: value });
   };
 
-  const toggleFormStatus = () => {
+  const handleTextAreaChange = (inputValue) => {
+    setValues({ ...values, description: inputValue });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const result = productSchema.validate(values, {
+      abortEarly: false,
+    });
+    if (result.error) {
+      let updatedError = { ...error };
+      result.error.details.forEach((e) => {
+        const { path, message } = e;
+        updatedError = { ...updatedError, [path[0]]: message };
+      });
+      return setError(updatedError);
+    }
+    const images = [...values.images];
+
+    const uploadedImageData = await Promise.all(
+      images.map(async (i) => {
+        try {
+          return handleImageSubmit(i);
+        } catch (error) {
+          return null;
+        }
+      })
+    );
+    console.log(`uploadedImageData`, uploadedImageData);
+
+    for (let obj of uploadedImageData) {
+      if (!obj) return;
+    }
+
+    const submittingData = { ...values, images: uploadedImageData };
+
+    try {
+      await createProduct(submittingData, user);
+      setValues(initialState);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleImageSubmit = async (image) => {
+    const resizedImageUri = await imageResizer(image);
+    const { error } = imageSchema.validate(resizedImageUri);
+    if (error) {
+      setError({ ...error, image: error });
+      return;
+    }
+    const { data } = await uploadImage(resizedImageUri, user);
+    return data;
+  };
+
+  const toggleSubCategoryFormStatus = () => {
     if (!subCategories.length) {
       return { label: "No sub category registered.", disable: true };
     }
@@ -94,36 +165,10 @@ const ProductPage = ({ location }) => {
     return { label: "Sub category", disable: false };
   };
 
-  const handleTextAreaChange = (inputValue) => {
-    setValues({ ...values, description: inputValue });
-  };
+  const toggleStatus = (path) => {
+    if (error[path]) return { error: true, helperText: error[path] };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const images = [...values.images];
-    handleImageSubmit(images);
-
-    const submittingData = { ...values };
-    delete submittingData.images;
-    delete submittingData.colors;
-
-    try {
-      await createProduct(submittingData, user);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleImageSubmit = (images) => {
-    images.forEach(async (i) => {
-      try {
-        const resizedImageUri = await imageResizer(i);
-        console.log(resizedImageUri);
-        // await uploadImage(resizedImageUri, user);
-      } catch (error) {
-        return console.log("Image uploading error", error);
-      }
-    });
+    return { error: false, helperText: "" };
   };
 
   return (
@@ -133,10 +178,11 @@ const ProductPage = ({ location }) => {
           values={values}
           setValues={setValues}
           setLoading={setLoading}
+          error={error.image}
         />
         <TextField
-          error={false}
-          helperText="this is error message."
+          error={toggleStatus("title").error}
+          helperText={toggleStatus("title").helperText}
           id="title"
           name="title"
           label="Product name"
@@ -147,8 +193,8 @@ const ProductPage = ({ location }) => {
         />
         {/* Price** */}
         <TextField
-          error={false}
-          helperText="this is error message."
+          error={toggleStatus("price").error}
+          helperText={toggleStatus("price").helperText}
           id="price"
           name="price"
           label="Price"
@@ -159,8 +205,8 @@ const ProductPage = ({ location }) => {
         />
         {/* Quantitiy** */}
         <TextField
-          error={false}
-          helperText="this is error message."
+          error={toggleStatus("quantity").error}
+          helperText={toggleStatus("quantity").helperText}
           id="quantity"
           name="quantity"
           label="Quantity"
@@ -172,8 +218,8 @@ const ProductPage = ({ location }) => {
         {/* Color */}
         <TextField
           select
-          error={false}
-          helperText="this is error message."
+          error={toggleStatus("color").error}
+          helperText={toggleStatus("color").helperText}
           id="color"
           name="color"
           label="Color"
@@ -182,7 +228,10 @@ const ProductPage = ({ location }) => {
           fullWidth
           select
         >
-          {values.colors.map((c) => (
+          <MenuItem key="" value="">
+            {" "}
+          </MenuItem>
+          {colors.map((c) => (
             <MenuItem key={c.value} value={c.value}>
               {c.label}
             </MenuItem>
@@ -191,8 +240,8 @@ const ProductPage = ({ location }) => {
         {/* Parent category** */}
         <TextField
           select
-          error={false}
-          helperText="this is error message."
+          error={toggleStatus("category").error}
+          helperText={toggleStatus("category").helperText}
           id="category"
           name="category"
           label="Category"
@@ -201,6 +250,9 @@ const ProductPage = ({ location }) => {
           fullWidth
           select
         >
+          <MenuItem key="" value="">
+            {" "}
+          </MenuItem>
           {categories.map((c) => (
             <MenuItem key={c._id} value={c._id} name={c.name}>
               {c.name}
@@ -211,12 +263,12 @@ const ProductPage = ({ location }) => {
         {!!values.category.length && (
           <TextField
             select
-            disabled={toggleFormStatus().disable}
+            disabled={toggleSubCategoryFormStatus().disable}
             error={false}
             helperText="this is error message."
             id="subCategory"
             name="subCategory"
-            label={toggleFormStatus().label}
+            label={toggleSubCategoryFormStatus().label}
             onChange={handleInputChange}
             value={values.subCategory}
             fullWidth
@@ -231,8 +283,8 @@ const ProductPage = ({ location }) => {
         )}
         {/* Brand */}
         <TextField
-          error={false}
-          helperText="this is error message."
+          error={toggleStatus("brand").error}
+          helperText={toggleStatus("brand").helperText}
           id="brand"
           name="brand"
           label="Brand name"
