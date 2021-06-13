@@ -15,25 +15,25 @@ import Playground from "./Playground";
 import ProductPage from "./pages/ProductPage";
 
 const App = () => (
-  <ThemeProvider theme={theme}>
-    <CssBaseline />
-    <BrowserRouter>
-      <Switch>
-        <Route exact path="/" component={HomePage} />
-        <Route exact path="/signup" component={SignupPage} />
-        <Route exact path="/signin" component={SigninPage} />
-        <Route exact path="/activate/:token" component={ActivationPage} />
-        <Route exact path="/forgotpassword" component={SignupPage} />
-        <Route exact path="/resetpassword/:token" component={ActivationPage} />
-        <Route exact path="/admin/dashboard" component={Dashboard} />
-        {/* <AdminRoute exact path="/admin/dashboard" component={Dashboard} /> */}
-        <Route exact path="/admin/categories" component={CategoryPage} />
-        <Route exact path="/admin/subcategories" component={SubCategoryPage} />
-        <Route exact path="/admin/newproduct" component={ProductPage} />
-      </Switch>
-    </BrowserRouter>
-  </ThemeProvider>
-  // <Playground />
+  // <ThemeProvider theme={theme}>
+  //   <CssBaseline />
+  //   <BrowserRouter>
+  //     <Switch>
+  //       <Route exact path="/" component={HomePage} />
+  //       <Route exact path="/signup" component={SignupPage} />
+  //       <Route exact path="/signin" component={SigninPage} />
+  //       <Route exact path="/activate/:token" component={ActivationPage} />
+  //       <Route exact path="/forgotpassword" component={SignupPage} />
+  //       <Route exact path="/resetpassword/:token" component={ActivationPage} />
+  //       <Route exact path="/admin/dashboard" component={Dashboard} />
+  //       {/* <AdminRoute exact path="/admin/dashboard" component={Dashboard} /> */}
+  //       <Route exact path="/admin/categories" component={CategoryPage} />
+  //       <Route exact path="/admin/subcategories" component={SubCategoryPage} />
+  //       <Route exact path="/admin/newproduct" component={ProductPage} />
+  //     </Switch>
+  //   </BrowserRouter>
+  // </ThemeProvider>
+  <Playground />
 );
 
 export default App;

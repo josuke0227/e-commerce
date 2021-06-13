@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ImagePreviewer = ({ open, setOpen, selectedImageUrl, content }) => {
+const ImagePreviewer = ({ open, setOpen, content }) => {
   const classes = useStyles();
   return (
     <Modal
@@ -17,14 +17,7 @@ const ImagePreviewer = ({ open, setOpen, selectedImageUrl, content }) => {
       open={open}
       onClose={() => setOpen(false)}
     >
-      <Container>
-        {content}
-        {/* <img
-          src={selectedImageUrl}
-          width="100%"
-          onClick={() => setOpen(false)}
-        /> */}
-      </Container>
+      <Container>{content}</Container>
     </Modal>
   );
 };

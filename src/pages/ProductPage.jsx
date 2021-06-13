@@ -1,3 +1,6 @@
+// TODO: Add loading modal.
+// TODO: Add color route.
+
 import Layout from "../components/Layout";
 import React, { useState, useEffect } from "react";
 import { getCategories } from "../services/categoryServices";
@@ -17,6 +20,8 @@ import { imageResizer } from "../util/imageResizer";
 import { productSchema } from "../schemas/productSchema";
 import { imageSchema } from "../schemas/imagesSchema";
 import RichTextField from "../components/shared/RichTextField";
+import CustomSnackBar from "../components/shared/CustomSnackBar";
+import { isEmptyObject } from "../util/isEmptyobject";
 
 const useStyles = makeStyles((theme) => ({
   descriptionPreview: {
@@ -32,12 +37,10 @@ const useStyles = makeStyles((theme) => ({
 
 const initialState = {
   title: "test",
-  description: "<p>sugoi</p>",
   price: 1,
   category: "60c00dbf4cb336f57aff244b",
   subCategory: "60b85ba36fc3f936c09728b1",
   quantity: 1,
-  images: {},
   color: "brown",
   brand: "toshiba",
 };
@@ -60,7 +63,7 @@ const colors = [
   { value: "black", label: "black" },
   { value: "gray", label: "gray" },
   { value: "brown", label: "brown" },
-  { value: "baige", label: "baige" },
+  { value: "beige", label: "baige" },
   { value: "green", label: "green" },
   { value: "blue", label: "blue" },
   { value: "purple", label: "purple" },
@@ -80,6 +83,12 @@ const ProductPage = ({ location }) => {
 
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
+  const [images, setImages] = useState({});
+  const [showSnackBar, setShowSnackBar] = useState({
+    show: false,
+    severity: "",
+    message: "",
+  });
 
   const { user } = useSelector((state) => ({ ...state }));
   const classes = useStyles();
@@ -123,9 +132,6 @@ const ProductPage = ({ location }) => {
 
     const submittingData = { ...values, description };
 
-    const images = [...submittingData.images];
-    delete submittingData.images;
-
     const result = productSchema.validate(submittingData, {
       abortEarly: false,
     });
@@ -140,21 +146,33 @@ const ProductPage = ({ location }) => {
     }
 
     try {
-      console.log(images);
       const { data } = await createProduct(submittingData, user);
+
+      if (isEmptyObject(images)) return;
       const productId = data._id;
-      images.forEach(async (i) => {
+      [...images].forEach(async (i) => {
         try {
           await handleImageSubmit(i, productId);
+          setValues(initialState);
+          setDescription("");
+          setImages({});
         } catch (error) {
-          console.log("Product creation error", error);
-          console.log("Product creation failed. Try again.");
+          console.log(`error`, error);
+          setShowSnackBar({
+            message: "Product creation failed.",
+            show: true,
+            severity: "error",
+          });
           // TODO: send delete requiest to delete product data.
         }
       });
-      setValues(initialState);
     } catch (error) {
-      console.log("Product creation failed. Try again.");
+      console.log(`error`, error);
+      setShowSnackBar({
+        message: "Product creation failed.",
+        show: true,
+        severity: "error",
+      });
     }
   };
 
@@ -181,10 +199,14 @@ const ProductPage = ({ location }) => {
 
   return (
     <Layout location={location}>
+      <CustomSnackBar
+        showSnackBar={showSnackBar}
+        setShowSnackBar={setShowSnackBar}
+      />
       <Container component="form" onSubmit={handleSubmit}>
         <ImageSelector
-          values={values}
-          setValues={setValues}
+          images={images}
+          setValues={setImages}
           setLoading={setLoading}
           error={error.image}
         />
@@ -240,11 +262,19 @@ const ProductPage = ({ location }) => {
           fullWidth
           select
         >
-          <MenuItem key="" value="">
-            {" "}
-          </MenuItem>
           {colors.map((c) => (
             <MenuItem key={c.value} value={c.value}>
+              <div
+                style={{
+                  width: "1rem",
+                  height: "1rem",
+                  borderRadius: "50%",
+                  border: `1px solid black ${c.value}`,
+                  display: "inline",
+                  marginRight: "1rem",
+                  backgroundColor: c.value,
+                }}
+              />
               {c.label}
             </MenuItem>
           ))}
@@ -262,9 +292,6 @@ const ProductPage = ({ location }) => {
           fullWidth
           select
         >
-          <MenuItem key="" value="">
-            {" "}
-          </MenuItem>
           {categories.map((c) => (
             <MenuItem key={c._id} value={c._id} name={c.name}>
               {c.name}
@@ -313,6 +340,7 @@ const ProductPage = ({ location }) => {
           setValue={setDescription}
           characters={description}
           count={2000}
+          loading={loading}
         />
         <Button variant="contained" type="submit" color="primary">
           Submit

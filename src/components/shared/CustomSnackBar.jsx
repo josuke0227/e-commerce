@@ -24,7 +24,7 @@ const CustomSnackBar = ({ showSnackBar, setShowSnackBar }) => {
   return (
     <Snackbar
       open={show}
-      anchorOrigin={setAnchorOrigin()}
+      anchorOrigin={{ vertical: "top", horizontal: "right" }}
       autoHideDuration={6000}
       onClose={() => setShowSnackBar({ ...showSnackBar, show: false })}
     >

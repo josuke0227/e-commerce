@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import { Avatar, Badge, Grid, Typography } from "@material-ui/core";
 import ImagePreviewer from "./ImagePreviewer";
+import { isEmptyObject } from "../util/isEmptyobject";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -28,23 +29,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ImageSelector = ({ values, setValues, error }) => {
+const ImageSelector = ({ images, setValues, error }) => {
   const classes = useStyles();
   const [selectedImageUrl, setSelectedImageUrl] = useState("");
   const [open, setOpen] = useState(false);
 
   const handleImageRemove = (fileName) => {
-    const images = { ...values.images };
-    Object.keys(images).forEach((key) => {
-      if (images[key].name === fileName) {
-        delete images[key];
+    const currentImages = { ...images };
+    Object.keys(currentImages).forEach((key) => {
+      if (currentImages[key].name === fileName) {
+        delete currentImages[key];
       }
     });
-    setValues({ ...values, images });
-  };
-
-  const handleInputChange = (e) => {
-    setValues({ ...values, images: e.target.files });
+    setValues(currentImages);
   };
 
   const handleImageClick = (imageUrl, e) => {
@@ -54,10 +51,12 @@ const ImageSelector = ({ values, setValues, error }) => {
   };
 
   const renderedTotalFileSize = () => {
+    if (isEmptyObject(images)) return;
+
     let totalSize = 0;
-    const keys = Object.keys(values.images);
+    const keys = Object.keys(images);
     if (keys.length > 0) {
-      keys.forEach((key) => (totalSize += values.images[key].size));
+      keys.forEach((key) => (totalSize += images[key].size));
     } else if (keys.length < 1) return;
 
     return (
@@ -85,31 +84,32 @@ const ImageSelector = ({ values, setValues, error }) => {
         }
       />
       <Grid item xs={12}>
-        {Object.keys(values.images).map((key, index) => {
-          const file = values.images[key];
-          const imageUrl = URL.createObjectURL(file);
-          return (
-            <Badge
-              key={index}
-              badgeContent={"x"}
-              color="secondary"
-              onClick={() => {
-                handleImageRemove(file.name);
-              }}
-              className={classes.avatarWrapper}
-            >
-              <Avatar
-                className={classes.avatarImage}
-                variant="square"
-                src={imageUrl}
-                onClick={(e) => handleImageClick(imageUrl, e)}
-              />
-              <Typography variant="caption" display="block">
-                {getMegaByte(file.size)}
-              </Typography>
-            </Badge>
-          );
-        })}
+        {!isEmptyObject(images) &&
+          Object.keys(images).map((key, index) => {
+            const file = images[key];
+            const imageUrl = URL.createObjectURL(file);
+            return (
+              <Badge
+                key={index}
+                badgeContent={"x"}
+                color="secondary"
+                onClick={() => {
+                  handleImageRemove(file.name);
+                }}
+                className={classes.avatarWrapper}
+              >
+                <Avatar
+                  className={classes.avatarImage}
+                  variant="square"
+                  src={imageUrl}
+                  onClick={(e) => handleImageClick(imageUrl, e)}
+                />
+                <Typography variant="caption" display="block">
+                  {getMegaByte(file.size)}
+                </Typography>
+              </Badge>
+            );
+          })}
         {renderedTotalFileSize()}
       </Grid>
       <Grid item xs={12} className={classes.buttonContainer}>
@@ -119,7 +119,7 @@ const ImageSelector = ({ values, setValues, error }) => {
           id="contained-button-file"
           multiple
           type="file"
-          onChange={handleInputChange}
+          onChange={(e) => setValues(e.target.files)}
         />
         <label htmlFor="contained-button-file">
           <Button variant="outlined" color="primary" component="span">
