@@ -19,9 +19,6 @@ const CategoryFilterInput = ({ value, onChange, category }) => {
       onChange: (e) => onChange(e.target.value),
       type: "text",
       value,
-      InputLabelProps: {
-        shrink: false,
-      },
       InputProps: {
         startAdornment: (
           <InputAdornment position="start">
