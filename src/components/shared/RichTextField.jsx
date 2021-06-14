@@ -3,7 +3,7 @@ import { EditorState, convertToRaw, ContentState } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import draftToHtml from "draftjs-to-html";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { Box, Chip, makeStyles } from "@material-ui/core";
+import { Box, Chip, Grid, makeStyles, Typography } from "@material-ui/core";
 
 const useStyles = makeStyles({
   charCounter: {
@@ -11,7 +11,14 @@ const useStyles = makeStyles({
   },
 });
 
-const RichTextField = ({ setValue, characters, count, loading }) => {
+const RichTextField = ({
+  setValue,
+  characters,
+  count,
+  loading,
+  success,
+  label,
+}) => {
   const classes = useStyles();
 
   const strippedString = characters.replace(/(<([^>]+)>)/gi, "");
@@ -33,6 +40,7 @@ const RichTextField = ({ setValue, characters, count, loading }) => {
   }, [loading]);
 
   const resetInputForm = () => {
+    if (success === false) return;
     const newEditorState = EditorState.push(
       editorState,
       ContentState.createFromText("")
@@ -42,6 +50,24 @@ const RichTextField = ({ setValue, characters, count, loading }) => {
 
   return (
     <>
+      <Grid
+        container
+        className={classes.charCounter}
+        justify="space-between"
+        alignItems="center"
+      >
+        <Grid item>
+          <Typography className={classes.formParts}>{label}</Typography>
+        </Grid>
+        <Grid item>
+          {count && (
+            <Chip
+              label={`${count - strippedString.length + 1}  characters left`}
+              color="default"
+            />
+          )}
+        </Grid>
+      </Grid>
       <Editor
         editorStyle={{
           border: "1px solid rgb(241, 241, 241)",
@@ -51,6 +77,7 @@ const RichTextField = ({ setValue, characters, count, loading }) => {
           padding: "0 0.5rem",
           maxHeight: "50vh",
           overflowX: "scroll",
+          marginBottom: "0.5rem",
         }}
         toolbarStyle={{
           borderRadius: "4px",
@@ -74,14 +101,6 @@ const RichTextField = ({ setValue, characters, count, loading }) => {
         editorState={editorState}
         onEditorStateChange={onEditorStateChange}
       />
-      {count && (
-        <Box className={classes.charCounter} textAlign="end">
-          <Chip
-            label={`${count - strippedString.length + 1}  characters left`}
-            color="primary"
-          />
-        </Box>
-      )}
     </>
   );
 };
