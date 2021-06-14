@@ -120,6 +120,12 @@ const SubCategoryPage = ({ location }) => {
       setInputValue("");
     } catch (error) {
       console.log(error);
+      setShowSnackBar({
+        editing: false,
+        show: true,
+        severity: "error",
+        message: error.response.data || "Creating category failed.",
+      });
     }
     setIsSubmitting(false);
   };
@@ -178,7 +184,9 @@ const SubCategoryPage = ({ location }) => {
     }
   };
 
-  const filteredCategories = getSearchResult(categories, inputValue);
+  const filteredCategories = !category
+    ? getSearchResult(categories, inputValue)
+    : categories;
 
   return (
     <Layout location={location}>
