@@ -20,3 +20,35 @@ export const uploadImage = async (url, productId, user) => {
     },
   });
 };
+
+export const getProducts = async (sort, order, page) =>
+  await axios.get(`${process.env.REACT_APP_API}/products`, {
+    sort,
+    order,
+    page,
+  });
+
+export const getProductsByCount = async (count, user, slug) =>
+  await axios.get(`${process.env.REACT_APP_API}/product/${slug}`, {
+    headers: {
+      "x-auth-token": user.token,
+    },
+  });
+
+export const getProduct = async (slug) =>
+  await axios.get(`${process.env.REACT_APP_API}/product/${slug}`);
+
+export const getCount = async () =>
+  await axios.get(`${process.env.REACT_APP_API}/products/total`);
+
+export const update = async (slug, product, token) =>
+  await axios.put(`${process.env.REACT_APP_API}/product/${slug}`, product, {
+    headers: {
+      "x-auth-token": { token },
+    },
+  });
+
+export const deleteProduct = async (slug, product, token) =>
+  await axios.put(`${process.env.REACT_APP_API}/product/${slug}`, product, {
+    headers: { "x-auth-token": { token } },
+  });

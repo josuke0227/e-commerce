@@ -8,7 +8,8 @@ const AdminMenuList = () => {
     <List>
       {[
         { label: "Dashboard", path: "/admin/dashboard" },
-        { label: "Product", path: "/admin/newproduct" },
+        { label: "Register Product", path: "/admin/newproduct" },
+        { label: "Edit Product", path: "/admin/products" },
         { label: "Category Management", path: "/admin/categories" },
         { label: "SubCategory", path: "/admin/subcategories" },
         { label: "Coupon", path: "/admin/coupon" },
