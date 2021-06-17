@@ -34,14 +34,12 @@ const initialState = {
   category: "60c00dbf4cb336f57aff244b",
   subCategory: "60b85ba36fc3f936c09728b1",
   quantity: 1,
-  color: "brown",
   brand: "toshiba",
 };
 
 const signature = {
   brand: "",
   category: "",
-  color: "",
   description: "",
   images: {},
   image: "",
@@ -50,23 +48,6 @@ const signature = {
   subCategory: "",
   title: "",
 };
-
-const colors = [
-  { value: "white", label: "white" },
-  { value: "black", label: "black" },
-  { value: "gray", label: "gray" },
-  { value: "brown", label: "brown" },
-  { value: "beige", label: "baige" },
-  { value: "green", label: "green" },
-  { value: "blue", label: "blue" },
-  { value: "purple", label: "purple" },
-  { value: "yellow", label: "yellow" },
-  { value: "pink", label: "pink" },
-  { value: "red", label: "red" },
-  { value: "orange", label: "orange" },
-  { value: "silver", label: "silver" },
-  { value: "gold", label: "gold" },
-];
 
 const CreateProductPage = ({ location }) => {
   const [values, setValues] = useState(initialState);
@@ -250,39 +231,6 @@ const CreateProductPage = ({ location }) => {
             />
             <TextField
               className={classes.formParts}
-              error={toggleStatus("color").error}
-              helperText={toggleStatus("color").helperText}
-              id="color"
-              name="color"
-              label="Color"
-              onChange={handleInputChange}
-              value={values.color}
-              variant="outlined"
-              fullWidth
-              select
-            >
-              <MenuItem value="">
-                <em>None</em>
-              </MenuItem>
-              {colors.map((c) => (
-                <MenuItem key={c.value} value={c.value}>
-                  <div
-                    style={{
-                      width: "1rem",
-                      height: "1rem",
-                      borderRadius: "50%",
-                      border: `1px solid black ${c.value}`,
-                      display: "inline",
-                      marginRight: "1rem",
-                      backgroundColor: c.value,
-                    }}
-                  />
-                  {c.label}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              className={classes.formParts}
               error={toggleStatus("category").error}
               helperText={toggleStatus("category").helperText}
               id="category"
@@ -300,7 +248,6 @@ const CreateProductPage = ({ location }) => {
                 </MenuItem>
               ))}
             </TextField>
-
             {!!values.category.length && (
               <TextField
                 className={classes.formParts}
