@@ -13,12 +13,6 @@ import {
   Grid,
 } from "@material-ui/core";
 import { useSelector } from "react-redux";
-import { imageResizer } from "../util/imageResizer";
-import { productSchema } from "../schemas/productSchema";
-import { imageSchema } from "../schemas/imagesSchema";
-import RichTextField from "../components/shared/RichTextField";
-import { isEmptyObject } from "../util/isEmptyobject";
-import ModalWithLoader from "../components/ModalWithLoader";
 
 import { getProducts, deleteProduct } from "../services/productServices";
 

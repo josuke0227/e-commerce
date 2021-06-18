@@ -21,6 +21,7 @@ import { imageSchema } from "../schemas/imagesSchema";
 import RichTextField from "../components/shared/RichTextField";
 import { isEmptyObject } from "../util/isEmptyobject";
 import ModalWithLoader from "../components/ModalWithLoader";
+import Playground from "../Playground";
 
 const useStyles = makeStyles((theme) => ({
   formParts: {
@@ -35,6 +36,7 @@ const initialState = {
   subCategory: "60b85ba36fc3f936c09728b1",
   quantity: 1,
   brand: "toshiba",
+  variations: [],
 };
 
 const signature = {
@@ -47,6 +49,20 @@ const signature = {
   quantity: 0,
   subCategory: "",
   title: "",
+  variations: [],
+};
+
+const initialVariationsState = {
+  color: {
+    index: 0,
+    name: "",
+  },
+  size: {
+    index: 0,
+    name: "",
+  },
+  qty: "",
+  instances: [],
 };
 
 const CreateProductPage = ({ location }) => {
@@ -61,6 +77,7 @@ const CreateProductPage = ({ location }) => {
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const [images, setImages] = useState({});
+  const [variations, setVariations] = useState(initialVariationsState);
 
   const { user } = useSelector((state) => ({ ...state }));
   const classes = useStyles();
@@ -94,7 +111,6 @@ const CreateProductPage = ({ location }) => {
   };
 
   const handleInputChange = (e) => {
-    console.log(`e.target`, e.target);
     const { name, value } = e.target;
     setValues({ ...values, [name]: value });
   };
@@ -104,7 +120,12 @@ const CreateProductPage = ({ location }) => {
     setLoading(true);
     setOpen(true);
 
-    const submittingData = { ...values, description };
+    const { instances } = variations;
+    const submittingData = {
+      ...values,
+      description,
+      variations: instances,
+    };
 
     const result = productSchema.validate(submittingData, {
       abortEarly: false,
@@ -229,6 +250,13 @@ const CreateProductPage = ({ location }) => {
               variant="outlined"
               fullWidth
             />
+            <div className="">
+              <Playground
+                variations={variations}
+                setVariations={setVariations}
+                totalQty={values.quantity}
+              />
+            </div>
             <TextField
               className={classes.formParts}
               error={toggleStatus("category").error}

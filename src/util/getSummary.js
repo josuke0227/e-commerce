@@ -1,66 +1,89 @@
 /**
  * input: [
-    { color: "Red", qty: "1", size: "S" },
-    { color: "Red", qty: "2", size: "M" },
-    { color: "Red", qty: "3", size: "L" },
-    { color: "Blue", qty: "1", size: "S" },
-    { color: "Blue", qty: "2", size: "M" },
-    { color: "Blue", qty: "3", size: "L" },
+    {
+      color: {
+        index: 0,
+        name: "red",
+      },
+      size: {
+        index: 1,
+        name: "s",
+      },
+      qty: "1",
+    },
     ...
-  ];
- * output: [
-    {
-      color: [ red, blue, green, yellow ]
-    }, 
-    {
-      size: [ S, M, L ]
-    }, 
-    {
-      qty: [
-        [ 1, 2, 3 ],
-        [ 1, 2, 3 ], 
-        [ 1, 2, 3 ], 
-        [ 1, 2 ]
-      ]
-    }
-  ]  
+  ]
+  * output: JSX
  */
-export function getSummary(variations) {
-  const color = variations.map((i) => i.color);
-  const size = variations.map((i) => i.size);
 
-  const trimmedColor = [...new Set(color)];
-  const trimmedSize = [...new Set(size)];
+export function getSummary(variations) {
+  const trimmedColor = getObjectSet(getColumn(variations, "color"));
+  const trimmedSize = getObjectSet(getColumn(variations, "size"));
+
+  trimmedSize.sort((a, b) => a.index - b.index);
 
   const mappedQty = [];
 
   for (let i = 0; i < trimmedColor.length; i++) {
-    const color = trimmedColor[i];
+    const color = trimmedColor[i].name;
     mappedQty[i] = [];
     for (let j = 0; j < variations.length; j++) {
       const instance = variations[j];
-      if (instance.color === color) mappedQty[i].push(instance.qty);
+      if (instance.color.name === color) mappedQty[i].push(instance.qty);
     }
   }
 
   for (let i = 0; i < mappedQty.length; i++) {
     const fixedQty = [];
     if (mappedQty[i].length < trimmedSize.length) {
-      const color = trimmedColor[i];
-      const cruster = variations.filter((i) => i.color === color);
+      const color = trimmedColor[i].name;
+      const cluster = variations.filter((i) => i.color.name === color);
 
-      for (let i = 0; i < cruster.length; i++) {
-        const currentSize = cruster[i].size;
-        fixedQty[trimmedSize.indexOf(currentSize)] = cruster[i].qty;
+      for (let i = 0; i < cluster.length; i++) {
+        const currentSize = cluster[i].size.name;
+        fixedQty[indexOfArrayObj(trimmedSize, { name: currentSize })] =
+          cluster[i].qty;
       }
-      console.log(fixedQty);
       mappedQty[i] = fixedQty;
     }
   }
 
   return {
-    color: [...new Set(color)],
-    size: [...new Set(size)],
+    color: trimmedColor,
+    size: trimmedSize,
     qty: mappedQty,
   };
+}
+
+function indexOfArrayObj(arr, targetObj) {
+  const key = Object.keys(targetObj)[0];
+  for (let i = 0; i < arr.length; i++) {
+    const current = arr[i];
+    if (current[key] === targetObj[key]) return i;
+  }
+}
+
+function getColumn(arr, key) {
+  return arr.map((item) => item[key]);
+}
+
+function getObjectSet(arr) {
+  let index = getDuplicatedItemIdx(arr);
+  while (true) {
+    if (index !== -1) {
+      arr.splice(index, 1);
+      index = getDuplicatedItemIdx(arr);
+    } else {
+      return arr;
+    }
+  }
+}
+
+function getDuplicatedItemIdx(arr) {
+  const map = {};
+  for (let i = 0; i < arr.length; i++) {
+    if (map[arr[i].name]) return i;
+    map[arr[i].name] = true;
+  }
+  return -1;
 }

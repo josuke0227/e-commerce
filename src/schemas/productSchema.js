@@ -17,9 +17,9 @@ const colorSchema = Joi.string().label("Color").allow("").optional();
 
 const brandSchema = Joi.string().label("Brand").allow("").optional();
 
-const imagesSchema = Joi.object();
-
 const imageSchema = Joi.string().uri().label("Image file");
+
+const variationsSchema = Joi.array();
 
 export const productSchema = Joi.object({
   brand: brandSchema,
@@ -30,6 +30,7 @@ export const productSchema = Joi.object({
   quantity: quantitySchema,
   subCategory: subCategorySchema,
   title: titleSchema,
+  variations: variationsSchema,
 });
 
 export {
@@ -42,4 +43,5 @@ export {
   imageSchema, //done
   colorSchema,
   brandSchema,
+  variationsSchema,
 };

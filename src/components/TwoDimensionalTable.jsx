@@ -1,14 +1,34 @@
 /**
  * input: [
-    { color: "Red", qty: "1", size: "S" },
-    { color: "Red", qty: "2", size: "M" },
-    { color: "Red", qty: "3", size: "L" },
-    { color: "Blue", qty: "1", size: "S" },
-    { color: "Blue", qty: "2", size: "M" },
-    { color: "Blue", qty: "3", size: "L" },
+    {
+      color: {
+        index: 0,
+        name: "red",
+      },
+      size: {
+        index: 1,
+        name: "s",
+      },
+      qty: "1",
+    },
     ...
-  ];
-  * output: JSX
+  ]
+  * output: {
+    color: [
+      { index: 0, name: "red" },
+      ...
+    ],
+    size: [
+      { index: 1, name: "s" },
+      ...
+    ],
+    * qty[i].length === color.length
+    * qty[i][j].length === size.length
+    qty: [
+      ["1", null, "1"],
+      ...
+    ],
+  };
  */
 
 import React from "react";
@@ -28,22 +48,7 @@ const useStyles = makeStyles({
   },
 });
 
-const variations = [
-  { color: "Red", qty: "1", size: "S" },
-  { color: "Red", qty: "2", size: "M" },
-  { color: "Red", qty: "3", size: "L" },
-  { color: "Blue", qty: "1", size: "S" },
-  { color: "Blue", qty: "2", size: "M" },
-  { color: "Blue", qty: "3", size: "L" },
-  { color: "Green", qty: "1", size: "S" },
-  { color: "Green", qty: "2", size: "M" },
-  { color: "Green", qty: "3", size: "L" },
-  { color: "Yellow", qty: "1", size: "S" },
-  { color: "Yellow", qty: "3", size: "M" },
-  { color: "Yellow", qty: "3", size: "L" },
-];
-
-const TwoDimentionalTable = () => {
+const TwoDimensionalTable = ({ variations }) => {
   const classes = useStyles();
   const summary = getSummary(variations);
 
@@ -51,8 +56,8 @@ const TwoDimentionalTable = () => {
     <>
       <TableCell></TableCell>
       {summary.color.map((c, i) => (
-        <TableCell key={i} align="center">
-          {c}
+        <TableCell key={`tableHeader${i}`} align="center">
+          {c.name}
         </TableCell>
       ))}
     </>
@@ -60,12 +65,14 @@ const TwoDimentionalTable = () => {
 
   const renderedTableBody = () =>
     summary.size.map((s, i) => (
-      <TableRow key={i}>
+      <TableRow key={`tableRow${i}`}>
         <TableCell align="center" component="th" scope="row">
-          {s}
+          {s.name}
         </TableCell>
-        {summary.qty.map((q) => (
-          <TableCell align="center">{q[i] === 0 ? "sold out" : q[i]}</TableCell>
+        {summary.qty.map((q, idx) => (
+          <TableCell id={`${i},${idx}`} key={`tableCell${idx}`} align="center">
+            {q[i] === 0 ? "sold out" : q[i]}
+          </TableCell>
         ))}
       </TableRow>
     ));
@@ -82,4 +89,4 @@ const TwoDimentionalTable = () => {
   );
 };
 
-export default TwoDimentionalTable;
+export default TwoDimensionalTable;
