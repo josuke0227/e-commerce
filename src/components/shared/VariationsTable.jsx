@@ -20,6 +20,13 @@ const useStyles = makeStyles({
   },
 });
 
+// instances: [
+//   {
+//     size: '{index: 0, name: "xs"}',
+//     qty: "1",
+//   },
+// ],
+
 const VariationsTable = ({
   variations,
   handleDeleteClick,

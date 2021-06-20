@@ -13,6 +13,9 @@ import {
   makeStyles,
   Button,
   Grid,
+  FormControl,
+  Switch,
+  FormControlLabel,
 } from "@material-ui/core";
 import { useSelector } from "react-redux";
 import { imageResizer } from "../util/imageResizer";
@@ -22,6 +25,7 @@ import RichTextField from "../components/shared/RichTextField";
 import { isEmptyObject } from "../util/isEmptyobject";
 import ModalWithLoader from "../components/ModalWithLoader";
 import Playground from "../Playground";
+import { isEqual } from "../util/isEqual";
 
 const useStyles = makeStyles((theme) => ({
   formParts: {
@@ -53,15 +57,6 @@ const signature = {
 };
 
 const initialVariationsState = {
-  color: {
-    index: 0,
-    name: "",
-  },
-  size: {
-    index: 0,
-    name: "",
-  },
-  qty: "",
   instances: [],
 };
 
@@ -78,6 +73,8 @@ const CreateProductPage = ({ location }) => {
   const [subCategories, setSubCategories] = useState([]);
   const [images, setImages] = useState({});
   const [variations, setVariations] = useState(initialVariationsState);
+  const [selectedVariationsData, setSelectedVariationsData] = useState([]);
+  const [showVariations, setShowVariations] = useState(false);
 
   const { user } = useSelector((state) => ({ ...state }));
   const classes = useStyles();
@@ -113,6 +110,25 @@ const CreateProductPage = ({ location }) => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setValues({ ...values, [name]: value });
+  };
+
+  const handleVariationSelect = (variation) => {
+    const currentData = [...selectedVariationsData];
+    for (let data of currentData) {
+      if (isEqual(data, variation)) return;
+    }
+
+    setSelectedVariationsData([...selectedVariationsData, variation]);
+  };
+
+  const handleVariationDeSelect = (name, index) => {
+    const currentData = [...selectedVariationsData];
+    currentData.splice(index, 1);
+    setSelectedVariationsData(currentData);
+
+    const currentVariations = { ...variations };
+    delete currentVariations[name];
+    setVariations(currentVariations);
   };
 
   const handleSubmit = async (e) => {
@@ -170,6 +186,16 @@ const CreateProductPage = ({ location }) => {
       setLoading(false);
       setSubmittingError(error.response.data || "Failed to create product.");
     }
+  };
+
+  const handleCheckboxClick = () => {
+    if (showVariations && variations.instances.length) {
+      alert("All the variations are lost. Are you sure to disable variations?");
+    }
+
+    setVariations(initialVariationsState);
+    setShowVariations(!showVariations);
+    setSelectedVariationsData([]);
   };
 
   const handleImageSubmit = async (image, productId) => {
@@ -251,11 +277,28 @@ const CreateProductPage = ({ location }) => {
               fullWidth
             />
             <div className="">
-              <Playground
-                variations={variations}
-                setVariations={setVariations}
-                totalQty={values.quantity}
-              />
+              <FormControl component="fieldset" className={classes.formControl}>
+                <FormControlLabel
+                  label="Enable variations"
+                  control={
+                    <Switch
+                      checked={showVariations}
+                      onChange={handleCheckboxClick}
+                      color="primary"
+                    />
+                  }
+                />
+              </FormControl>
+              {showVariations && (
+                <Playground
+                  variations={variations}
+                  setVariations={setVariations}
+                  totalQty={values.quantity}
+                  handleVariationSelect={handleVariationSelect}
+                  handleVariationDeSelect={handleVariationDeSelect}
+                  selectedVariationsData={selectedVariationsData}
+                />
+              )}
             </div>
             <TextField
               className={classes.formParts}
