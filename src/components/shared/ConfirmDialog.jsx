@@ -4,16 +4,12 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
-const ConfirmDialog = ({ showDialog, setShowDialog, item, handleConfirm }) => {
-  const handleCancel = () => {
-    setShowDialog(false);
-  };
-
-  const handleConfirmClick = () => {
-    setShowDialog(false);
-    handleConfirm(item);
-  };
-
+const ConfirmDialog = ({
+  message,
+  handleCancel,
+  handleConfirm,
+  showDialog,
+}) => {
   return (
     <Dialog
       open={showDialog}
@@ -21,11 +17,9 @@ const ConfirmDialog = ({ showDialog, setShowDialog, item, handleConfirm }) => {
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">
-        {`Are your sure to remove category "${item && item.name}"?`}
-      </DialogTitle>
+      <DialogTitle id="alert-dialog-title">{message}</DialogTitle>
       <DialogActions>
-        <Button onClick={handleConfirmClick} color="primary">
+        <Button onClick={handleConfirm} color="primary">
           Ok
         </Button>
         <Button onClick={handleCancel} color="primary" autoFocus>

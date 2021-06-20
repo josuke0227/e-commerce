@@ -132,7 +132,20 @@ const CategoryPage = ({ location }) => {
     }
   };
 
+  const handleConfirm = () => {
+    setShowDialog(false);
+    doCategoryDelete(selectedCategory);
+  };
+
+  const handleCancel = () => {
+    setShowDialog(false);
+  };
+
   const filteredCategories = getSearchResult(categories, query);
+
+  const dialogMessage = `Are your sure to remove category "${
+    selectedCategory && selectedCategory.name
+  }"?`;
 
   return (
     <Layout location={location}>
@@ -141,10 +154,10 @@ const CategoryPage = ({ location }) => {
         setShowSnackBar={setShowSnackBar}
       />
       <ConfirmDialog
+        handleConfirm={handleConfirm}
+        handleCancel={handleCancel}
         showDialog={showDialog}
-        item={selectedCategory}
-        handleConfirm={doCategoryDelete}
-        setShowDialog={setShowDialog}
+        message={dialogMessage}
       />
       <div className={classes.container}>
         <Typography
