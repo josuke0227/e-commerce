@@ -26,6 +26,7 @@ import { isEmptyObject } from "../util/isEmptyobject";
 import ModalWithLoader from "../components/ModalWithLoader";
 import Playground from "../Playground";
 import { isEqual } from "../util/isEqual";
+import ConfirmDialog from "../components/shared/ConfirmDialog";
 
 const useStyles = makeStyles((theme) => ({
   formParts: {
@@ -75,6 +76,7 @@ const CreateProductPage = ({ location }) => {
   const [variations, setVariations] = useState(initialVariationsState);
   const [selectedVariationsData, setSelectedVariationsData] = useState([]);
   const [showVariations, setShowVariations] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
 
   const { user } = useSelector((state) => ({ ...state }));
   const classes = useStyles();
@@ -189,13 +191,10 @@ const CreateProductPage = ({ location }) => {
   };
 
   const handleCheckboxClick = () => {
-    if (showVariations && variations.instances.length) {
-      alert("All the variations are lost. Are you sure to disable variations?");
-    }
-
-    setVariations(initialVariationsState);
     setShowVariations(!showVariations);
-    setSelectedVariationsData([]);
+    if (showVariations && variations.instances.length) {
+      setShowDialog(true);
+    }
   };
 
   const handleImageSubmit = async (image, productId) => {
@@ -203,6 +202,18 @@ const CreateProductPage = ({ location }) => {
     const { error } = imageSchema.validate(resizedImageUri);
     if (error) throw new Error("Invalid image URI.");
     await uploadImage(resizedImageUri, productId, user);
+  };
+
+  const handleConfirm = () => {
+    setShowDialog(false);
+    setVariations(initialVariationsState);
+    setShowVariations(false);
+    setSelectedVariationsData([]);
+  };
+
+  const handleCancel = () => {
+    setShowDialog(false);
+    setShowVariations(false);
   };
 
   const toggleSubCategoryFormStatus = () => {
@@ -219,6 +230,9 @@ const CreateProductPage = ({ location }) => {
     return { error: false, helperText: "" };
   };
 
+  const dialogMessage =
+    "All changes are lost. Are you sure to disable variations?";
+
   return (
     <Layout location={location}>
       <ModalWithLoader
@@ -227,6 +241,12 @@ const CreateProductPage = ({ location }) => {
         open={open}
         setOpen={setOpen}
         submittingError={submittingError}
+      />
+      <ConfirmDialog
+        handleConfirm={handleConfirm}
+        handleCancel={handleCancel}
+        showDialog={showDialog}
+        message={dialogMessage}
       />
       <Container component="form" onSubmit={handleSubmit}>
         <Grid container spacing={2}>
