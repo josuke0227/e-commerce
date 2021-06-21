@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import { Avatar, Badge, Grid, Typography } from "@material-ui/core";
 import ImagePreviewer from "./ImagePreviewer";
-import { isEmptyObject } from "../util/isEmptyobject";
+import { isEmptyObject } from "../util/isEmptyObject";
 
 const useStyles = makeStyles((theme) => ({
   container: {

@@ -1,5 +1,3 @@
-// TODO: Add color route.
-
 import Layout from "../components/Layout";
 import React, { useState, useEffect } from "react";
 import { getCategories } from "../services/categoryServices";
@@ -13,18 +11,19 @@ import {
   makeStyles,
   Button,
   Grid,
-  FormControl,
-  Switch,
-  FormControlLabel,
 } from "@material-ui/core";
 import { useSelector } from "react-redux";
-import { imageResizer } from "../util/imageResizer";
-import { productSchema } from "../schemas/productSchema";
+import { resizeImage } from "../util/resizeImage";
+import {
+  productSchema,
+  productSchemas,
+  variationSchema,
+} from "../schemas/productSchema";
 import { imageSchema } from "../schemas/imagesSchema";
 import RichTextField from "../components/shared/RichTextField";
-import { isEmptyObject } from "../util/isEmptyobject";
+import { isEmptyObject } from "../util/isEmptyObject";
 import ModalWithLoader from "../components/ModalWithLoader";
-import Playground from "../Playground";
+import VariationField from "../components/VariationField";
 import { isEqual } from "../util/isEqual";
 import ConfirmDialog from "../components/shared/ConfirmDialog";
 
@@ -32,29 +31,31 @@ const useStyles = makeStyles((theme) => ({
   formParts: {
     marginTop: theme.spacing(3),
   },
+  slideButton: {
+    marginBottom: theme.spacing(1),
+  },
 }));
 
 const initialState = {
   title: "test",
   price: 1,
+  quantity: 1,
+  variations: [],
   category: "60c00dbf4cb336f57aff244b",
   subCategory: "60b85ba36fc3f936c09728b1",
-  quantity: 1,
   brand: "toshiba",
-  variations: [],
 };
 
-const signature = {
-  brand: "",
-  category: "",
-  description: "",
-  images: {},
-  image: "",
-  price: 0,
-  quantity: 0,
-  subCategory: "",
+const initialErrorsState = {
+  images: "",
   title: "",
-  variations: [],
+  price: "",
+  quantity: "",
+  variations: "",
+  category: "",
+  subCategory: "",
+  brand: "",
+  description: "",
 };
 
 const initialVariationsState = {
@@ -64,7 +65,7 @@ const initialVariationsState = {
 const CreateProductPage = ({ location }) => {
   const [values, setValues] = useState(initialState);
   const [description, setDescription] = useState("");
-  const [error, setError] = useState(signature);
+  const [errors, setErrors] = useState(initialErrorsState);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(null);
   const [open, setOpen] = useState(false);
@@ -110,7 +111,16 @@ const CreateProductPage = ({ location }) => {
   };
 
   const handleInputChange = (e) => {
+    setErrors(initialErrorsState);
     const { name, value } = e.target;
+    const { error } = productSchemas[name].validate(value);
+    if (error) setErrors({ ...errors, [name]: error.message });
+
+    if (name === "price" || name === "quantity") {
+      const int = parseInt(value);
+      return setValues({ ...values, [name]: int });
+    }
+
     setValues({ ...values, [name]: value });
   };
 
@@ -139,6 +149,12 @@ const CreateProductPage = ({ location }) => {
     setOpen(true);
 
     const { instances } = variations;
+
+    if (instances.length) {
+      const result = variationSchema.validate(instances);
+      console.log(result);
+    }
+
     const submittingData = {
       ...values,
       description,
@@ -148,14 +164,15 @@ const CreateProductPage = ({ location }) => {
     const result = productSchema.validate(submittingData, {
       abortEarly: false,
     });
+    console.log(result);
 
     if (result.error) {
-      let updatedError = { ...error };
+      let updatedError = { ...errors };
       result.error.details.forEach((e) => {
         const { path, message } = e;
         updatedError = { ...updatedError, [path[0]]: message };
       });
-      return setError(updatedError);
+      return setErrors(updatedError);
     }
 
     try {
@@ -198,7 +215,7 @@ const CreateProductPage = ({ location }) => {
   };
 
   const handleImageSubmit = async (image, productId) => {
-    const resizedImageUri = await imageResizer(image);
+    const resizedImageUri = await resizeImage(image);
     const { error } = imageSchema.validate(resizedImageUri);
     if (error) throw new Error("Invalid image URI.");
     await uploadImage(resizedImageUri, productId, user);
@@ -225,7 +242,7 @@ const CreateProductPage = ({ location }) => {
   };
 
   const toggleStatus = (path) => {
-    if (error[path]) return { error: true, helperText: error[path] };
+    if (errors[path]) return { error: true, helperText: errors[path] };
 
     return { error: false, helperText: "" };
   };
@@ -255,7 +272,7 @@ const CreateProductPage = ({ location }) => {
               images={images}
               setValues={setImages}
               setLoading={setLoading}
-              error={error.image}
+              error={errors.images}
             />
             <TextField
               className={classes.formParts}
@@ -296,30 +313,18 @@ const CreateProductPage = ({ location }) => {
               variant="outlined"
               fullWidth
             />
-            <div className="">
-              <FormControl component="fieldset" className={classes.formControl}>
-                <FormControlLabel
-                  label="Enable variations"
-                  control={
-                    <Switch
-                      checked={showVariations}
-                      onChange={handleCheckboxClick}
-                      color="primary"
-                    />
-                  }
-                />
-              </FormControl>
-              {showVariations && (
-                <Playground
-                  variations={variations}
-                  setVariations={setVariations}
-                  totalQty={values.quantity}
-                  handleVariationSelect={handleVariationSelect}
-                  handleVariationDeSelect={handleVariationDeSelect}
-                  selectedVariationsData={selectedVariationsData}
-                />
-              )}
-            </div>
+            <VariationField
+              showVariations={showVariations}
+              handleCheckboxClick={handleCheckboxClick}
+              errors={errors}
+              setErrors={setErrors}
+              variations={variations}
+              setVariations={setVariations}
+              values={values}
+              handleVariationSelect={handleVariationSelect}
+              handleVariationDeSelect={handleVariationDeSelect}
+              selectedVariationsData={selectedVariationsData}
+            />
             <TextField
               className={classes.formParts}
               error={toggleStatus("category").error}
@@ -383,6 +388,7 @@ const CreateProductPage = ({ location }) => {
               count={2000}
               loading={loading}
               label="Description"
+              error={errors.description}
             />
             <Button fullWidth variant="contained" type="submit" color="primary">
               Submit

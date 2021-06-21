@@ -13,25 +13,38 @@ const subCategorySchema = Joi.ObjectId().label("Sub category");
 
 const quantitySchema = Joi.number().min(1).label("Quantity");
 
-const colorSchema = Joi.string().label("Color").allow("").optional();
-
-const brandSchema = Joi.string().label("Brand").allow("").optional();
+const brandSchema = Joi.string().label("Brand");
 
 const imageSchema = Joi.string().uri().label("Image file");
 
-const variationsSchema = Joi.array();
+const variationsSchema = Joi.array().optional();
 
-export const productSchema = Joi.object({
-  brand: brandSchema,
-  category: categorySchema,
-  color: colorSchema,
-  description: descriptionSchema,
+const variationSchema = Joi.array().has(
+  Joi.object().keys({
+    color: Joi.object({
+      name: Joi.string().label("Variation name"),
+      index: Joi.number().label("Variation index"),
+    }),
+    size: Joi.object({
+      name: Joi.string().label("Variation name"),
+      index: Joi.number().label("Variation index"),
+    }),
+    qty: Joi.number().label("Variation qty"),
+  })
+);
+
+export const productSchemas = {
+  title: titleSchema,
   price: priceSchema,
   quantity: quantitySchema,
-  subCategory: subCategorySchema,
-  title: titleSchema,
   variations: variationsSchema,
-});
+  category: categorySchema,
+  subCategory: subCategorySchema,
+  brand: brandSchema,
+  description: descriptionSchema,
+};
+
+export const productSchema = Joi.object({ ...productSchemas });
 
 export {
   titleSchema,
@@ -41,7 +54,7 @@ export {
   subCategorySchema,
   quantitySchema,
   imageSchema, //done
-  colorSchema,
   brandSchema,
   variationsSchema,
+  variationSchema,
 };

@@ -18,6 +18,7 @@ const RichTextField = ({
   loading,
   success,
   label,
+  error,
 }) => {
   const classes = useStyles();
 
@@ -68,6 +69,11 @@ const RichTextField = ({
           )}
         </Grid>
       </Grid>
+      {!!error && (
+        <Typography color="error" className={classes.formParts}>
+          {error}
+        </Typography>
+      )}
       <Editor
         editorStyle={{
           border: "1px solid rgb(241, 241, 241)",
