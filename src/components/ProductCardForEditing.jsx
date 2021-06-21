@@ -33,19 +33,8 @@ const ProductCardForEditing = ({
   product,
   user,
   loading,
-  handleProductDelete,
+  handleDeleteButtonClick,
 }) => {
-  // const images = [
-  //   {
-  //     _id: "60c768e293fe691d348a2277",
-  //     public_id: "pnfsacgyfst1sn249cq5",
-  //     url: "http://res.cloudinary.com/ymotoe-commerce/image/upload/v1623681250/pnfsacgyfst1sn249cq5.jpg",
-  //     productId: "60c768df93fe691d348a2276",
-  //     postedBy: "60c19ad573d9c63196cc4a0a",
-  //     __v: 0,
-  //   },
-  // ];
-
   const classes = useStyles();
   const [images, setImages] = useState([]);
 
@@ -104,7 +93,7 @@ const ProductCardForEditing = ({
                 variant="contained"
                 color="secondary"
                 fullWidth
-                onClick={() => handleProductDelete(product)}
+                onClick={() => handleDeleteButtonClick(product)}
               >
                 Delete
               </Button>
