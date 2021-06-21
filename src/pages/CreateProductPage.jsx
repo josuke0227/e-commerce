@@ -26,6 +26,7 @@ import ModalWithLoader from "../components/ModalWithLoader";
 import VariationField from "../components/VariationField";
 import { isEqual } from "../util/isEqual";
 import ConfirmDialog from "../components/shared/ConfirmDialog";
+import { deleteProduct } from "../services/productServices";
 
 const useStyles = makeStyles((theme) => ({
   formParts: {
@@ -152,7 +153,6 @@ const CreateProductPage = ({ location }) => {
 
     if (instances.length) {
       const result = variationSchema.validate(instances);
-      console.log(result);
     }
 
     const submittingData = {
@@ -164,7 +164,6 @@ const CreateProductPage = ({ location }) => {
     const result = productSchema.validate(submittingData, {
       abortEarly: false,
     });
-    console.log(result);
 
     if (result.error) {
       let updatedError = { ...errors };
@@ -193,25 +192,23 @@ const CreateProductPage = ({ location }) => {
           setSuccess(true);
           setLoading(false);
         } catch (error) {
-          console.log(`error`, error);
-          // TODO: send delete requiest to delete product data.
-          setSuccess(false);
-          setLoading(false);
-          setSubmittingError("Product creation failed.");
+          try {
+            await deleteProduct(data, user);
+          } catch (error) {
+            endWithFailure(error);
+          }
+          endWithFailure(error);
         }
       });
     } catch (error) {
-      setSuccess(false);
-      setLoading(false);
-      setSubmittingError(error.response.data || "Failed to create product.");
+      endWithFailure(error);
     }
   };
 
-  const handleCheckboxClick = () => {
-    setShowVariations(!showVariations);
-    if (showVariations && variations.instances.length) {
-      setShowDialog(true);
-    }
+  const endWithFailure = (error) => {
+    setSuccess(false);
+    setLoading(false);
+    setSubmittingError(error.message || "Product creation failed.");
   };
 
   const handleImageSubmit = async (image, productId) => {
@@ -219,6 +216,13 @@ const CreateProductPage = ({ location }) => {
     const { error } = imageSchema.validate(resizedImageUri);
     if (error) throw new Error("Invalid image URI.");
     await uploadImage(resizedImageUri, productId, user);
+  };
+
+  const handleCheckboxClick = () => {
+    setShowVariations(!showVariations);
+    if (showVariations && variations.instances.length) {
+      setShowDialog(true);
+    }
   };
 
   const handleConfirm = () => {
