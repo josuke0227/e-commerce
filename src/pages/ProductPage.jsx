@@ -18,6 +18,7 @@ import { getProducts, deleteProduct } from "../services/productServices";
 
 import ProductCardForEditing from "../components/ProductCardForEditing";
 import { isEqual } from "../util/isEqual";
+import ConfirmDialog from "../components/shared/ConfirmDialog";
 
 const useStyles = makeStyles({});
 
@@ -68,6 +69,9 @@ const productsSample = [
 
 const ProductPage = ({ location }) => {
   const [products, setProducts] = useState([]);
+  const [product, setProduct] = useState(null);
+  const [showDialog, setShowDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const classes = useStyles();
   const { user } = useSelector((state) => ({ ...state }));
@@ -82,26 +86,53 @@ const ProductPage = ({ location }) => {
     console.log(data);
   };
 
-  const handleProductDelete = async (product) => {
+  const handleDeleteButtonClick = (product) => {
+    setProduct(product);
+    setShowDialog(true);
+  };
+
+  const handleCancel = () => {
+    setShowDialog(false);
+  };
+
+  const handleConfirm = () => {
+    setLoading(true);
+    doProductDelete(product);
+    setShowDialog(false);
+  };
+
+  const doProductDelete = async (product) => {
     try {
       await deleteProduct(product, user);
       let current = [...products];
       for (let i = 0; i < current.length; i++) {
         if (isEqual(product, current[i])) current.splice(i, 1);
       }
-      setProducts(current);
+      setLoading(false);
+      return setProducts(current);
     } catch (error) {
-      console.log("product delete error", error);
+      setLoading(false);
+      return console.log("product delete error", error);
     }
   };
 
+  const message = "Are you sure to delete product?";
+
   return (
     <Layout location={location}>
+      <ConfirmDialog
+        message={message}
+        handleCancel={handleCancel}
+        handleConfirm={handleConfirm}
+        showDialog={showDialog}
+        loading={loading}
+      />
       {products.map((p) => (
         <ProductCardForEditing
+          key={p._id}
           product={p}
           user={user}
-          handleProductDelete={handleProductDelete}
+          handleDeleteButtonClick={handleDeleteButtonClick}
         />
       ))}
     </Layout>
