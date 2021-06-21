@@ -13,7 +13,7 @@ import HomePage from "./pages/HomePage";
 
 import Playground from "./Playground";
 import CreateProductPage from "./pages/CreateProductPage";
-import ProductPage from "./pages/ProductPage";
+import ProductsPage from "./pages/ProductsPage";
 
 const App = () => (
   <ThemeProvider theme={theme}>
@@ -30,7 +30,7 @@ const App = () => (
         <Route exact path="/admin/categories" component={CategoryPage} />
         <Route exact path="/admin/subcategories" component={SubCategoryPage} />
         <Route exact path="/admin/newproduct" component={CreateProductPage} />
-        <Route exact path="/admin/products" component={ProductPage} />
+        <Route exact path="/admin/products" component={ProductsPage} />
         <Route exact path="/playground" component={Playground} />
       </Switch>
     </BrowserRouter>
