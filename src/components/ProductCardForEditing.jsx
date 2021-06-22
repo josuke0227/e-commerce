@@ -35,6 +35,7 @@ const ProductCardForEditing = ({
   user,
   loading,
   handleDeleteButtonClick,
+  handleEditButtonClick,
 }) => {
   const classes = useStyles();
   const [images, setImages] = useState([]);
@@ -86,7 +87,12 @@ const ProductCardForEditing = ({
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <Link component={ReactRouterLink} to="/admin/editproduct">
-                <Button variant="contained" color="default" fullWidth>
+                <Button
+                  variant="contained"
+                  color="default"
+                  fullWidth
+                  onClick={() => handleEditButtonClick(product)}
+                >
                   Edit
                 </Button>
               </Link>
