@@ -43,6 +43,14 @@ const initialState = {
   quantity: 1,
   variations: [],
   category: "60c00dbf4cb336f57aff244b",
+  // category: {
+  //   _id: { $oid: "60b820a07468c922cf38beb7" },
+  //   name: "Books",
+  //   slug: "Books",
+  //   createdAt: { $date: "2021-06-03T00:21:52.278Z" },
+  //   updatedAt: { $date: "2021-06-08T07:05:06.449Z" },
+  //   __v: 0,
+  // },
   subCategory: "60b85ba36fc3f936c09728b1",
   brand: "toshiba",
 };
@@ -63,16 +71,17 @@ const initialVariationsState = {
   instances: [],
 };
 
-const EditProductPage = ({ location, product }) => {
-  console.log(product);
-  const [values, setValues] = useState(initialState);
+const EditProductPage = ({ location }) => {
+  const classes = useStyles();
+  const { user, product } = useSelector((state) => ({ ...state }));
+
+  const [values, setValues] = useState(product);
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState(initialErrorsState);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(null);
   const [open, setOpen] = useState(false);
   const [submittingError, setSubmittingError] = useState("");
-
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const [images, setImages] = useState({});
@@ -80,9 +89,6 @@ const EditProductPage = ({ location, product }) => {
   const [selectedVariationsData, setSelectedVariationsData] = useState([]);
   const [showVariations, setShowVariations] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
-
-  const { user } = useSelector((state) => ({ ...state }));
-  const classes = useStyles();
 
   useEffect(() => {
     loadCategories();
