@@ -13,6 +13,7 @@ import HomePage from "./pages/HomePage";
 
 import Playground from "./Playground";
 import CreateProductPage from "./pages/CreateProductPage";
+import EditProductPage from "./pages/EditProductPage";
 import ProductsPage from "./pages/ProductsPage";
 
 const App = () => (
@@ -30,6 +31,7 @@ const App = () => (
         <Route exact path="/admin/categories" component={CategoryPage} />
         <Route exact path="/admin/subcategories" component={SubCategoryPage} />
         <Route exact path="/admin/newproduct" component={CreateProductPage} />
+        <Route exact path="/admin/editproduct" component={EditProductPage} />
         <Route exact path="/admin/products" component={ProductsPage} />
         <Route exact path="/playground" component={Playground} />
       </Switch>
