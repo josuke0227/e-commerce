@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { EditorState, convertToRaw, ContentState } from "draft-js";
+import {
+  EditorState,
+  convertToRaw,
+  ContentState,
+  convertFromHTML,
+} from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import draftToHtml from "draftjs-to-html";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
@@ -19,18 +24,17 @@ const RichTextField = ({
   success,
   label,
   error,
+  defaultValue,
 }) => {
   const classes = useStyles();
 
   const strippedString = characters.replace(/(<([^>]+)>)/gi, "");
 
   const [editorState, setEditorState] = useState(() =>
-    EditorState.createEmpty()
+    EditorState.createWithContent(
+      ContentState.createFromBlockArray(convertFromHTML(defaultValue))
+    )
   );
-
-  const onEditorStateChange = (editorState) => {
-    setEditorState(editorState);
-  };
 
   useEffect(() => {
     setValue(draftToHtml(convertToRaw(editorState.getCurrentContent())));
@@ -39,6 +43,10 @@ const RichTextField = ({
   useEffect(() => {
     if (loading) return resetInputForm();
   }, [loading]);
+
+  const onEditorStateChange = (editorState) => {
+    setEditorState(editorState);
+  };
 
   const resetInputForm = () => {
     if (success === false) return;

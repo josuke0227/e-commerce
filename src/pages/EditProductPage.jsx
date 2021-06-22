@@ -90,21 +90,23 @@ const EditProductPage = ({ location }) => {
   const [showVariations, setShowVariations] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
 
-  useEffect(() => {
-    loadCategories();
-  }, []);
+  const [defaultValue, setDefaultValue] = useState("");
+  const [showEditor, setShowEditor] = useState(false);
 
   useEffect(() => {
-    if (values.category) {
-      const id = switchValue("category");
-      loadSubcategories(id);
-    }
-  }, [values.category]);
+    loadCategories();
+    setValues(product);
+  }, [product]);
 
   useEffect(() => {
     const id = switchValue("category");
-    if (!!id) loadSubcategories(id);
-  }, [values.subCategory]);
+    loadSubcategories(id);
+
+    if (values) {
+      const defaultData = values.description;
+      setDefaultValue(defaultData);
+    }
+  }, [values]);
 
   const loadCategories = async () => {
     try {
@@ -266,12 +268,15 @@ const EditProductPage = ({ location }) => {
   };
 
   const switchValue = (path) => {
+    if (values === null) return;
     if (typeof values[path] === "object") return values[path]._id;
     return values[path];
   };
 
   const dialogMessage =
     "All changes are lost. Are you sure to disable variations?";
+
+  if (values === null) return <div className="">loading...</div>;
 
   return (
     <Layout location={location}>
@@ -404,15 +409,30 @@ const EditProductPage = ({ location }) => {
             />
           </Grid>
           <Grid item xs={12} md={6}>
-            <RichTextField
-              success={success}
-              setValue={setDescription}
-              characters={description}
-              count={2000}
-              loading={loading}
-              label="Description"
-              error={errors.description}
-            />
+            {!showEditor && (
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => setShowEditor(true)}
+              >
+                Edit description
+              </Button>
+            )}
+
+            {showEditor ? (
+              <RichTextField
+                success={success}
+                setValue={setDescription}
+                characters={description}
+                count={2000}
+                loading={loading}
+                label="Description"
+                error={errors.description}
+                defaultValue={defaultValue}
+              />
+            ) : (
+              <div dangerouslySetInnerHTML={{ __html: defaultValue }} />
+            )}
             <Button fullWidth variant="contained" type="submit" color="primary">
               Submit
             </Button>
