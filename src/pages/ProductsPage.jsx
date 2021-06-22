@@ -9,6 +9,8 @@ import ProductCardForEditing from "../components/ProductCardForEditing";
 import { isEqual } from "../util/isEqual";
 import ConfirmDialog from "../components/shared/ConfirmDialog";
 
+import { useDispatch } from "react-redux";
+
 const useStyles = makeStyles({});
 
 const ProductsPage = ({ location }) => {
@@ -18,6 +20,7 @@ const ProductsPage = ({ location }) => {
   const [loading, setLoading] = useState(false);
 
   const classes = useStyles();
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => ({ ...state }));
 
   useEffect(() => {
@@ -28,6 +31,13 @@ const ProductsPage = ({ location }) => {
     const { data } = await getProducts();
     setProducts(data);
     console.log(data);
+  };
+
+  const handleEditButtonClick = (product) => {
+    dispatch({
+      type: "SELECT_PRODUCT",
+      payload: product,
+    });
   };
 
   const handleDeleteButtonClick = (product) => {
@@ -77,6 +87,7 @@ const ProductsPage = ({ location }) => {
           product={p}
           user={user}
           handleDeleteButtonClick={handleDeleteButtonClick}
+          handleEditButtonClick={handleEditButtonClick}
         />
       ))}
     </Layout>
