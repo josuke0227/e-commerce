@@ -95,13 +95,14 @@ const EditProductPage = ({ location }) => {
   }, []);
 
   useEffect(() => {
-    if (values.category.length) {
-      loadSubcategories(values.category);
+    if (values.category) {
+      const id = switchValue("category");
+      loadSubcategories(id);
     }
   }, [values.category]);
 
   useEffect(() => {
-    const id = switchValue();
+    const id = switchValue("category");
     if (!!id) loadSubcategories(id);
   }, [values.subCategory]);
 
@@ -117,6 +118,7 @@ const EditProductPage = ({ location }) => {
   const loadSubcategories = async (id) => {
     try {
       const { data } = await pickByParentId(id);
+      console.log(`data`, data);
       setSubCategories(data);
     } catch (error) {
       console.log("category fetching error", error);
