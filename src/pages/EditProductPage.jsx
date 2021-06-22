@@ -42,15 +42,15 @@ const initialState = {
   price: 1,
   quantity: 1,
   variations: [],
-  category: "60c00dbf4cb336f57aff244b",
-  // category: {
-  //   _id: { $oid: "60b820a07468c922cf38beb7" },
-  //   name: "Books",
-  //   slug: "Books",
-  //   createdAt: { $date: "2021-06-03T00:21:52.278Z" },
-  //   updatedAt: { $date: "2021-06-08T07:05:06.449Z" },
-  //   __v: 0,
-  // },
+  // category: "60c00dbf4cb336f57aff244b",
+  category: {
+    _id: { $oid: "60c00dbf4cb336f57aff244b" },
+    name: "Stationary",
+    slug: "Stationary",
+    createdAt: { $date: "2021-06-03T00:21:52.278Z" },
+    updatedAt: { $date: "2021-06-08T07:05:06.449Z" },
+    __v: 0,
+  },
   subCategory: "60b85ba36fc3f936c09728b1",
   brand: "toshiba",
 };
@@ -99,6 +99,11 @@ const EditProductPage = ({ location }) => {
       loadSubcategories(values.category);
     }
   }, [values.category]);
+
+  useEffect(() => {
+    const id = switchValue();
+    if (!!id) loadSubcategories(id);
+  }, [values.subCategory]);
 
   const loadCategories = async () => {
     try {
@@ -258,6 +263,11 @@ const EditProductPage = ({ location }) => {
     return { error: false, helperText: "" };
   };
 
+  const switchValue = (path) => {
+    if (typeof values[path] === "object") return values[path]._id;
+    return values[path];
+  };
+
   const dialogMessage =
     "All changes are lost. Are you sure to disable variations?";
 
@@ -344,7 +354,7 @@ const EditProductPage = ({ location }) => {
               name="category"
               label="Category"
               onChange={handleInputChange}
-              value={values.category}
+              value={switchValue("category")}
               variant="outlined"
               fullWidth
               select
@@ -355,7 +365,7 @@ const EditProductPage = ({ location }) => {
                 </MenuItem>
               ))}
             </TextField>
-            {!!values.category.length && (
+            {!!values.category && (
               <TextField
                 className={classes.formParts}
                 disabled={toggleSubCategoryFormStatus().disable}
@@ -365,7 +375,7 @@ const EditProductPage = ({ location }) => {
                 name="subCategory"
                 label={toggleSubCategoryFormStatus().label}
                 onChange={handleInputChange}
-                value={values.subCategory}
+                value={switchValue("subCategory")}
                 variant="outlined"
                 fullWidth
                 select
@@ -412,3 +422,29 @@ const EditProductPage = ({ location }) => {
 };
 
 export default EditProductPage;
+
+// const obj = {
+//   category: {
+//     _id: {
+//       $oid: "60b820a07468c922cf38beb7",
+//     },
+//     name: "Books",
+//     slug: "Books",
+//     createdAt: {
+//       $date: "2021-06-03T00:21:52.278Z",
+//     },
+//     updatedAt: {
+//       $date: "2021-06-08T07:05:06.449Z",
+//     },
+//     __v: 0,
+//   },
+// };
+
+// const obj = {
+//   _id: "60b820a07468c922cf38beb7",
+//   name: "Books",
+//   slug: "Books",
+//   createdAt: "2021-06-03T00:21:52.278Z",
+//   updatedAt: "2021-06-08T07:05:06.449Z",
+//   __v: 0,
+// };
