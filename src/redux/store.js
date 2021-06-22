@@ -5,6 +5,6 @@ import { composeWithDevTools } from "redux-devtools-extension";
 
 const store = createStore(rootReducer, composeWithDevTools());
 
-const persistor = persistStore(store);
+const persister = persistStore(store);
 
-export { store, persistor };
+export { store, persister };
