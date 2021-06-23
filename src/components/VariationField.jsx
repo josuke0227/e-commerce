@@ -29,6 +29,7 @@ const VariationField = ({
   handleVariationSelect,
   handleVariationDeSelect,
   selectedVariationsData,
+  variationsData,
 }) => {
   const classes = useStyles();
 
@@ -51,6 +52,7 @@ const VariationField = ({
       </FormControl>
       {showVariations && (
         <ControlPanel
+          showVariations={showVariations}
           variations={variations}
           setVariations={setVariations}
           totalQty={values.quantity}
@@ -59,6 +61,7 @@ const VariationField = ({
           selectedVariationsData={selectedVariationsData}
           setErrors={setErrors}
           errors={errors}
+          variationsData={variationsData}
         />
       )}
     </Box>

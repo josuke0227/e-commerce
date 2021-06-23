@@ -57,9 +57,8 @@ const VariationsForm = ({
       if (!getObjectKeysSet(currentInstances).includes(key))
         return setErrors({
           ...errors,
-          variations: "Cannot mix variations",
+          variations: "Please choose the save variation pattern.",
         });
-      // throw Error("variation name must be the same.");
     }
 
     let combinedQty = data.qty;
@@ -90,7 +89,6 @@ const VariationsForm = ({
   };
 
   const handleInputChange = (e) => {
-    console.log(e.target);
     const { value, name } = e.target;
     if (name === "qty") {
       const int = parseInt(value);

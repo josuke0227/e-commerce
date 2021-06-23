@@ -27,6 +27,8 @@ import VariationField from "../components/VariationField";
 import { isEqual } from "../util/isEqual";
 import ConfirmDialog from "../components/shared/ConfirmDialog";
 import { deleteProduct } from "../services/productServices";
+import { getObjectKeysSet } from "../util/getObjectKeysSet";
+import { getVariations } from "../services/variationServices";
 
 const useStyles = makeStyles((theme) => ({
   formParts: {
@@ -87,6 +89,7 @@ const EditProductPage = ({ location }) => {
   const [images, setImages] = useState({});
   const [variations, setVariations] = useState(initialVariationsState);
   const [selectedVariationsData, setSelectedVariationsData] = useState([]);
+  const [variationsData, setVariationsData] = useState([]);
   const [showVariations, setShowVariations] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
 
@@ -94,8 +97,29 @@ const EditProductPage = ({ location }) => {
   const [showEditor, setShowEditor] = useState(false);
 
   useEffect(() => {
+    fetchVariations();
+  }, []);
+
+  const fetchVariations = async () => {
+    try {
+      const { data } = await getVariations();
+      setVariationsData(data);
+    } catch (error) {
+      console.log("fetching variations error", error);
+    }
+  };
+
+  useEffect(() => {
     loadCategories();
-    setValues(product);
+
+    if (product) {
+      const initialProduct = { ...product };
+      const initialVariations = [...product.variations];
+      delete initialProduct.variations;
+
+      setValues(initialProduct);
+      setVariations({ ...variations, instances: initialVariations });
+    }
   }, [product]);
 
   useEffect(() => {
@@ -106,7 +130,29 @@ const EditProductPage = ({ location }) => {
       const defaultData = values.description;
       setDefaultValue(defaultData);
     }
-  }, [values]);
+
+    if (
+      variations.instances.length &&
+      !showVariations &&
+      variationsData.length
+    ) {
+      setShowVariations(true);
+      setSelectedVariationsData(getInitialVariationsData());
+    }
+  }, [values, variationsData, variations]);
+
+  const getInitialVariationsData = () => {
+    const keys = getObjectKeysSet(variations.instances);
+    keys.splice(keys.indexOf("qty"), 1);
+
+    const initialVariationsData = [];
+    variationsData.forEach((vD) =>
+      keys.forEach((k) => {
+        if (vD.name === k) initialVariationsData.push(vD);
+      })
+    );
+    return initialVariationsData;
+  };
 
   const loadCategories = async () => {
     try {
@@ -120,7 +166,6 @@ const EditProductPage = ({ location }) => {
   const loadSubcategories = async (id) => {
     try {
       const { data } = await pickByParentId(id);
-      console.log(`data`, data);
       setSubCategories(data);
     } catch (error) {
       console.log("category fetching error", error);
@@ -352,6 +397,7 @@ const EditProductPage = ({ location }) => {
               handleVariationSelect={handleVariationSelect}
               handleVariationDeSelect={handleVariationDeSelect}
               selectedVariationsData={selectedVariationsData}
+              variationsData={variationsData}
             />
             <TextField
               className={classes.formParts}

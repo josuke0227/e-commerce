@@ -24,7 +24,7 @@ const RichTextField = ({
   success,
   label,
   error,
-  defaultValue,
+  defaultValue = "",
 }) => {
   const classes = useStyles();
 

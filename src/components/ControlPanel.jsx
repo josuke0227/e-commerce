@@ -12,21 +12,22 @@ const ControlPanel = ({
   handleVariationDeSelect,
   setErrors,
   errors,
+  variationsData,
 }) => {
-  const [variationsData, setVariationsData] = useState([]);
+  // const [variationsData, setVariationsData] = useState([]);
 
-  useEffect(() => {
-    fetchVariations();
-  }, []);
+  // useEffect(() => {
+  //   fetchVariations();
+  // }, []);
 
-  const fetchVariations = async () => {
-    try {
-      const { data } = await getVariations();
-      setVariationsData(data);
-    } catch (error) {
-      console.log("fetching variations error", error);
-    }
-  };
+  // const fetchVariations = async () => {
+  //   try {
+  //     const { data } = await getVariations();
+  //     setVariationsData(data);
+  //   } catch (error) {
+  //     console.log("fetching variations error", error);
+  //   }
+  // };
 
   const handleEditClick = (index) => {
     const current = { ...variations };
