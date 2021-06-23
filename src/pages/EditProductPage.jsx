@@ -57,7 +57,7 @@ const initialState = {
   brand: "toshiba",
 };
 
-const initialErrorsState = {
+const INITIAL_ERROR_STATE = {
   images: "",
   title: "",
   price: "",
@@ -69,7 +69,7 @@ const initialErrorsState = {
   description: "",
 };
 
-const initialVariationsState = {
+const INITIAL_VARIATIONS_STATE = {
   instances: [],
 };
 
@@ -77,24 +77,23 @@ const EditProductPage = ({ location }) => {
   const classes = useStyles();
   const { user, product } = useSelector((state) => ({ ...state }));
 
-  const [values, setValues] = useState(product);
-  const [description, setDescription] = useState("");
-  const [errors, setErrors] = useState(initialErrorsState);
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(null);
   const [open, setOpen] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+  const [showEditor, setShowEditor] = useState(false);
+  const [showVariations, setShowVariations] = useState(false);
+  const [success, setSuccess] = useState(null);
+  const [defaultValue, setDefaultValue] = useState("");
+  const [description, setDescription] = useState("");
   const [submittingError, setSubmittingError] = useState("");
   const [categories, setCategories] = useState([]);
-  const [subCategories, setSubCategories] = useState([]);
-  const [images, setImages] = useState({});
-  const [variations, setVariations] = useState(initialVariationsState);
   const [selectedVariationsData, setSelectedVariationsData] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
   const [variationsData, setVariationsData] = useState([]);
-  const [showVariations, setShowVariations] = useState(false);
-  const [showDialog, setShowDialog] = useState(false);
-
-  const [defaultValue, setDefaultValue] = useState("");
-  const [showEditor, setShowEditor] = useState(false);
+  const [errors, setErrors] = useState(INITIAL_ERROR_STATE);
+  const [images, setImages] = useState({});
+  const [values, setValues] = useState(null);
+  const [variations, setVariations] = useState(INITIAL_VARIATIONS_STATE);
 
   useEffect(() => {
     fetchVariations();
@@ -123,14 +122,6 @@ const EditProductPage = ({ location }) => {
   }, [product]);
 
   useEffect(() => {
-    const id = switchValue("category");
-    loadSubcategories(id);
-
-    if (values) {
-      const defaultData = values.description;
-      setDefaultValue(defaultData);
-    }
-
     if (
       variations.instances.length &&
       !showVariations &&
@@ -140,6 +131,16 @@ const EditProductPage = ({ location }) => {
       setSelectedVariationsData(getInitialVariationsData());
     }
   }, [values, variationsData, variations]);
+
+  useEffect(() => {
+    const id = switchValue("category");
+    loadSubcategories(id);
+
+    if (values) {
+      const defaultData = values.description;
+      setDefaultValue(defaultData);
+    }
+  }, [values]);
 
   const getInitialVariationsData = () => {
     const keys = getObjectKeysSet(variations.instances);
@@ -173,7 +174,7 @@ const EditProductPage = ({ location }) => {
   };
 
   const handleInputChange = (e) => {
-    setErrors(initialErrorsState);
+    setErrors(INITIAL_ERROR_STATE);
     const { name, value } = e.target;
     const { error } = productSchemas[name].validate(value);
     if (error) setErrors({ ...errors, [name]: error.message });
@@ -288,7 +289,7 @@ const EditProductPage = ({ location }) => {
 
   const handleConfirm = () => {
     setShowDialog(false);
-    setVariations(initialVariationsState);
+    setVariations(INITIAL_VARIATIONS_STATE);
     setShowVariations(false);
     setSelectedVariationsData([]);
   };
@@ -490,29 +491,3 @@ const EditProductPage = ({ location }) => {
 };
 
 export default EditProductPage;
-
-// const obj = {
-//   category: {
-//     _id: {
-//       $oid: "60b820a07468c922cf38beb7",
-//     },
-//     name: "Books",
-//     slug: "Books",
-//     createdAt: {
-//       $date: "2021-06-03T00:21:52.278Z",
-//     },
-//     updatedAt: {
-//       $date: "2021-06-08T07:05:06.449Z",
-//     },
-//     __v: 0,
-//   },
-// };
-
-// const obj = {
-//   _id: "60b820a07468c922cf38beb7",
-//   name: "Books",
-//   slug: "Books",
-//   createdAt: "2021-06-03T00:21:52.278Z",
-//   updatedAt: "2021-06-08T07:05:06.449Z",
-//   __v: 0,
-// };
