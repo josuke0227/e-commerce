@@ -1,7 +1,5 @@
-import { useState, useEffect } from "react";
 import VariationsForm from "./VariationsForm";
 import VariationsTable from "./shared/VariationsTable";
-import { getVariations } from "../services/variationServices";
 
 const ControlPanel = ({
   variations,
@@ -14,21 +12,6 @@ const ControlPanel = ({
   errors,
   variationsData,
 }) => {
-  // const [variationsData, setVariationsData] = useState([]);
-
-  // useEffect(() => {
-  //   fetchVariations();
-  // }, []);
-
-  // const fetchVariations = async () => {
-  //   try {
-  //     const { data } = await getVariations();
-  //     setVariationsData(data);
-  //   } catch (error) {
-  //     console.log("fetching variations error", error);
-  //   }
-  // };
-
   const handleEditClick = (index) => {
     const current = { ...variations };
     const target = current.instances[index];
