@@ -3,7 +3,11 @@ import React, { useState, useEffect } from "react";
 import { getCategories } from "../services/categoryServices";
 import { pickByParentId } from "../services/subCategoryServices";
 import ImageSelector from "../components/ImageSelector";
-import { createProduct, uploadImage } from "../services/productServices";
+import {
+  createProduct,
+  getImages,
+  uploadImage,
+} from "../services/productServices";
 import {
   TextField,
   MenuItem,
@@ -118,8 +122,19 @@ const EditProductPage = ({ location }) => {
 
       setValues(initialProduct);
       setVariations({ ...variations, instances: initialVariations });
+      fetchImages(product._id);
     }
   }, [product]);
+
+  const fetchImages = async (id) => {
+    try {
+      const { data } = await getImages(id, user);
+      setImages(data);
+      console.log(data);
+    } catch (error) {
+      console.log("fetching variations error", error);
+    }
+  };
 
   useEffect(() => {
     if (
@@ -344,7 +359,7 @@ const EditProductPage = ({ location }) => {
           <Grid item xs={12} md={6}>
             <ImageSelector
               images={images}
-              setValues={setImages}
+              setImages={setImages}
               setLoading={setLoading}
               error={errors.images}
             />

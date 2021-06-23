@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-import { Avatar, Badge, Grid, Typography } from "@material-ui/core";
+import { Avatar, Badge, Grid, SvgIcon, Typography } from "@material-ui/core";
 import ImagePreviewer from "./ImagePreviewer";
 import { isEmptyObject } from "../util/isEmptyObject";
+import { isArray } from "../util/isArray";
+import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -29,19 +31,38 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ImageSelector = ({ images, setValues, error }) => {
+const ImageSelector = ({ images, setImages, error }) => {
   const classes = useStyles();
   const [selectedImageUrl, setSelectedImageUrl] = useState("");
+  const [fileInputKey, setFileInputKey] = useState("");
   const [open, setOpen] = useState(false);
+  const [initialImages, setInitialImages] = useState([]);
 
-  const handleImageRemove = (fileName) => {
+  useEffect(() => {
+    if (isArray(images)) setInitialImages(images);
+  }, [images]);
+
+  const handleFileObjectRemove = (image) => {
+    filterObject(image);
+  };
+
+  const handleInitialImageRemove = (image) => {
+    filterArray(image);
+  };
+
+  const filterArray = (image) => {
+    const updatedImages = initialImages.filter((i) => i._id !== image._id);
+    setInitialImages(updatedImages);
+  };
+
+  const filterObject = (image) => {
     const currentImages = { ...images };
     Object.keys(currentImages).forEach((key) => {
-      if (currentImages[key].name === fileName) {
+      if (currentImages[key].name === image) {
         delete currentImages[key];
       }
     });
-    setValues(currentImages);
+    setImages(currentImages);
   };
 
   const handleImageClick = (imageUrl, e) => {
@@ -69,6 +90,12 @@ const ImageSelector = ({ images, setValues, error }) => {
     return megaByte.toFixed(2) + "MB";
   };
 
+  const handleButtonClick = () => {
+    let randomString = Math.random().toString(36);
+
+    setFileInputKey(randomString);
+  };
+
   return (
     <Grid container className={classes.container}>
       <ImagePreviewer
@@ -84,7 +111,26 @@ const ImageSelector = ({ images, setValues, error }) => {
         }
       />
       <Grid item xs={12}>
+        {initialImages.length > 0 &&
+          initialImages.map((i) => (
+            <Badge
+              key={i._id}
+              badgeContent={"x"}
+              color="secondary"
+              onClick={() => handleInitialImageRemove(i)}
+              className={classes.avatarWrapper}
+            >
+              <Avatar
+                className={classes.avatarImage}
+                variant="square"
+                src={i.url}
+                onClick={(e) => handleImageClick(i.url, e)}
+              />
+            </Badge>
+          ))}
+        <AddCircleOutlineIcon color="disabled" />
         {!isEmptyObject(images) &&
+          !isArray(images) &&
           Object.keys(images).map((key, index) => {
             const file = images[key];
             const imageUrl = URL.createObjectURL(file);
@@ -94,7 +140,7 @@ const ImageSelector = ({ images, setValues, error }) => {
                 badgeContent={"x"}
                 color="secondary"
                 onClick={() => {
-                  handleImageRemove(file.name);
+                  handleFileObjectRemove(file.name);
                 }}
                 className={classes.avatarWrapper}
               >
@@ -110,7 +156,9 @@ const ImageSelector = ({ images, setValues, error }) => {
               </Badge>
             );
           })}
-        {renderedTotalFileSize()}
+      </Grid>
+      <Grid item xs={12}>
+        {!isEmptyObject(images) && !isArray(images) && renderedTotalFileSize()}
       </Grid>
       <Grid item xs={12} className={classes.buttonContainer}>
         <input
@@ -119,10 +167,16 @@ const ImageSelector = ({ images, setValues, error }) => {
           id="contained-button-file"
           multiple
           type="file"
-          onChange={(e) => setValues(e.target.files)}
+          onChange={(e) => setImages(e.target.files)}
+          key={fileInputKey || ""}
         />
         <label htmlFor="contained-button-file">
-          <Button variant="outlined" color="primary" component="span">
+          <Button
+            variant="outlined"
+            color="primary"
+            component="span"
+            onClick={handleButtonClick}
+          >
             Choose Image(s)
           </Button>
         </label>
