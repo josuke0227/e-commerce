@@ -1,7 +1,5 @@
 import Layout from "../components/Layout";
 import React, { useState, useEffect } from "react";
-import { getCategories } from "../services/categoryServices";
-import { pickByParentId } from "../services/subCategoryServices";
 import ImageSelector from "../components/ImageSelector";
 import {
   getImages,
@@ -32,6 +30,8 @@ import ConfirmDialog from "../components/shared/ConfirmDialog";
 import { getObjectKeysSet } from "../util/getObjectKeysSet";
 import { getVariations } from "../services/variationServices";
 import { isArray } from "../util/isArray";
+import CategorySelector from "../components/CategorySelector";
+import SubCategorySelector from "../components/SubCategorySelector";
 
 const useStyles = makeStyles((theme) => ({
   formParts: {
@@ -92,9 +92,9 @@ const EditProductPage = ({ location }) => {
   const [showVariations, setShowVariations] = useState(false);
   const [defaultDescriptionValue, setDefaultDescriptionValue] = useState("");
   const [description, setDescription] = useState("");
-  const [categories, setCategories] = useState([]);
+  const [category, setCategory] = useState("");
+  const [subCategory, setSubCategory] = useState("");
   const [selectedVariationsData, setSelectedVariationsData] = useState([]);
-  const [subCategories, setSubCategories] = useState([]);
   const [variationsData, setVariationsData] = useState([]);
   const [errors, setErrors] = useState(INITIAL_ERROR_STATE);
   const [showVariationDialog, setShowVariationDialog] =
@@ -110,7 +110,6 @@ const EditProductPage = ({ location }) => {
 
   useEffect(() => {
     fetchVariationsData();
-    loadCategories();
   }, []);
 
   const fetchVariationsData = async () => {
@@ -119,15 +118,6 @@ const EditProductPage = ({ location }) => {
       setVariationsData(data);
     } catch (error) {
       console.log("fetching variations error", error);
-    }
-  };
-
-  const loadCategories = async () => {
-    try {
-      const { data } = await getCategories();
-      setCategories(data);
-    } catch (error) {
-      console.log("category fetching error", error);
     }
   };
 
@@ -157,8 +147,6 @@ const EditProductPage = ({ location }) => {
   useEffect(() => {
     if (values === null) return;
 
-    loadSubcategories(switchValue("category"));
-
     const defaultData = values.description;
     setDefaultDescriptionValue(defaultData);
 
@@ -171,15 +159,6 @@ const EditProductPage = ({ location }) => {
       setSelectedVariationsData(getInitialVariationsData());
     }
   }, [values, variationsData, variations]);
-
-  const loadSubcategories = async (id) => {
-    try {
-      const { data } = await pickByParentId(id);
-      setSubCategories(data);
-    } catch (error) {
-      console.log("category fetching error", error);
-    }
-  };
 
   const getInitialVariationsData = () => {
     const keys = getObjectKeysSet(variations.instances);
@@ -237,8 +216,9 @@ const EditProductPage = ({ location }) => {
 
     const submittingData = {
       ...values,
-      category: switchValue("category"),
-      subCategory: switchValue("subCategory"),
+      // Let Joi validator know if categories are empty or not.
+      category: category ? category._id : "",
+      subCategory: subCategory ? subCategory._id : "",
       description: description || values.description,
       variations: instances,
     };
@@ -270,9 +250,6 @@ const EditProductPage = ({ location }) => {
   };
 
   const doSubmit = async () => {
-    console.log(`values`, values);
-    console.log(`finalizedData`, finalizedData);
-    console.log(`images`, images);
     try {
       const { data } = await updateProduct(finalizedData, user);
       // images = empty object means no images is chosen.
@@ -337,25 +314,10 @@ const EditProductPage = ({ location }) => {
     setShowVariationDialog({ ...showVariationDialog, show: false });
   };
 
-  const toggleSubCategoryFormStatus = () => {
-    if (!subCategories.length) {
-      return { label: "No sub category registered.", disable: true };
-    }
-
-    return { label: "Sub category", disable: false };
-  };
-
   const toggleStatus = (path) => {
     if (errors[path]) return { error: true, helperText: errors[path] };
 
     return { error: false, helperText: "" };
-  };
-
-  const switchValue = (path) => {
-    if (values === null) return;
-
-    if (typeof values[path] === "object") return values[path]._id;
-    return values[path];
   };
 
   if (values === null) return <div className="">loading...</div>;
@@ -436,46 +398,19 @@ const EditProductPage = ({ location }) => {
               selectedVariationsData={selectedVariationsData}
               variationsData={variationsData}
             />
-            <TextField
-              className={classes.formParts}
-              error={toggleStatus("category").error}
-              helperText={toggleStatus("category").helperText}
-              id="category"
-              name="category"
-              label="Category"
-              onChange={handleInputChange}
-              value={switchValue("category")}
-              variant="outlined"
-              fullWidth
-              select
-            >
-              {categories.map((c) => (
-                <MenuItem key={c._id} value={c._id} name={c.name}>
-                  {c.name}
-                </MenuItem>
-              ))}
-            </TextField>
+            <CategorySelector
+              errors={errors}
+              setCategory={setCategory}
+              defaultValue={values.category}
+            />
             {!!values.category && (
-              <TextField
-                className={classes.formParts}
-                disabled={toggleSubCategoryFormStatus().disable}
-                error={toggleStatus().error}
-                helperText={toggleStatus().helperText}
-                id="subCategory"
-                name="subCategory"
-                label={toggleSubCategoryFormStatus().label}
-                onChange={handleInputChange}
-                value={switchValue("subCategory")}
-                variant="outlined"
-                fullWidth
-                select
-              >
-                {subCategories.map((c) => (
-                  <MenuItem key={c._id} value={c._id} name={c.name}>
-                    {c.name}
-                  </MenuItem>
-                ))}
-              </TextField>
+              <SubCategorySelector
+                errors={errors}
+                setSubCategory={setSubCategory}
+                parent={values.category}
+                defaultValue={values.subCategory}
+                category={category}
+              />
             )}
             <TextField
               className={classes.formParts}
