@@ -20,6 +20,15 @@ export const uploadImage = async (url, productId, user) =>
     },
   });
 
+export const deleteImage = async (public_id, user) =>
+  await axios({
+    method: "delete",
+    url: `${process.env.REACT_APP_API}/images/${public_id}`,
+    headers: {
+      "x-auth-token": user ? user.token : "",
+    },
+  });
+
 export const getImages = async (productId, user) =>
   await axios({
     method: "get",
@@ -37,24 +46,28 @@ export const getProducts = async (sort, order, page) =>
   });
 
 export const getProductsByCount = async (count, user, slug) =>
-  await axios.get(`${process.env.REACT_APP_API}/product/${slug}`, {
+  await axios.get(`${process.env.REACT_APP_API}/products/${slug}`, {
     headers: {
       "x-auth-token": user.token,
     },
   });
 
 export const getProduct = async (slug) =>
-  await axios.get(`${process.env.REACT_APP_API}/product/${slug}`);
+  await axios.get(`${process.env.REACT_APP_API}/products/${slug}`);
 
 export const getCount = async () =>
   await axios.get(`${process.env.REACT_APP_API}/products/total`);
 
-export const update = async (slug, product, user) =>
-  await axios.put(`${process.env.REACT_APP_API}/product/${slug}`, product, {
-    headers: {
-      "x-auth-token": user.token,
-    },
-  });
+export const updateProduct = async (product, user) =>
+  await axios.put(
+    `${process.env.REACT_APP_API}/products/${product.slug}`,
+    product,
+    {
+      headers: {
+        "x-auth-token": user.token,
+      },
+    }
+  );
 
 export const deleteProduct = async (product, user) => {
   const { _id, slug } = product;

@@ -13,11 +13,14 @@ import { useDispatch } from "react-redux";
 
 const useStyles = makeStyles({});
 
+const INITIAL_RESULT_STATE = { success: null, message: "" };
+
 const ProductsPage = ({ location }) => {
   const [products, setProducts] = useState([]);
   const [product, setProduct] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(INITIAL_RESULT_STATE);
 
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -42,17 +45,18 @@ const ProductsPage = ({ location }) => {
 
   const handleDeleteButtonClick = (product) => {
     setProduct(product);
-    setShowDialog(true);
+    setShowDialog({ message: "Are you sure to delete product?", show: true });
   };
 
   const handleCancel = () => {
-    setShowDialog(false);
+    setShowDialog({ ...showDialog, show: false });
+    setResult(INITIAL_RESULT_STATE);
   };
 
   const handleConfirm = () => {
     setLoading(true);
     doProductDelete(product);
-    setShowDialog(false);
+    result.success && setShowDialog({ ...showDialog, show: false });
   };
 
   const doProductDelete = async (product) => {
@@ -62,24 +66,24 @@ const ProductsPage = ({ location }) => {
       for (let i = 0; i < current.length; i++) {
         if (isEqual(product, current[i])) current.splice(i, 1);
       }
+      setResult({ success: true, message: "" });
       setLoading(false);
       return setProducts(current);
     } catch (error) {
+      setResult({ success: false, message: "Failed to delete product." });
       setLoading(false);
       return console.log("product delete error", error);
     }
   };
 
-  const message = "Are you sure to delete product?";
-
   return (
     <Layout location={location}>
       <ConfirmDialog
-        message={message}
         handleCancel={handleCancel}
         handleConfirm={handleConfirm}
         showDialog={showDialog}
         loading={loading}
+        result={result}
       />
       {products.map((p) => (
         <ProductCardForEditing

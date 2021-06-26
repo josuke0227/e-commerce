@@ -41,11 +41,12 @@ const ProductCardForEditing = ({
   const [images, setImages] = useState([]);
 
   useEffect(() => {
+    if (!user) return;
     loadImages();
   }, [user]);
 
   const loadImages = async () => {
-    if (user === null) return;
+    console.log(user);
     const { data } = await getImages(product._id, user);
     setImages(data);
   };

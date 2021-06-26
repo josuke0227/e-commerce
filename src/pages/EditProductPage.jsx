@@ -4,9 +4,9 @@ import { getCategories } from "../services/categoryServices";
 import { pickByParentId } from "../services/subCategoryServices";
 import ImageSelector from "../components/ImageSelector";
 import {
-  createProduct,
   getImages,
   uploadImage,
+  updateProduct,
 } from "../services/productServices";
 import {
   TextField,
@@ -26,13 +26,12 @@ import {
 import { imageSchema } from "../schemas/imagesSchema";
 import RichTextField from "../components/shared/RichTextField";
 import { isEmptyObject } from "../util/isEmptyObject";
-import ModalWithLoader from "../components/ModalWithLoader";
 import VariationField from "../components/VariationField";
 import { isEqual } from "../util/isEqual";
 import ConfirmDialog from "../components/shared/ConfirmDialog";
-import { deleteProduct } from "../services/productServices";
 import { getObjectKeysSet } from "../util/getObjectKeysSet";
 import { getVariations } from "../services/variationServices";
+import { isArray } from "../util/isArray";
 
 const useStyles = makeStyles((theme) => ({
   formParts: {
@@ -77,33 +76,44 @@ const INITIAL_VARIATIONS_STATE = {
   instances: [],
 };
 
+const INITIAL_DIALOG_STATE = {
+  show: false,
+  message: "",
+};
+
+const INITIAL_RESULT_STATE = { success: null, message: "" };
+
 const EditProductPage = ({ location }) => {
   const classes = useStyles();
   const { user, product } = useSelector((state) => ({ ...state }));
 
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [showDialog, setShowDialog] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
   const [showVariations, setShowVariations] = useState(false);
-  const [success, setSuccess] = useState(null);
-  const [defaultValue, setDefaultValue] = useState("");
+  const [defaultDescriptionValue, setDefaultDescriptionValue] = useState("");
   const [description, setDescription] = useState("");
-  const [submittingError, setSubmittingError] = useState("");
   const [categories, setCategories] = useState([]);
   const [selectedVariationsData, setSelectedVariationsData] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const [variationsData, setVariationsData] = useState([]);
   const [errors, setErrors] = useState(INITIAL_ERROR_STATE);
+  const [showVariationDialog, setShowVariationDialog] =
+    useState(INITIAL_DIALOG_STATE);
   const [images, setImages] = useState({});
   const [values, setValues] = useState(null);
   const [variations, setVariations] = useState(INITIAL_VARIATIONS_STATE);
+  const [result, setResult] = useState(INITIAL_RESULT_STATE);
+  const [showSubmissionDialog, setShowSubmissionDialog] = useState(
+    INITIAL_VARIATIONS_STATE
+  );
+  const [finalizedData, setFinalizedData] = useState(null);
 
   useEffect(() => {
-    fetchVariations();
+    fetchVariationsData();
+    loadCategories();
   }, []);
 
-  const fetchVariations = async () => {
+  const fetchVariationsData = async () => {
     try {
       const { data } = await getVariations();
       setVariationsData(data);
@@ -112,31 +122,46 @@ const EditProductPage = ({ location }) => {
     }
   };
 
-  useEffect(() => {
-    loadCategories();
-
-    if (product) {
-      const initialProduct = { ...product };
-      const initialVariations = [...product.variations];
-      delete initialProduct.variations;
-
-      setValues(initialProduct);
-      setVariations({ ...variations, instances: initialVariations });
-      fetchImages(product._id);
+  const loadCategories = async () => {
+    try {
+      const { data } = await getCategories();
+      setCategories(data);
+    } catch (error) {
+      console.log("category fetching error", error);
     }
+  };
+
+  useEffect(() => {
+    if (product === null) return;
+
+    const initialProduct = { ...product };
+    fetchImages(product._id);
+
+    const initialVariations = [...product.variations];
+    setVariations({ ...variations, instances: initialVariations });
+
+    delete initialProduct.variations;
+
+    setValues(initialProduct);
   }, [product]);
 
   const fetchImages = async (id) => {
     try {
       const { data } = await getImages(id, user);
       setImages(data);
-      console.log(data);
     } catch (error) {
       console.log("fetching variations error", error);
     }
   };
 
   useEffect(() => {
+    if (values === null) return;
+
+    loadSubcategories(switchValue("category"));
+
+    const defaultData = values.description;
+    setDefaultDescriptionValue(defaultData);
+
     if (
       variations.instances.length &&
       !showVariations &&
@@ -147,15 +172,14 @@ const EditProductPage = ({ location }) => {
     }
   }, [values, variationsData, variations]);
 
-  useEffect(() => {
-    const id = switchValue("category");
-    loadSubcategories(id);
-
-    if (values) {
-      const defaultData = values.description;
-      setDefaultValue(defaultData);
+  const loadSubcategories = async (id) => {
+    try {
+      const { data } = await pickByParentId(id);
+      setSubCategories(data);
+    } catch (error) {
+      console.log("category fetching error", error);
     }
-  }, [values]);
+  };
 
   const getInitialVariationsData = () => {
     const keys = getObjectKeysSet(variations.instances);
@@ -168,24 +192,6 @@ const EditProductPage = ({ location }) => {
       })
     );
     return initialVariationsData;
-  };
-
-  const loadCategories = async () => {
-    try {
-      const { data } = await getCategories();
-      setCategories(data);
-    } catch (error) {
-      console.log("category fetching error", error);
-    }
-  };
-
-  const loadSubcategories = async (id) => {
-    try {
-      const { data } = await pickByParentId(id);
-      setSubCategories(data);
-    } catch (error) {
-      console.log("category fetching error", error);
-    }
   };
 
   const handleInputChange = (e) => {
@@ -221,27 +227,25 @@ const EditProductPage = ({ location }) => {
     setVariations(currentVariations);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
-    setOpen(true);
-
     const { instances } = variations;
-
     if (instances.length) {
-      const result = variationSchema.validate(instances);
+      const { error } = variationSchema.validate(instances);
+      if (error) return setErrors({ ...errors, variations: error.message });
     }
 
     const submittingData = {
       ...values,
-      description,
+      category: switchValue("category"),
+      subCategory: switchValue("subCategory"),
+      description: description || values.description,
       variations: instances,
     };
 
     const result = productSchema.validate(submittingData, {
       abortEarly: false,
     });
-
     if (result.error) {
       let updatedError = { ...errors };
       result.error.details.forEach((e) => {
@@ -251,41 +255,58 @@ const EditProductPage = ({ location }) => {
       return setErrors(updatedError);
     }
 
-    try {
-      const { data } = await createProduct(submittingData, user);
+    setFinalizedData(submittingData);
+    setShowSubmissionDialog({ show: true, message: "Are you sure to submit?" });
+  };
 
-      if (isEmptyObject(images)) {
-        setSuccess(true);
-        setLoading(false);
-        return;
+  const handleSubmissionConfirm = () => {
+    doSubmit();
+    setLoading(true);
+  };
+
+  const handleSubmissionCancel = () => {
+    setShowSubmissionDialog({ message: "", show: false });
+    setResult({ message: "", success: null });
+  };
+
+  const doSubmit = async () => {
+    console.log(`values`, values);
+    console.log(`finalizedData`, finalizedData);
+    console.log(`images`, images);
+    try {
+      const { data } = await updateProduct(finalizedData, user);
+      // images = empty object means no images is chosen.
+      // images = array no additional images are chosen.
+      if (isEmptyObject(images) || isArray(images)) {
+        return endWithSuccess();
       }
       const productId = data._id;
       [...images].forEach(async (i) => {
         try {
           await handleImageSubmit(i, productId);
-          setValues(initialState);
+          setValues(data);
           setDescription("");
           setImages({});
-          setSuccess(true);
-          setLoading(false);
+          endWithSuccess();
         } catch (error) {
-          try {
-            await deleteProduct(data, user);
-          } catch (error) {
-            endWithFailure(error);
-          }
-          endWithFailure(error);
+          console.log(error);
+          return endWithFailure(error);
         }
       });
     } catch (error) {
+      console.log(error);
       endWithFailure(error);
     }
   };
 
-  const endWithFailure = (error) => {
-    setSuccess(false);
+  const endWithSuccess = () => {
+    setResult({ ...result, success: true });
     setLoading(false);
-    setSubmittingError(error.message || "Product creation failed.");
+  };
+
+  const endWithFailure = (error) => {
+    setResult({ message: error.message, success: false });
+    setLoading(false);
   };
 
   const handleImageSubmit = async (image, productId) => {
@@ -296,22 +317,24 @@ const EditProductPage = ({ location }) => {
   };
 
   const handleCheckboxClick = () => {
-    setShowVariations(!showVariations);
+    setShowVariations(true);
     if (showVariations && variations.instances.length) {
-      setShowDialog(true);
+      setShowVariationDialog({
+        show: true,
+        message: "All changes are lost. Are you sure to disable variations?",
+      });
     }
   };
 
   const handleConfirm = () => {
-    setShowDialog(false);
+    setShowVariationDialog({ ...showVariationDialog, show: false });
     setVariations(INITIAL_VARIATIONS_STATE);
     setShowVariations(false);
     setSelectedVariationsData([]);
   };
 
   const handleCancel = () => {
-    setShowDialog(false);
-    setShowVariations(false);
+    setShowVariationDialog({ ...showVariationDialog, show: false });
   };
 
   const toggleSubCategoryFormStatus = () => {
@@ -330,29 +353,27 @@ const EditProductPage = ({ location }) => {
 
   const switchValue = (path) => {
     if (values === null) return;
+
     if (typeof values[path] === "object") return values[path]._id;
     return values[path];
   };
-
-  const dialogMessage =
-    "All changes are lost. Are you sure to disable variations?";
 
   if (values === null) return <div className="">loading...</div>;
 
   return (
     <Layout location={location}>
-      <ModalWithLoader
-        loading={loading}
-        success={success}
-        open={open}
-        setOpen={setOpen}
-        submittingError={submittingError}
-      />
       <ConfirmDialog
         handleConfirm={handleConfirm}
         handleCancel={handleCancel}
-        showDialog={showDialog}
-        message={dialogMessage}
+        showDialog={showVariationDialog}
+        result={result}
+        loading={loading}
+      />
+      <ConfirmDialog
+        handleConfirm={handleSubmissionConfirm}
+        handleCancel={handleSubmissionCancel}
+        showDialog={showSubmissionDialog}
+        result={result}
       />
       <Container component="form" onSubmit={handleSubmit}>
         <Grid container spacing={2}>
@@ -360,8 +381,8 @@ const EditProductPage = ({ location }) => {
             <ImageSelector
               images={images}
               setImages={setImages}
-              setLoading={setLoading}
-              error={errors.images}
+              errors={errors.images}
+              user={user}
             />
             <TextField
               className={classes.formParts}
@@ -483,17 +504,19 @@ const EditProductPage = ({ location }) => {
 
             {showEditor ? (
               <RichTextField
-                success={success}
+                success={result.success}
                 setValue={setDescription}
                 characters={description}
                 count={2000}
                 loading={loading}
                 label="Description"
                 error={errors.description}
-                defaultValue={defaultValue}
+                defaultValue={defaultDescriptionValue}
               />
             ) : (
-              <div dangerouslySetInnerHTML={{ __html: defaultValue }} />
+              <div
+                dangerouslySetInnerHTML={{ __html: defaultDescriptionValue }}
+              />
             )}
             <Button fullWidth variant="contained" type="submit" color="primary">
               Submit

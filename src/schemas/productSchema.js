@@ -42,9 +42,15 @@ export const productSchemas = {
   subCategory: subCategorySchema,
   brand: brandSchema,
   description: descriptionSchema,
+  // product signature changes in creating and editing
+  sold: Joi.number(),
+  _id: Joi.ObjectId(),
+  slug: Joi.string(),
+  ratings: Joi.array(),
+  __v: Joi.number(),
 };
 
-export const productSchema = Joi.object({ ...productSchemas });
+export const productSchema = Joi.object().keys({ ...productSchemas });
 
 export {
   titleSchema,

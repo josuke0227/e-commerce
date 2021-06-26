@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-import { Avatar, Badge, Grid, SvgIcon, Typography } from "@material-ui/core";
+import { Avatar, Badge, Grid, Typography } from "@material-ui/core";
 import ImagePreviewer from "./ImagePreviewer";
 import { isEmptyObject } from "../util/isEmptyObject";
 import { isArray } from "../util/isArray";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
+import { deleteImage } from "../services/productServices";
+import ConfirmDialog from "./shared/ConfirmDialog";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -31,12 +33,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ImageSelector = ({ images, setImages, error }) => {
+const ImageSelector = ({ images, setImages, errors, user }) => {
   const classes = useStyles();
   const [selectedImageUrl, setSelectedImageUrl] = useState("");
   const [fileInputKey, setFileInputKey] = useState("");
   const [open, setOpen] = useState(false);
   const [initialImages, setInitialImages] = useState([]);
+  const [image, setImage] = useState(null);
+
+  // ConfirmDialog dependencies
+  const INITIAL_RESULT_STATE = { success: null, message: "" };
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(INITIAL_RESULT_STATE);
+  const [showDialog, setShowDialog] = useState(false);
 
   useEffect(() => {
     if (isArray(images)) setInitialImages(images);
@@ -46,8 +55,28 @@ const ImageSelector = ({ images, setImages, error }) => {
     filterObject(image);
   };
 
-  const handleInitialImageRemove = (image) => {
-    filterArray(image);
+  const handleInitialImageRemove = async (image) => {
+    setImage(image);
+    setShowDialog({ show: true, message: "Are you sure to remove image?" });
+  };
+
+  const handleConfirm = async () => {
+    setLoading(true);
+    try {
+      await deleteImage(image.public_id, user);
+      filterArray(image);
+      setResult({ ...result, success: true });
+    } catch (error) {
+      const message = "Image delete failed.";
+      setResult({ message, success: false });
+    }
+    setLoading(false);
+    setShowDialog({ ...showDialog, show: false });
+  };
+
+  const handleCancel = () => {
+    setShowDialog({ ...showDialog, show: false });
+    setResult(INITIAL_RESULT_STATE);
   };
 
   const filterArray = (image) => {
@@ -97,92 +126,105 @@ const ImageSelector = ({ images, setImages, error }) => {
   };
 
   return (
-    <Grid container className={classes.container}>
-      <ImagePreviewer
-        open={open}
-        setOpen={setOpen}
-        content={
-          <img
-            src={selectedImageUrl}
-            width="100%"
-            onClick={() => setOpen(false)}
-            alt="small selected images."
-          />
-        }
+    <>
+      <ConfirmDialog
+        handleConfirm={handleConfirm}
+        handleCancel={handleCancel}
+        showDialog={showDialog}
+        loading={loading}
+        result={result}
       />
-      <Grid item xs={12}>
-        {initialImages.length > 0 &&
-          initialImages.map((i) => (
-            <Badge
-              key={i._id}
-              badgeContent={"x"}
-              color="secondary"
-              onClick={() => handleInitialImageRemove(i)}
-              className={classes.avatarWrapper}
-            >
-              <Avatar
-                className={classes.avatarImage}
-                variant="square"
-                src={i.url}
-                onClick={(e) => handleImageClick(i.url, e)}
-              />
-            </Badge>
-          ))}
-        <AddCircleOutlineIcon color="disabled" />
-        {!isEmptyObject(images) &&
-          !isArray(images) &&
-          Object.keys(images).map((key, index) => {
-            const file = images[key];
-            const imageUrl = URL.createObjectURL(file);
-            return (
+      <Grid container className={classes.container}>
+        <ImagePreviewer
+          open={open}
+          setOpen={setOpen}
+          content={
+            <img
+              src={selectedImageUrl}
+              width="100%"
+              onClick={() => setOpen(false)}
+              alt="small selected images."
+            />
+          }
+        />
+        <Grid item xs={12}>
+          {initialImages.length > 0 &&
+            initialImages.map((i) => (
               <Badge
-                key={index}
+                key={i._id}
                 badgeContent={"x"}
                 color="secondary"
-                onClick={() => {
-                  handleFileObjectRemove(file.name);
-                }}
+                onClick={() => handleInitialImageRemove(i)}
                 className={classes.avatarWrapper}
               >
                 <Avatar
                   className={classes.avatarImage}
                   variant="square"
-                  src={imageUrl}
-                  onClick={(e) => handleImageClick(imageUrl, e)}
+                  src={i.url}
+                  onClick={(e) => handleImageClick(i.url, e)}
                 />
-                <Typography variant="caption" display="block">
-                  {getMegaByte(file.size)}
-                </Typography>
               </Badge>
-            );
-          })}
+            ))}
+          {initialImages.length > 0 && (
+            <AddCircleOutlineIcon color="disabled" />
+          )}
+          {!isEmptyObject(images) &&
+            !isArray(images) &&
+            Object.keys(images).map((key, index) => {
+              const file = images[key];
+              const imageUrl = URL.createObjectURL(file);
+              return (
+                <Badge
+                  key={index}
+                  badgeContent={"x"}
+                  color="secondary"
+                  onClick={() => {
+                    handleFileObjectRemove(file.name);
+                  }}
+                  className={classes.avatarWrapper}
+                >
+                  <Avatar
+                    className={classes.avatarImage}
+                    variant="square"
+                    src={imageUrl}
+                    onClick={(e) => handleImageClick(imageUrl, e)}
+                  />
+                  <Typography variant="caption" display="block">
+                    {getMegaByte(file.size)}
+                  </Typography>
+                </Badge>
+              );
+            })}
+        </Grid>
+        <Grid item xs={12}>
+          {!isEmptyObject(images) &&
+            !isArray(images) &&
+            renderedTotalFileSize()}
+        </Grid>
+        <Grid item xs={12} className={classes.buttonContainer}>
+          <input
+            accept="image/*"
+            className={classes.input}
+            id="contained-button-file"
+            multiple
+            type="file"
+            onChange={(e) => setImages(e.target.files)}
+            key={fileInputKey || ""}
+          />
+          <label htmlFor="contained-button-file">
+            <Button
+              variant="outlined"
+              color="primary"
+              component="span"
+              onClick={handleButtonClick}
+            >
+              Choose Image(s)
+            </Button>
+          </label>
+        </Grid>
+        <Typography color="error">{errors}</Typography>
       </Grid>
-      <Grid item xs={12}>
-        {!isEmptyObject(images) && !isArray(images) && renderedTotalFileSize()}
-      </Grid>
-      <Grid item xs={12} className={classes.buttonContainer}>
-        <input
-          accept="image/*"
-          className={classes.input}
-          id="contained-button-file"
-          multiple
-          type="file"
-          onChange={(e) => setImages(e.target.files)}
-          key={fileInputKey || ""}
-        />
-        <label htmlFor="contained-button-file">
-          <Button
-            variant="outlined"
-            color="primary"
-            component="span"
-            onClick={handleButtonClick}
-          >
-            Choose Image(s)
-          </Button>
-        </label>
-      </Grid>
-      <Typography color="error">{error && "Invalid data."}</Typography>
-    </Grid>
+    </>
   );
 };
 
