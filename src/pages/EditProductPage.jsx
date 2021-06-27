@@ -87,6 +87,7 @@ const EditProductPage = ({ location }) => {
   const [showSubmissionDialog, setShowSubmissionDialog] = useState(
     INITIAL_VARIATIONS_STATE
   );
+  // To get the ref of submitting data when submitting dialog is confirmed.
   const [finalizedData, setFinalizedData] = useState(null);
 
   useEffect(() => {
@@ -222,7 +223,6 @@ const EditProductPage = ({ location }) => {
 
   const handleSubmissionConfirm = () => {
     doSubmit();
-    setLoading(true);
   };
 
   const handleSubmissionCancel = () => {
@@ -231,6 +231,7 @@ const EditProductPage = ({ location }) => {
   };
 
   const doSubmit = async () => {
+    setLoading(true);
     try {
       const { data } = await updateProduct(finalizedData, user);
       // images = empty object means no images is chosen.
@@ -278,8 +279,8 @@ const EditProductPage = ({ location }) => {
     setShowVariations(true);
     if (showVariations && variations.instances.length) {
       setShowVariationDialog({
-        show: true,
         message: "All changes are lost. Are you sure to disable variations?",
+        show: true,
       });
     }
   };
@@ -310,13 +311,13 @@ const EditProductPage = ({ location }) => {
         handleCancel={handleCancel}
         showDialog={showVariationDialog}
         result={result}
-        loading={loading}
       />
       <ConfirmDialog
         handleConfirm={handleSubmissionConfirm}
         handleCancel={handleSubmissionCancel}
         showDialog={showSubmissionDialog}
         result={result}
+        loading={loading}
       />
       <Container component="form" onSubmit={handleSubmit}>
         <Grid container spacing={2}>
