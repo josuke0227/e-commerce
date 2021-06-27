@@ -233,13 +233,13 @@ const CreateProductPage = ({ location }) => {
   };
 
   const handleCheckboxClick = () => {
-    setShowVariations(true);
     if (showVariations && variations.instances.length) {
-      setShowVariationDialog({
+      return setShowVariationDialog({
         message: "All changes are lost. Are you sure to disable variations?",
         show: true,
       });
     }
+    setShowVariations(!showVariations);
   };
 
   const handleConfirm = () => {
@@ -336,12 +336,14 @@ const CreateProductPage = ({ location }) => {
               variationsData={variationsData}
             />
             <CategorySelector errors={errors} setCategory={setCategory} />
-            <SubCategorySelector
-              errors={errors}
-              setSubCategory={setSubCategory}
-              parent={values.category}
-              category={category}
-            />
+            {category && (
+              <SubCategorySelector
+                errors={errors}
+                setSubCategory={setSubCategory}
+                parent={values.category}
+                category={category}
+              />
+            )}
             <TextField
               className={classes.formParts}
               error={toggleStatus("brand").error}
