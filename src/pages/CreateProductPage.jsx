@@ -22,11 +22,11 @@ import {
 import { imageSchema } from "../schemas/imagesSchema";
 import RichTextField from "../components/shared/RichTextField";
 import { isEmptyObject } from "../util/isEmptyObject";
-import ModalWithLoader from "../components/ModalWithLoader";
 import VariationField from "../components/VariationField";
 import { isEqual } from "../util/isEqual";
 import ConfirmDialog from "../components/shared/ConfirmDialog";
 import { deleteProduct } from "../services/productServices";
+import { getVariations } from "../services/variationServices";
 
 const useStyles = makeStyles((theme) => ({
   formParts: {
@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const initialState = {
+const INITIAL_STATE = {
   title: "test",
   price: 1,
   quantity: 1,
@@ -47,7 +47,7 @@ const initialState = {
   brand: "toshiba",
 };
 
-const initialErrorsState = {
+const INITIAL_ERROR_STATE = {
   images: "",
   title: "",
   price: "",
@@ -59,33 +59,54 @@ const initialErrorsState = {
   description: "",
 };
 
-const initialVariationsState = {
+const INITIAL_VARIATIONS_STATE = {
   instances: [],
 };
 
-const CreateProductPage = ({ location }) => {
-  const [values, setValues] = useState(initialState);
-  const [description, setDescription] = useState("");
-  const [errors, setErrors] = useState(initialErrorsState);
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(null);
-  const [open, setOpen] = useState(false);
-  const [submittingError, setSubmittingError] = useState("");
+const INITIAL_DIALOG_STATE = {
+  show: false,
+  message: "",
+};
 
+const INITIAL_RESULT_STATE = { success: null, message: "" };
+
+const CreateProductPage = ({ location }) => {
+  const classes = useStyles();
+  const { user } = useSelector((state) => ({ ...state }));
+
+  const [loading, setLoading] = useState(false);
+  const [showVariations, setShowVariations] = useState(false);
+  const [description, setDescription] = useState("");
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
-  const [images, setImages] = useState({});
-  const [variations, setVariations] = useState(initialVariationsState);
   const [selectedVariationsData, setSelectedVariationsData] = useState([]);
-  const [showVariations, setShowVariations] = useState(false);
-  const [showDialog, setShowDialog] = useState(false);
+  const [variationsData, setVariationsData] = useState([]);
+  const [values, setValues] = useState(INITIAL_STATE);
+  const [errors, setErrors] = useState(INITIAL_ERROR_STATE);
+  const [showVariationDialog, setShowVariationDialog] =
+    useState(INITIAL_DIALOG_STATE);
+  const [showSubmissionDialog, setShowSubmissionDialog] =
+    useState(INITIAL_DIALOG_STATE);
+  const [images, setImages] = useState({});
+  const [result, setResult] = useState(INITIAL_RESULT_STATE);
+  const [variations, setVariations] = useState(INITIAL_VARIATIONS_STATE);
 
-  const { user } = useSelector((state) => ({ ...state }));
-  const classes = useStyles();
+  // To get the ref of submitting data when submitting dialog is confirmed.
+  const [finalizedData, setFinalizedData] = useState(null);
 
   useEffect(() => {
     loadCategories();
+    fetchVariationsData();
   }, []);
+
+  const fetchVariationsData = async () => {
+    try {
+      const { data } = await getVariations();
+      setVariationsData(data);
+    } catch (error) {
+      console.log("fetching variations error", error);
+    }
+  };
 
   useEffect(() => {
     if (values.category.length) {
@@ -112,7 +133,7 @@ const CreateProductPage = ({ location }) => {
   };
 
   const handleInputChange = (e) => {
-    setErrors(initialErrorsState);
+    setErrors(INITIAL_ERROR_STATE);
     const { name, value } = e.target;
     const { error } = productSchemas[name].validate(value);
     if (error) setErrors({ ...errors, [name]: error.message });
@@ -144,15 +165,64 @@ const CreateProductPage = ({ location }) => {
     setVariations(currentVariations);
   };
 
+  const handleSubmissionConfirm = () => {
+    doSubmit();
+  };
+
+  const handleSubmissionCancel = () => {
+    setShowSubmissionDialog({ message: "", show: false });
+    setResult({ message: "", success: null });
+  };
+
+  const doSubmit = async () => {
+    setLoading(true);
+
+    try {
+      const { data } = await createProduct(finalizedData, user);
+
+      if (isEmptyObject(images)) {
+        return endWithSuccess();
+      }
+      const productId = data._id;
+      [...images].forEach(async (i) => {
+        try {
+          await handleImageSubmit(i, productId);
+          setValues(INITIAL_STATE);
+          setDescription("");
+          setImages({});
+          endWithSuccess();
+        } catch (error) {
+          try {
+            await deleteProduct(data, user);
+            endWithFailure(error);
+          } catch (error) {
+            endWithFailure(error);
+          }
+          endWithFailure(error);
+        }
+      });
+    } catch (error) {
+      endWithFailure(error);
+    }
+  };
+
+  const endWithSuccess = () => {
+    setResult({ ...result, success: true });
+    setLoading(false);
+  };
+
+  const endWithFailure = (error) => {
+    setResult({ message: error.message, success: false });
+    setLoading(false);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setOpen(true);
-
     const { instances } = variations;
 
     if (instances.length) {
-      const result = variationSchema.validate(instances);
+      const { error } = variationSchema.validate(instances);
+      if (error) return setErrors({ ...errors, variations: error.message });
     }
 
     const submittingData = {
@@ -174,41 +244,8 @@ const CreateProductPage = ({ location }) => {
       return setErrors(updatedError);
     }
 
-    try {
-      const { data } = await createProduct(submittingData, user);
-
-      if (isEmptyObject(images)) {
-        setSuccess(true);
-        setLoading(false);
-        return;
-      }
-      const productId = data._id;
-      [...images].forEach(async (i) => {
-        try {
-          await handleImageSubmit(i, productId);
-          setValues(initialState);
-          setDescription("");
-          setImages({});
-          setSuccess(true);
-          setLoading(false);
-        } catch (error) {
-          try {
-            await deleteProduct(data, user);
-          } catch (error) {
-            endWithFailure(error);
-          }
-          endWithFailure(error);
-        }
-      });
-    } catch (error) {
-      endWithFailure(error);
-    }
-  };
-
-  const endWithFailure = (error) => {
-    setSuccess(false);
-    setLoading(false);
-    setSubmittingError(error.message || "Product creation failed.");
+    setFinalizedData(submittingData);
+    setShowSubmissionDialog({ show: true, message: "Are you sure to submit?" });
   };
 
   const handleImageSubmit = async (image, productId) => {
@@ -219,22 +256,24 @@ const CreateProductPage = ({ location }) => {
   };
 
   const handleCheckboxClick = () => {
-    setShowVariations(!showVariations);
+    setShowVariations(true);
     if (showVariations && variations.instances.length) {
-      setShowDialog(true);
+      setShowVariationDialog({
+        message: "All changes are lost. Are you sure to disable variations?",
+        show: true,
+      });
     }
   };
 
   const handleConfirm = () => {
-    setShowDialog(false);
-    setVariations(initialVariationsState);
+    setShowVariationDialog({ ...showVariationDialog, show: false });
+    setVariations(INITIAL_VARIATIONS_STATE);
     setShowVariations(false);
     setSelectedVariationsData([]);
   };
 
   const handleCancel = () => {
-    setShowDialog(false);
-    setShowVariations(false);
+    setShowVariationDialog({ ...showVariationDialog, show: false });
   };
 
   const toggleSubCategoryFormStatus = () => {
@@ -251,23 +290,20 @@ const CreateProductPage = ({ location }) => {
     return { error: false, helperText: "" };
   };
 
-  const dialogMessage =
-    "All changes are lost. Are you sure to disable variations?";
-
   return (
     <Layout location={location}>
-      <ModalWithLoader
-        loading={loading}
-        success={success}
-        open={open}
-        setOpen={setOpen}
-        submittingError={submittingError}
-      />
       <ConfirmDialog
         handleConfirm={handleConfirm}
         handleCancel={handleCancel}
-        showDialog={showDialog}
-        message={dialogMessage}
+        showDialog={showVariationDialog}
+        result={result}
+      />
+      <ConfirmDialog
+        handleConfirm={handleSubmissionConfirm}
+        handleCancel={handleSubmissionCancel}
+        showDialog={showSubmissionDialog}
+        result={result}
+        loading={loading}
       />
       <Container component="form" onSubmit={handleSubmit}>
         <Grid container spacing={2}>
@@ -328,6 +364,7 @@ const CreateProductPage = ({ location }) => {
               handleVariationSelect={handleVariationSelect}
               handleVariationDeSelect={handleVariationDeSelect}
               selectedVariationsData={selectedVariationsData}
+              variationsData={variationsData}
             />
             <TextField
               className={classes.formParts}
@@ -386,7 +423,7 @@ const CreateProductPage = ({ location }) => {
           </Grid>
           <Grid item xs={12} md={6}>
             <RichTextField
-              success={success}
+              success={result.success}
               setValue={setDescription}
               characters={description}
               count={2000}
