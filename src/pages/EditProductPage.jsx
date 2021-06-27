@@ -385,15 +385,13 @@ const EditProductPage = ({ location }) => {
               setCategory={setCategory}
               defaultValue={values.category}
             />
-            {!!values.category && (
-              <SubCategorySelector
-                errors={errors}
-                setSubCategory={setSubCategory}
-                parent={values.category}
-                defaultValue={values.subCategory}
-                category={category}
-              />
-            )}
+            <SubCategorySelector
+              errors={errors}
+              setSubCategory={setSubCategory}
+              parent={values.category}
+              defaultValue={values.subCategory}
+              category={category}
+            />
             <TextField
               className={classes.formParts}
               error={toggleStatus("brand").error}

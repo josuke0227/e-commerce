@@ -48,7 +48,7 @@ const CategoryListItem = ({
   };
 
   const handleDeleteButtonClick = () => {
-    setShowDialog(true);
+    setShowDialog({ show: true, message: "Are you sure to remove category?" });
     setSelectedCategory(category);
   };
 

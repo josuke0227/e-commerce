@@ -40,15 +40,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const INITIAL_DIALOG_STATE = {
+  show: false,
+  message: "",
+};
+
+const INITIAL_RESULT_STATE = { success: null, message: "" };
+
 const CategoryPage = ({ location }) => {
   const classes = useStyles();
   const { user } = useSelector((state) => state);
 
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(false);
   const [listItemLoading, setListItemLoading] = useState({});
-  const [showDialog, setShowDialog] = useState(false);
+  const [showDialog, setShowDialog] = useState(INITIAL_DIALOG_STATE);
+  const [result, setResult] = useState(INITIAL_RESULT_STATE);
   const [showSnackBar, setShowSnackBar] = useState({
     show: false,
     severity: "",
@@ -57,12 +66,12 @@ const CategoryPage = ({ location }) => {
   const [categories, listLoading, setCategories] = useCategory();
 
   const doCategoryCreate = async (categoryName) => {
-    setLoading(true);
+    setSubmitting(true);
     try {
       const { data } = await createCategory(categoryName, user);
       const updatedCategory = [...categories, data];
       setCategories(updatedCategory);
-      setLoading(false);
+      setSubmitting(false);
       setShowSnackBar({
         editing: false,
         show: true,
@@ -76,7 +85,7 @@ const CategoryPage = ({ location }) => {
         severity: "error",
         message: error.response.data,
       });
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
@@ -108,44 +117,31 @@ const CategoryPage = ({ location }) => {
   };
 
   const doCategoryDelete = async (category) => {
-    setListItemLoading({ [category.slug]: true });
+    setLoading(true);
+
     try {
       const { data } = await deleteCategory(category, user);
       const updatedCategory = categories.filter((c) => c.slug !== data.slug);
       setCategories(updatedCategory);
-      setListItemLoading({ [category.slug]: false });
       setSelectedCategory(null);
-      setShowSnackBar({
-        editing: true,
-        show: true,
-        severity: "success",
-        message: "Deleted successfully.",
-      });
+      setLoading(false);
+      setResult({ success: true, message: "" });
     } catch (error) {
-      setListItemLoading({ [category.slug]: false });
-      setShowSnackBar({
-        editing: true,
-        show: true,
-        severity: "error",
-        message: "Deletion failed. Please try again later.",
-      });
+      setLoading(false);
+      setResult({ success: false, message: error.message });
     }
   };
 
   const handleConfirm = () => {
-    setShowDialog(false);
     doCategoryDelete(selectedCategory);
   };
 
   const handleCancel = () => {
-    setShowDialog(false);
+    setShowDialog({ show: false, message: "" });
+    setResult({ message: "", success: null });
   };
 
   const filteredCategories = getSearchResult(categories, query);
-
-  const dialogMessage = `Are your sure to remove category "${
-    selectedCategory && selectedCategory.name
-  }"?`;
 
   return (
     <Layout location={location}>
@@ -157,7 +153,8 @@ const CategoryPage = ({ location }) => {
         handleConfirm={handleConfirm}
         handleCancel={handleCancel}
         showDialog={showDialog}
-        message={dialogMessage}
+        result={result}
+        loading={loading}
       />
       <div className={classes.container}>
         <Typography
@@ -171,7 +168,7 @@ const CategoryPage = ({ location }) => {
         <Container className={classes.uiContainer}>
           <CreateCategory
             doCategoryCreate={doCategoryCreate}
-            loading={loading}
+            loading={submitting}
           />
           <EditCategory
             query={query}

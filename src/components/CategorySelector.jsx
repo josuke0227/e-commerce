@@ -22,6 +22,15 @@ const CategorySelector = ({ errors, setCategory, defaultValue }) => {
     loadCategories();
   }, []);
 
+  const loadCategories = async () => {
+    try {
+      const { data } = await getCategories();
+      setCategories(data);
+    } catch (error) {
+      console.log("category fetching error", error);
+    }
+  };
+
   useEffect(() => {
     setCategory(categories[value]);
   }, [value]);
@@ -31,15 +40,6 @@ const CategorySelector = ({ errors, setCategory, defaultValue }) => {
       setValue(getIndex(categories, defaultValue));
     }
   }, [defaultValue, categories]);
-
-  const loadCategories = async () => {
-    try {
-      const { data } = await getCategories();
-      setCategories(data);
-    } catch (error) {
-      console.log("category fetching error", error);
-    }
-  };
 
   const handleInputChange = (e) => {
     setValue(e.target.value);

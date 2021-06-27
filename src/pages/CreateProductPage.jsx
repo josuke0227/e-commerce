@@ -1,12 +1,9 @@
 import Layout from "../components/Layout";
 import React, { useState, useEffect } from "react";
-import { getCategories } from "../services/categoryServices";
-import { pickByParentId } from "../services/subCategoryServices";
 import ImageSelector from "../components/ImageSelector";
 import { createProduct, uploadImage } from "../services/productServices";
 import {
   TextField,
-  MenuItem,
   Container,
   makeStyles,
   Button,
