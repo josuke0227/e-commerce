@@ -33,11 +33,16 @@ const SelectForm = ({
         label={inputLabel}
         classes={{ select: classes.select }}
       >
-        {values.map((v) => (
-          <MenuItem key={`selectFormItem${v.name}`} value={v}>
+        {values.map((v, i) => (
+          <MenuItem key={`selectFormItem${v.name}`} value={i}>
             {v.name}
           </MenuItem>
         ))}
+        {/* {values.map((v) => (
+          <MenuItem key={`selectFormItem${v.name}`} value={v}>
+            {v.name}
+          </MenuItem>
+        ))} */}
       </Select>
     </FormControl>
   );

@@ -23,7 +23,7 @@ const CategorySelector = ({ errors, setCategory, defaultValue }) => {
   }, []);
 
   useEffect(() => {
-    applyEffect(categories[value]);
+    setCategory(categories[value]);
   }, [value]);
 
   useEffect(() => {
@@ -31,9 +31,6 @@ const CategorySelector = ({ errors, setCategory, defaultValue }) => {
       setValue(getIndex(categories, defaultValue));
     }
   }, [defaultValue, categories]);
-
-  const applyEffect = (obj) =>
-    setCategory(categories[getIndex(categories, obj)]);
 
   const loadCategories = async () => {
     try {

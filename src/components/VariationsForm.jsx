@@ -28,6 +28,12 @@ import { getObjectKeysSet } from "../util/getObjectKeysSet";
 ]
  */
 
+const useStyles = makeStyles((theme) => ({
+  typography: {
+    marginBottom: theme.spacing(1),
+  },
+}));
+
 const VariationsForm = ({
   variationsData,
   variations,
@@ -40,6 +46,10 @@ const VariationsForm = ({
   setErrors,
   errors,
 }) => {
+  const classes = useStyles();
+
+  const [inputValues, setInputValues] = React.useState({});
+
   const handleAdd = () => {
     const data = { ...variations };
     let currentInstances = data.instances;
@@ -57,7 +67,7 @@ const VariationsForm = ({
       if (!getObjectKeysSet(currentInstances).includes(key))
         return setErrors({
           ...errors,
-          variations: "Please choose the save variation pattern.",
+          variations: "Please choose the same variation pattern.",
         });
     }
 
@@ -88,13 +98,28 @@ const VariationsForm = ({
     });
   };
 
-  const handleInputChange = (e) => {
-    const { value, name } = e.target;
-    if (name === "qty") {
-      const int = parseInt(value);
-      return setVariations({ ...variations, [name]: int });
-    }
-    setVariations({ ...variations, [name]: value });
+  const handleSelectInputChange = ({ target }) => {
+    const { value, name } = target;
+    const currentValue = { ...inputValues, [name]: value };
+    setInputValues(currentValue);
+
+    const variation = getInstance(name, value);
+    setVariations({ ...variations, [name]: { ...variation } });
+  };
+
+  const getInstance = (name, index) => {
+    let variation;
+    selectedVariationsData.forEach((v) => {
+      if (v.name === name) variation = v;
+    });
+
+    return variation.instances[index];
+  };
+
+  const handleInputChange = ({ target }) => {
+    const qty = parseInt(target.value) ? parseInt(target.value) : "";
+
+    setVariations({ ...variations, qty });
   };
 
   const selectDefinitions = selectedVariationsData.map((v) => ({
@@ -102,9 +127,9 @@ const VariationsForm = ({
     inputLabel: v.name,
     labelId: `${v.name}-select-label`,
     name: `${v.name}`,
-    value: variations[v.name],
+    value: inputValues[v.name] || "",
     values: v.instances,
-    onChange: handleInputChange,
+    onChange: handleSelectInputChange,
   }));
 
   const includes = (variationData) => {
@@ -138,11 +163,20 @@ const VariationsForm = ({
   const isValidQuantity = () => {
     if (!variations.qty) return false;
     else if (variations.qty < 1) return false;
+    else if (variations.qty > totalQty) return false;
     return true;
   };
 
+  const variationsLeft = totalQty - variationTotalQty;
+
   return (
     <>
+      <Typography
+        className={classes.typography}
+        color={variationsLeft > 0 ? "textPrimary" : "error"}
+      >{`You can add ${variationsLeft > 0 ? variationsLeft : "no"} more ${
+        variationsLeft > 1 ? "variations" : "variation"
+      }.`}</Typography>
       <Grid container alignItems="center" spacing={2}>
         {variationsData.map(
           (v) =>

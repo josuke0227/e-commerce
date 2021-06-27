@@ -8,7 +8,6 @@ import {
 } from "../services/productServices";
 import {
   TextField,
-  MenuItem,
   Container,
   makeStyles,
   Button,
@@ -41,24 +40,6 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1),
   },
 }));
-
-const initialState = {
-  title: "test",
-  price: 1,
-  quantity: 1,
-  variations: [],
-  // category: "60c00dbf4cb336f57aff244b",
-  category: {
-    _id: { $oid: "60c00dbf4cb336f57aff244b" },
-    name: "Stationary",
-    slug: "Stationary",
-    createdAt: { $date: "2021-06-03T00:21:52.278Z" },
-    updatedAt: { $date: "2021-06-08T07:05:06.449Z" },
-    __v: 0,
-  },
-  subCategory: "60b85ba36fc3f936c09728b1",
-  brand: "toshiba",
-};
 
 const INITIAL_ERROR_STATE = {
   images: "",

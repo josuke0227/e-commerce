@@ -47,16 +47,13 @@ const SubCategorySelector = ({
   useEffect(() => {
     if (subCategories.length && defaultValue) {
       setValue(getIndex(subCategories, defaultValue));
-      applyEffect(parent);
+      setSubCategory(defaultValue);
     }
   }, [subCategories, defaultValue]);
 
   useEffect(() => {
-    applyEffect(subCategories[value]);
+    setSubCategory(subCategories[value]);
   }, [value]);
-
-  const applyEffect = (obj) =>
-    setSubCategory(subCategories[getIndex(subCategories, obj)]);
 
   const handleInputChange = (e) => {
     setValue(e.target.value);
