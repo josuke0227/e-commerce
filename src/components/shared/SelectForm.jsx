@@ -38,11 +38,6 @@ const SelectForm = ({
             {v.name}
           </MenuItem>
         ))}
-        {/* {values.map((v) => (
-          <MenuItem key={`selectFormItem${v.name}`} value={v}>
-            {v.name}
-          </MenuItem>
-        ))} */}
       </Select>
     </FormControl>
   );
