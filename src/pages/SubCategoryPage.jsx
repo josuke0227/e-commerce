@@ -34,13 +34,22 @@ const useStyles = makeStyles({
   },
 });
 
+const INITIAL_DIALOG_STATE = {
+  show: false,
+  message: "",
+};
+
+const INITIAL_RESULT_STATE = { success: null, message: "" };
+
 const SubCategoryPage = ({ location }) => {
   const [subCategories, setSubCategories] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
   const [category, setCategory] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [listItemLoading, setListItemLoading] = useState({});
-  const [showDialog, setShowDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [showDialog, setShowDialog] = useState(INITIAL_DIALOG_STATE);
+  const [result, setResult] = useState(INITIAL_RESULT_STATE);
   const [showSnackBar, setShowSnackBar] = useState({
     show: false,
     severity: "",
@@ -87,13 +96,6 @@ const SubCategoryPage = ({ location }) => {
       setCategory(selectedCategory);
       toggleRestStates();
     }
-  };
-
-  const handleCancel = () => {
-    setInputValue("");
-    setSubCategories([]);
-    setCategory(null);
-    setSlide(false);
   };
 
   const handleSubmit = () => {
@@ -160,28 +162,31 @@ const SubCategoryPage = ({ location }) => {
   };
 
   const doSubCategoryDelete = async (category) => {
-    setListItemLoading({ [category.slug]: true });
+    setLoading(true);
     try {
       const { data } = await deleteSubCategory(category, user);
       const updatedCategory = subCategories.filter((c) => c.slug !== data.slug);
       setSubCategories(updatedCategory);
-      setListItemLoading({ [category.slug]: false });
       setSubCategory(null);
-      setShowSnackBar({
-        editing: true,
-        show: true,
-        severity: "success",
-        message: "Deleted successfully.",
-      });
+      setLoading(false);
+      setResult({ success: true, message: "" });
     } catch (error) {
-      setListItemLoading({ [category.slug]: false });
-      setShowSnackBar({
-        editing: true,
-        show: true,
-        severity: "error",
-        message: "Deletion failed. Please try again later.",
-      });
+      setLoading(false);
+      setResult({ success: false, message: "" });
     }
+  };
+
+  const handleConfirm = () => {
+    doSubCategoryDelete(subCategory);
+  };
+
+  const handleCancel = () => {
+    setInputValue("");
+    setSubCategories([]);
+    setCategory(null);
+    setSlide(false);
+    setShowDialog({ show: false, message: "" });
+    setResult({ message: "", success: null });
   };
 
   const filteredCategories = !category
@@ -191,10 +196,11 @@ const SubCategoryPage = ({ location }) => {
   return (
     <Layout location={location}>
       <ConfirmDialog
+        handleConfirm={handleConfirm}
+        handleCancel={handleCancel}
         showDialog={showDialog}
-        item={subCategory}
-        handleConfirm={doSubCategoryDelete}
-        setShowDialog={setShowDialog}
+        result={result}
+        loading={loading}
       />
       <Container>
         {!category ? (
