@@ -27,6 +27,8 @@ import { isEqual } from "../util/isEqual";
 import ConfirmDialog from "../components/shared/ConfirmDialog";
 import { deleteProduct } from "../services/productServices";
 import { getVariations } from "../services/variationServices";
+import CategorySelector from "../components/CategorySelector";
+import SubCategorySelector from "../components/SubCategorySelector";
 
 const useStyles = makeStyles((theme) => ({
   formParts: {
@@ -77,8 +79,8 @@ const CreateProductPage = ({ location }) => {
   const [loading, setLoading] = useState(false);
   const [showVariations, setShowVariations] = useState(false);
   const [description, setDescription] = useState("");
-  const [categories, setCategories] = useState([]);
-  const [subCategories, setSubCategories] = useState([]);
+  const [category, setCategory] = useState("");
+  const [subCategory, setSubCategory] = useState("");
   const [selectedVariationsData, setSelectedVariationsData] = useState([]);
   const [variationsData, setVariationsData] = useState([]);
   const [values, setValues] = useState(INITIAL_STATE);
@@ -95,7 +97,6 @@ const CreateProductPage = ({ location }) => {
   const [finalizedData, setFinalizedData] = useState(null);
 
   useEffect(() => {
-    loadCategories();
     fetchVariationsData();
   }, []);
 
@@ -105,30 +106,6 @@ const CreateProductPage = ({ location }) => {
       setVariationsData(data);
     } catch (error) {
       console.log("fetching variations error", error);
-    }
-  };
-
-  useEffect(() => {
-    if (values.category.length) {
-      loadSubcategories(values.category);
-    }
-  }, [values.category]);
-
-  const loadCategories = async () => {
-    try {
-      const { data } = await getCategories();
-      setCategories(data);
-    } catch (error) {
-      console.log("category fetching error", error);
-    }
-  };
-
-  const loadSubcategories = async (id) => {
-    try {
-      const { data } = await pickByParentId(id);
-      setSubCategories(data);
-    } catch (error) {
-      console.log("category fetching error", error);
     }
   };
 
@@ -227,7 +204,10 @@ const CreateProductPage = ({ location }) => {
 
     const submittingData = {
       ...values,
-      description,
+      // Let Joi validator know if categories are empty or not.
+      category: category ? category._id : "",
+      subCategory: subCategory ? subCategory._id : "",
+      description: description || values.description,
       variations: instances,
     };
 
@@ -274,14 +254,6 @@ const CreateProductPage = ({ location }) => {
 
   const handleCancel = () => {
     setShowVariationDialog({ ...showVariationDialog, show: false });
-  };
-
-  const toggleSubCategoryFormStatus = () => {
-    if (!subCategories.length) {
-      return { label: "No sub category registered.", disable: true };
-    }
-
-    return { label: "Sub category", disable: false };
   };
 
   const toggleStatus = (path) => {
@@ -366,47 +338,13 @@ const CreateProductPage = ({ location }) => {
               selectedVariationsData={selectedVariationsData}
               variationsData={variationsData}
             />
-            <TextField
-              className={classes.formParts}
-              error={toggleStatus("category").error}
-              helperText={toggleStatus("category").helperText}
-              id="category"
-              name="category"
-              label="Category"
-              onChange={handleInputChange}
-              value={values.category}
-              variant="outlined"
-              fullWidth
-              select
-            >
-              {categories.map((c) => (
-                <MenuItem key={c._id} value={c._id} name={c.name}>
-                  {c.name}
-                </MenuItem>
-              ))}
-            </TextField>
-            {!!values.category.length && (
-              <TextField
-                className={classes.formParts}
-                disabled={toggleSubCategoryFormStatus().disable}
-                error={toggleStatus().error}
-                helperText={toggleStatus().helperText}
-                id="subCategory"
-                name="subCategory"
-                label={toggleSubCategoryFormStatus().label}
-                onChange={handleInputChange}
-                value={values.subCategory}
-                variant="outlined"
-                fullWidth
-                select
-              >
-                {subCategories.map((c) => (
-                  <MenuItem key={c._id} value={c._id} name={c.name}>
-                    {c.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-            )}
+            <CategorySelector errors={errors} setCategory={setCategory} />
+            <SubCategorySelector
+              errors={errors}
+              setSubCategory={setSubCategory}
+              parent={values.category}
+              category={category}
+            />
             <TextField
               className={classes.formParts}
               error={toggleStatus("brand").error}
