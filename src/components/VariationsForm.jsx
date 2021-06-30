@@ -1,6 +1,13 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
-import { Grid, Paper, TextField, Typography, Chip } from "@material-ui/core";
+import {
+  Grid,
+  Paper,
+  TextField,
+  Typography,
+  Chip,
+  Box,
+} from "@material-ui/core";
 import { isEqual } from "../util/isEqual";
 import SelectForm from "./shared/SelectForm";
 import { makeStyles } from "@material-ui/core/styles";
@@ -8,6 +15,17 @@ import IconButton from "@material-ui/core/IconButton";
 import AddCircleIcon from "@material-ui/icons/AddCircleOutline";
 import CancelIcon from "@material-ui/icons/Cancel";
 import { getObjectKeysSet } from "../util/getObjectKeysSet";
+import { useForm } from "react-hook-form";
+import { joiResolver } from "@hookform/resolvers/joi";
+import Joi from "joi";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
+import FormControl from "@material-ui/core/FormControl";
+import { variationsSchema } from "../schemas/productSchema";
+import { getIndex } from "../util/getIndex";
+
+import VariationForm from "./VariationFrom";
 
 /**
  * input: array
@@ -35,67 +53,70 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const VariationsForm = ({
-  variationsData,
+  variants,
   variations,
   setVariations,
   variationTotalQty,
   totalQty,
   handleVariationSelect,
-  selectedVariationsData,
+  currentVariants,
+  selectedVariation,
   handleVariationDeSelect,
   setErrors,
-  errors,
 }) => {
   const classes = useStyles();
 
   const [inputValues, setInputValues] = React.useState({});
 
-  const handleAdd = () => {
-    const data = { ...variations };
-    let currentInstances = data.instances;
-    delete data.instances;
+  const handleAdd = (data) => {
+    const newVariation = createVariation(data);
+    const currentVariations = [...variations];
 
-    if (!currentInstances.length)
-      return setVariations({
-        ...data,
-        qty: 0,
-        instances: [...currentInstances, data],
-      });
+    const combinedVariations = combineSameVariation(
+      currentVariations,
+      newVariation
+    );
 
-    const keys = Object.keys(data);
-    for (let key of keys) {
-      if (!getObjectKeysSet(currentInstances).includes(key))
-        return setErrors({
-          ...errors,
-          variations: "Please choose the same variation pattern.",
-        });
+    if (combinedVariations) {
+      setVariations(combinedVariations);
+    } else {
+      setVariations([...variations, { ...newVariation }]);
     }
+  };
 
-    let combinedQty = data.qty;
-    for (let i = 0; i < currentInstances.length; i++) {
-      const currentVariation = { ...currentInstances[i] };
-
-      const baseObject = { ...currentVariation };
-      const comparingObject = { ...data };
+  const combineSameVariation = (variations, variation) => {
+    let total = variation.qty;
+    for (let i = 0; i < variations.length; i++) {
+      const baseObject = { ...variations[i] };
+      const comparingObject = { ...variation };
       delete baseObject.qty;
       delete comparingObject.qty;
 
       if (isEqual(baseObject, comparingObject)) {
-        combinedQty += currentVariation.qty;
-        data.qty = combinedQty;
-        currentInstances[i] = data;
-        return setVariations({
-          ...data,
-          qty: 0,
-          instances: [...currentInstances],
-        });
+        total += variations[i].qty;
+        variation.qty = total;
+        variations[i] = variation;
+        return variations;
       }
     }
-    return setVariations({
-      ...data,
-      qty: 0,
-      instances: [...currentInstances, data],
+
+    return false;
+  };
+
+  const createVariation = (data) => {
+    const result = {};
+    const variantNames = Object.keys(data);
+
+    currentVariants.forEach((v) => {
+      variantNames.forEach((n) => {
+        if (n === "qty") result[n] = data[n];
+        if (v.name === n) {
+          result[n] = v.instances[data[n]];
+        }
+      });
     });
+
+    return result;
   };
 
   const handleSelectInputChange = ({ target }) => {
@@ -109,7 +130,7 @@ const VariationsForm = ({
 
   const getInstance = (name, index) => {
     let variation;
-    selectedVariationsData.forEach((v) => {
+    currentVariants.forEach((v) => {
       if (v.name === name) variation = v;
     });
 
@@ -122,25 +143,15 @@ const VariationsForm = ({
     setVariations({ ...variations, qty });
   };
 
-  const selectDefinitions = selectedVariationsData.map((v) => ({
-    variant: "outlined",
-    inputLabel: v.name,
-    labelId: `${v.name}-select-label`,
-    name: `${v.name}`,
-    value: inputValues[v.name] || "",
-    values: v.instances,
-    onChange: handleSelectInputChange,
-  }));
-
   const includes = (variationData) => {
-    for (let data of selectedVariationsData) {
+    for (let data of currentVariants) {
       if (isEqual(data, variationData)) return true;
     }
 
     return false;
   };
 
-  const disableAddButton = () => {
+  const disableButton = () => {
     if (
       !isSelectedVariationUsed() ||
       variationTotalQty >= parseInt(totalQty) ||
@@ -154,10 +165,10 @@ const VariationsForm = ({
   const isSelectedVariationUsed = () => {
     let count = 0;
 
-    for (let data of selectedVariationsData) {
+    for (let data of currentVariants) {
       if (variations[data.name]) count++;
     }
-    return count === selectedVariationsData.length ? true : false;
+    return count === currentVariants.length ? true : false;
   };
 
   const isValidQuantity = () => {
@@ -177,8 +188,8 @@ const VariationsForm = ({
       >{`You can add ${variationsLeft > 0 ? variationsLeft : "no"} more ${
         variationsLeft > 1 ? "variations" : "variation"
       }.`}</Typography>
-      <Grid container alignItems="center" spacing={2}>
-        {variationsData.map(
+      <Box>
+        {variants.map(
           (v) =>
             !includes(v) && (
               <Chip
@@ -192,49 +203,13 @@ const VariationsForm = ({
               />
             )
         )}
-        {selectDefinitions.map((d, i) => (
-          <Grid
-            item
-            key={`autoGeneratedSelectForms${i}`}
-            style={{ display: "flex" }}
-          >
-            <SelectForm {...d} />
-            <IconButton
-              aria-label="delete"
-              size="small"
-              onClick={() => handleVariationDeSelect(d.name, i)}
-            >
-              <CancelIcon fontSize="inherit" />
-            </IconButton>
-          </Grid>
-        ))}
-        {selectDefinitions.length > 0 && (
-          <>
-            <Grid item>
-              <TextField
-                variant="outlined"
-                style={{ width: 100 }}
-                id="qty"
-                name="qty"
-                label="qty"
-                type="number"
-                value={variations.qty}
-                onChange={handleInputChange}
-              />
-            </Grid>
-            <Grid item>
-              <Button
-                disabled={disableAddButton()}
-                variant="outlined"
-                color="primary"
-                onClick={handleAdd}
-              >
-                Add
-              </Button>
-            </Grid>
-          </>
-        )}
-      </Grid>
+      </Box>
+      <VariationForm
+        currentVariants={currentVariants}
+        variations={variations}
+        setVariations={setVariations}
+        selectedVariation={selectedVariation}
+      />
     </>
   );
 };

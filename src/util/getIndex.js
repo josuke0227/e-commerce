@@ -6,5 +6,5 @@ export const getIndex = (arr, obj) => {
     if (isEqual(item, obj)) index = i;
   });
 
-  return index >= 0 ? index : "";
+  return index >= 0 ? index : -1;
 };

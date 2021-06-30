@@ -61,7 +61,8 @@ const VariationsTable = ({
                 <TableCell>
                   <IconButton
                     color="primary"
-                    onClick={() => handleEditClick(i)}
+                    onClick={() => handleEditClick(r, i)}
+                    // onClick={() => handleEditClick(i)}
                   >
                     <EditICon style={{ fontSize: "1rem" }} />
                   </IconButton>

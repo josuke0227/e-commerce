@@ -25,11 +25,11 @@ const VariationField = ({
   setErrors,
   variations,
   setVariations,
-  values,
   handleVariationSelect,
   handleVariationDeSelect,
-  selectedVariationsData,
-  variationsData,
+  currentVariants,
+  variants,
+  quantity,
 }) => {
   const classes = useStyles();
 
@@ -55,13 +55,13 @@ const VariationField = ({
           showVariations={showVariations}
           variations={variations}
           setVariations={setVariations}
-          totalQty={values.quantity}
+          totalQty={quantity}
           handleVariationSelect={handleVariationSelect}
           handleVariationDeSelect={handleVariationDeSelect}
-          selectedVariationsData={selectedVariationsData}
+          currentVariants={currentVariants}
           setErrors={setErrors}
           errors={errors}
-          variationsData={variationsData}
+          variants={variants}
         />
       )}
     </Box>

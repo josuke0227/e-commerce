@@ -19,6 +19,7 @@ const SelectForm = ({
   value,
   onChange,
   variant,
+  register,
 }) => {
   const classes = useStyles();
 
@@ -27,11 +28,12 @@ const SelectForm = ({
       <InputLabel id={labelId}>{inputLabel}</InputLabel>
       <Select
         labelId={labelId}
-        value={value}
-        onChange={onChange}
+        // value={value}
+        // onChange={onChange}
         name={name}
         label={inputLabel}
         classes={{ select: classes.select }}
+        {...register}
       >
         {values.map((v, i) => (
           <MenuItem key={`selectFormItem${v.name}`} value={i}>

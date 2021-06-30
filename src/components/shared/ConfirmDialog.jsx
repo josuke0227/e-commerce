@@ -106,7 +106,7 @@ const ConfirmDialog = ({
 
   return (
     <Dialog
-      open={showDialog.show}
+      open={showDialog.show || false}
       onClose={handleCancel}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
