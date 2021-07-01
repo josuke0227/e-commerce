@@ -1,29 +1,12 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
-import {
-  Grid,
-  Paper,
-  TextField,
-  Typography,
-  Chip,
-  Box,
-} from "@material-ui/core";
+import { Grid, TextField } from "@material-ui/core";
 import { isEqual } from "../util/isEqual";
-import SelectForm from "./shared/SelectForm";
 import { makeStyles } from "@material-ui/core/styles";
-import IconButton from "@material-ui/core/IconButton";
-import AddCircleIcon from "@material-ui/icons/AddCircleOutline";
-import CancelIcon from "@material-ui/icons/Cancel";
-import { getObjectKeysSet } from "../util/getObjectKeysSet";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
-import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
-import FormControl from "@material-ui/core/FormControl";
-import { variationsSchema } from "../schemas/productSchema";
-import { getIndex } from "../util/getIndex";
 
 const useStyles = makeStyles((theme) => ({
   formGroup: {
@@ -44,7 +27,7 @@ const VariationForm = ({
   currentVariants,
   variations,
   setVariations,
-  selectedVariation,
+  totalQty,
 }) => {
   const classes = useStyles();
 
@@ -114,6 +97,22 @@ const VariationForm = ({
     return result;
   };
 
+  const disableButton = () => {
+    if (isValidQuantity() === true) return false;
+    return true;
+  };
+
+  const isValidQuantity = () => {
+    if (getCurrentQty() < totalQty) return true;
+    return false;
+  };
+
+  const getCurrentQty = () => {
+    let count = 0;
+    variations.forEach((v) => (count += v.qty));
+    return count;
+  };
+
   return (
     <Grid
       className={classes.formGroup}
@@ -146,78 +145,37 @@ const VariationForm = ({
           </TextField>
         </Grid>
       ))}
-      <Grid item xs={6}>
-        <TextField
-          variant="outlined"
-          id="qty"
-          name="qty"
-          label="Qty"
-          type="number"
-          fullWidth
-          {...register("qty")}
-          defaultValue=""
-          required
-        />
-      </Grid>
-      <Grid item xs={6}>
-        <Button
-          disabled={false}
-          type="submit"
-          variant="outlined"
-          color="primary"
-          fullWidth
-          classes={{ outlined: classes.button }}
-        >
-          Add
-        </Button>
-      </Grid>
+      {currentVariants.length > 0 && (
+        <>
+          <Grid item xs={6}>
+            <TextField
+              variant="outlined"
+              id="qty"
+              name="qty"
+              label="Qty"
+              type="number"
+              fullWidth
+              {...register("qty")}
+              defaultValue=""
+              required
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <Button
+              disabled={disableButton()}
+              type="submit"
+              variant="outlined"
+              color="primary"
+              fullWidth
+              classes={{ outlined: classes.button }}
+            >
+              Add
+            </Button>
+          </Grid>
+        </>
+      )}
     </Grid>
   );
 };
 
 export default VariationForm;
-
-// The code below goes to different component.
-// TODO: create edit modal
-// const another = (
-//   <Paper>
-//     {currentVariants.map((v) => {
-//       const defaultValue = selectedVariation[v.name].index;
-//       return (
-//         <TextField
-//           error={hasError(v.name)}
-//           helperText={hasError(v.name) && errors[v.name].message}
-//           id={v.name}
-//           name={v.name}
-//           label={v.name}
-//           variant="outlined"
-//           {...register(v.name)}
-//           defaultValue={selectedVariation ? selectedVariation[v.name].index : ""}
-//           required
-//           fullWidth
-//           select
-//         >
-//           {v.instances.map((c, i) => (
-//             <MenuItem key={c.name} value={i} name={c.name}>
-//               {c.name}
-//             </MenuItem>
-//           ))}
-//         </TextField>
-//       );
-//     })}
-//     <TextField
-//       variant="outlined"
-//       style={{ width: 100 }}
-//       id="qty"
-//       name="qty"
-//       label="Qty"
-//       type="number"
-//       {...register("qty")}
-//       defaultValue={selectedVariation.qty}
-//       required
-//     />
-//     <Button disabled={false} type="submit" variant="outlined" color="primary">
-//       Add
-//     </Button>
-//   </Paper>
-// );

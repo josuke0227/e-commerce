@@ -171,6 +171,7 @@ const VariationEditor = ({
             fullWidth
             {...register("qty")}
             defaultValue=""
+            required
           />
         </Grid>
         <Grid item xs={6}>

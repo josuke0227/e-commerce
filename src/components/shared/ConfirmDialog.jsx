@@ -32,6 +32,7 @@ const ConfirmDialog = ({
   result,
 }) => {
   const classes = useStyles();
+
   const { message, success } = result;
 
   const renderSuccessState = () => {
@@ -116,7 +117,7 @@ const ConfirmDialog = ({
       <DialogContent>
         <DialogContentText align="center">
           {loading && <CircularProgress size="3.5rem" />}
-          {renderResult()}
+          {result && renderResult()}
         </DialogContentText>
       </DialogContent>
       {toggleButtons()}

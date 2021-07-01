@@ -1,7 +1,6 @@
 import VariationsForm from "./VariationsForm";
 import VariationsTable from "./shared/VariationsTable";
 import { useState } from "react";
-import { object } from "joi";
 import VariationEditor from "./VariationEditor";
 
 const ControlPanel = ({
@@ -12,7 +11,6 @@ const ControlPanel = ({
   currentVariants,
   handleVariationDeSelect,
   setErrors,
-  errors,
   variants,
 }) => {
   const [selectedVariation, setSelectedVariation] = useState("");
@@ -83,7 +81,6 @@ const ControlPanel = ({
         currentVariants={currentVariants}
         handleVariationDeSelect={handleVariationDeSelect}
         setErrors={setErrors}
-        errors={errors}
       />
       <VariationsTable
         variations={variations}

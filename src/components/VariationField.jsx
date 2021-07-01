@@ -21,7 +21,6 @@ const useStyles = makeStyles((theme) => ({
 const VariationField = ({
   showVariations,
   handleCheckboxClick,
-  errors,
   setErrors,
   variations,
   setVariations,
@@ -30,6 +29,8 @@ const VariationField = ({
   currentVariants,
   variants,
   quantity,
+  errors,
+  totalQty,
 }) => {
   const classes = useStyles();
 
@@ -47,7 +48,7 @@ const VariationField = ({
           }
         />
         <FormHelperText className={classes.slideButton} error>
-          {errors.variations}
+          {errors}
         </FormHelperText>
       </FormControl>
       {showVariations && (
@@ -60,8 +61,8 @@ const VariationField = ({
           handleVariationDeSelect={handleVariationDeSelect}
           currentVariants={currentVariants}
           setErrors={setErrors}
-          errors={errors}
           variants={variants}
+          totalQty={totalQty}
         />
       )}
     </Box>
