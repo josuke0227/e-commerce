@@ -5,7 +5,6 @@ import { getVariations } from "../services/variationServices";
 import ConfirmDialog from "../components/shared/ConfirmDialog";
 import { Dialog, Chip, Box, Typography, Grid, Button } from "@material-ui/core";
 import AddCircleIcon from "@material-ui/icons/AddCircleOutline";
-import Slide from "./Slide";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 
 const INITIAL_DIALOG_STATE = {
@@ -96,51 +95,20 @@ export default function VariationsDialog({
         setSlide={setSlide}
       />
       <Dialog open={showDialog} style={{ width: "100vw" }}>
-        <div className="">
-          <VariationField
-            showDialog={showDialog}
-            setErrors={setOtherErrors}
-            errors={otherErrors.variations}
-            variations={variations}
-            setVariations={setVariations}
-            handleVariationSelect={handleVariationSelect}
-            handleVariationDeSelect={handleVariationDeSelect}
-            currentVariants={currentVariants}
-            variants={variants}
-            totalQty={quantity}
-            showDialog={showDialog}
-            setShowVariationDialog={setShowVariationDialog}
-          />
-        </div>
-        {/* <Slide
-            slide={slide}
-            frameWidth="100vw"
-            frameHeight="45vh"
-            defaultContent={
-              <VariantsPicker
-                variants={variants}
-                currentVariants={currentVariants}
-                handleVariationSelect={handleVariationSelect}
-                setSlide={setSlide}
-              />
-            }
-            alternativeContent={
-              <VariationField
-                showDialog={showDialog}
-                setErrors={setOtherErrors}
-                errors={otherErrors.variations}
-                variations={variations}
-                setVariations={setVariations}
-                handleVariationSelect={handleVariationSelect}
-                handleVariationDeSelect={handleVariationDeSelect}
-                currentVariants={currentVariants}
-                variants={variants}
-                totalQty={quantity}
-                showDialog={showDialog}
-                setShowVariationDialog={setShowVariationDialog}
-              />
-            }
-          /> */}
+        <VariationField
+          showDialog={showDialog}
+          setErrors={setOtherErrors}
+          errors={otherErrors.variations}
+          variations={variations}
+          setVariations={setVariations}
+          handleVariationSelect={handleVariationSelect}
+          handleVariationDeSelect={handleVariationDeSelect}
+          currentVariants={currentVariants}
+          variants={variants}
+          totalQty={quantity}
+          showDialog={showDialog}
+          setShowVariationDialog={setShowVariationDialog}
+        />
       </Dialog>
     </>
   );

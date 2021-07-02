@@ -2,9 +2,9 @@ import VariationsForm from "./VariationsForm";
 import VariationsTable from "./shared/VariationsTable";
 import { useState } from "react";
 import VariationEditor from "./VariationEditor";
-import { Container } from "@material-ui/core";
+import { Box } from "@material-ui/core";
 
-const ControlPanel = ({
+const VariationField = ({
   variations,
   setVariations,
   totalQty,
@@ -72,26 +72,28 @@ const ControlPanel = ({
           setSelectedVariation={setSelectedVariation}
         />
       )}
-      <VariationsForm
-        variants={variants}
-        selectedVariation={selectedVariation}
-        variations={variations}
-        setVariations={setVariations}
-        variationTotalQty={getCount(variations)}
-        totalQty={totalQty}
-        handleVariationSelect={handleVariationSelect}
-        currentVariants={currentVariants}
-        handleVariationDeSelect={handleVariationDeSelect}
-        setErrors={setErrors}
-        setShowVariationDialog={setShowVariationDialog}
-      />
-      <VariationsTable
-        variations={variations}
-        handleEditClick={handleEditClick}
-        handleDeleteClick={handleDeleteClick}
-      />
+      <Box style={{ padding: "1rem" }}>
+        <VariationsForm
+          variants={variants}
+          selectedVariation={selectedVariation}
+          variations={variations}
+          setVariations={setVariations}
+          variationTotalQty={getCount(variations)}
+          totalQty={totalQty}
+          handleVariationSelect={handleVariationSelect}
+          currentVariants={currentVariants}
+          handleVariationDeSelect={handleVariationDeSelect}
+          setErrors={setErrors}
+          setShowVariationDialog={setShowVariationDialog}
+        />
+        <VariationsTable
+          variations={variations}
+          handleEditClick={handleEditClick}
+          handleDeleteClick={handleDeleteClick}
+        />
+      </Box>
     </>
   );
 };
 
-export default ControlPanel;
+export default VariationField;
