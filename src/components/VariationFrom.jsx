@@ -28,6 +28,7 @@ const VariationForm = ({
   variations,
   setVariations,
   totalQty,
+  setShowVariationDialog,
 }) => {
   const classes = useStyles();
 
@@ -64,7 +65,8 @@ const VariationForm = ({
     return false;
   };
 
-  const handleAdd = (data) => {
+  const handleAdd = (data, e) => {
+    e.stopPropagation();
     const newVariation = createVariation(data);
     const currentVariations = [...variations];
 
@@ -118,9 +120,8 @@ const VariationForm = ({
       className={classes.formGroup}
       container
       alignItems="center"
-      component="form"
+      component="div"
       spacing={2}
-      onSubmit={handleSubmit(handleAdd)}
     >
       {currentVariants.map((v) => (
         <Grid item xs={currentVariants.length === 1 ? 12 : 6} key={v.name}>
@@ -147,7 +148,7 @@ const VariationForm = ({
       ))}
       {currentVariants.length > 0 && (
         <>
-          <Grid item xs={6}>
+          <Grid item xs={12}>
             <TextField
               variant="outlined"
               id="qty"
@@ -162,8 +163,20 @@ const VariationForm = ({
           </Grid>
           <Grid item xs={6}>
             <Button
+              disabled={false}
+              variant="outlined"
+              color="default"
+              fullWidth
+              classes={{ outlined: classes.button }}
+              onClick={() => setShowVariationDialog(false)}
+            >
+              Close
+            </Button>
+          </Grid>
+          <Grid item xs={6}>
+            <Button
               disabled={disableButton()}
-              type="submit"
+              onClick={handleSubmit(handleAdd)}
               variant="outlined"
               color="primary"
               fullWidth

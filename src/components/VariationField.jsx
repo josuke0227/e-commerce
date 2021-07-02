@@ -1,72 +1,97 @@
-import React, { useState, useEffect } from "react";
-import {
-  makeStyles,
-  FormControl,
-  Switch,
-  FormControlLabel,
-  FormHelperText,
-  Box,
-} from "@material-ui/core";
-import ControlPanel from "./ControlPanel";
+import VariationsForm from "./VariationsForm";
+import VariationsTable from "./shared/VariationsTable";
+import { useState } from "react";
+import VariationEditor from "./VariationEditor";
+import { Container } from "@material-ui/core";
 
-const useStyles = makeStyles((theme) => ({
-  formParts: {
-    marginTop: theme.spacing(3),
-  },
-  slideButton: {
-    marginBottom: theme.spacing(1),
-  },
-}));
-
-const VariationField = ({
-  showVariations,
-  handleCheckboxClick,
-  setErrors,
+const ControlPanel = ({
   variations,
   setVariations,
-  handleVariationSelect,
-  handleVariationDeSelect,
-  currentVariants,
-  variants,
-  quantity,
-  errors,
   totalQty,
+  handleVariationSelect,
+  currentVariants,
+  handleVariationDeSelect,
+  setErrors,
+  variants,
+  setShowVariationDialog,
 }) => {
-  const classes = useStyles();
+  const [selectedVariation, setSelectedVariation] = useState("");
+
+  const handleEditClick = (variation, i) => {
+    const variantNames = Object.keys(variation).filter((k) => k !== "qty");
+
+    const variationData = createVariationDataWithIndex(variantNames, variation);
+    variationData.location = i;
+
+    setSelectedVariation(variationData);
+  };
+
+  const createVariationDataWithIndex = (variantNames, variation) => {
+    let data = {};
+    for (let i = 0; i < variantNames.length; i++) {
+      const name = variantNames[i];
+      const index = getIndexOfInstance(name, variation[name]);
+      data = { ...data, [name]: { index } };
+    }
+    data.qty = variation.qty;
+    return data;
+  };
+
+  const getIndexOfInstance = (variantName, variationData) => {
+    let index;
+    const instances = currentVariants.filter((v) => v.name === variantName)[0]
+      .instances;
+    instances.forEach((i, idx) => {
+      if (i.name === variationData.name) index = idx;
+    });
+    return index;
+  };
+
+  const handleDeleteClick = (index) => {
+    const current = [...variations];
+    current.splice(index, 1);
+    setVariations(current);
+  };
+
+  const getCount = (arr) => {
+    if (!arr.length) return 0;
+
+    let count = 0;
+    arr.forEach((v) => (count += parseInt(v.qty)));
+    return count;
+  };
 
   return (
-    <Box className={classes.slideButton}>
-      <FormControl component="fieldset" className={classes.slideButton}>
-        <FormControlLabel
-          label="Enable variations"
-          control={
-            <Switch
-              checked={showVariations}
-              onChange={handleCheckboxClick}
-              color="primary"
-            />
-          }
-        />
-        <FormHelperText className={classes.slideButton} error>
-          {errors}
-        </FormHelperText>
-      </FormControl>
-      {showVariations && (
-        <ControlPanel
-          showVariations={showVariations}
+    <>
+      {selectedVariation && (
+        <VariationEditor
+          currentVariants={currentVariants}
           variations={variations}
           setVariations={setVariations}
-          totalQty={quantity}
-          handleVariationSelect={handleVariationSelect}
-          handleVariationDeSelect={handleVariationDeSelect}
-          currentVariants={currentVariants}
-          setErrors={setErrors}
-          variants={variants}
-          totalQty={totalQty}
+          selectedVariation={selectedVariation}
+          setSelectedVariation={setSelectedVariation}
         />
       )}
-    </Box>
+      <VariationsForm
+        variants={variants}
+        selectedVariation={selectedVariation}
+        variations={variations}
+        setVariations={setVariations}
+        variationTotalQty={getCount(variations)}
+        totalQty={totalQty}
+        handleVariationSelect={handleVariationSelect}
+        currentVariants={currentVariants}
+        handleVariationDeSelect={handleVariationDeSelect}
+        setErrors={setErrors}
+        setShowVariationDialog={setShowVariationDialog}
+      />
+      <VariationsTable
+        variations={variations}
+        handleEditClick={handleEditClick}
+        handleDeleteClick={handleDeleteClick}
+      />
+    </>
   );
 };
 
-export default VariationField;
+export default ControlPanel;

@@ -89,7 +89,8 @@ const VariationEditor = ({
     return false;
   };
 
-  const handleAdd = (data) => {
+  const handleAdd = (data, e) => {
+    e.stopPropagation();
     const variationData = createVariation(data);
 
     const combinedVariations = combineSameVariation(variations, variationData);
@@ -136,7 +137,6 @@ const VariationEditor = ({
         alignItems="center"
         component="form"
         spacing={2}
-        onSubmit={handleSubmit(handleAdd)}
       >
         {currentVariants.map((v) => (
           <Grid item xs={currentVariants.length === 1 ? 12 : 6} key={v.name}>
@@ -177,7 +177,7 @@ const VariationEditor = ({
         <Grid item xs={6}>
           <Button
             disabled={false}
-            type="submit"
+            onClick={handleSubmit(handleAdd)}
             variant="outlined"
             color="primary"
             fullWidth
