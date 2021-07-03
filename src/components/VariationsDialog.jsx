@@ -71,12 +71,6 @@ export default function VariationsDialog({
 
   return (
     <>
-      <ConfirmDialog
-        showDialog={showDialog}
-        handleConfirm={handleConfirm}
-        handleCancel={handleCancel}
-        result={{ message: "", success: null }}
-      />
       <VariantsPicker
         variants={variants}
         currentVariants={currentVariants}
