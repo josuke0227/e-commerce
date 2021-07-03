@@ -25,9 +25,9 @@ import {
   uploadImage,
   createProduct,
   deleteProduct,
-} from "./services/productServices";
-import { isEmptyObject } from "./util/isEmptyObject";
-import { resizeImage } from "./util/resizeImage";
+} from "../services/productServices";
+import { isEmptyObject } from "../util/isEmptyObject";
+import { resizeImage } from "../util/resizeImage";
 Joi.ObjectId = require("joi-objectid")(Joi);
 
 const schema = Joi.object().keys({
@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ProductRegistrationForm = () => {
   const classes = useStyles();
-  const { user, product } = useSelector((state) => ({ ...state }));
+  const { user } = useSelector((state) => ({ ...state }));
 
   const [categories, setCategories] = useState([]);
 
@@ -361,6 +361,7 @@ const ProductRegistrationForm = () => {
           <FormHelperText error>{otherErrors.variations}</FormHelperText>
           {enableVariations && (
             <VariationsDialog
+              quantity={quantity}
               showDialog={showVariationDialog}
               setShowVariationDialog={setShowVariationDialog}
               variations={variations}

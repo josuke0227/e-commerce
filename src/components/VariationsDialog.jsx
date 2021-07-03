@@ -7,8 +7,6 @@ import { Dialog, Chip, Box, Typography } from "@material-ui/core";
 import AddCircleIcon from "@material-ui/icons/AddCircleOutline";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 
-const quantity = 10;
-
 export default function VariationsDialog({
   showDialog,
   variations,
@@ -18,6 +16,7 @@ export default function VariationsDialog({
   setCurrentVariants,
   otherErrors,
   setOtherErrors,
+  quantity,
 }) {
   const [variants, setVariants] = useState([]);
 

@@ -1,14 +1,7 @@
 import Layout from "../components/Layout";
 import React, { useState, useEffect } from "react";
-import ImageSelector from "../components/ImageSelector";
 import { createProduct, uploadImage } from "../services/productServices";
-import {
-  TextField,
-  Container,
-  makeStyles,
-  Button,
-  Grid,
-} from "@material-ui/core";
+import { makeStyles, Button, Grid } from "@material-ui/core";
 import { useSelector } from "react-redux";
 import { resizeImage } from "../util/resizeImage";
 import {
@@ -26,6 +19,7 @@ import { deleteProduct } from "../services/productServices";
 import { getVariations } from "../services/variationServices";
 import CategorySelector from "../components/CategorySelector";
 import SubCategorySelector from "../components/SubCategorySelector";
+import ProductRegistrationForm from "../components/ProductRegistrationForm";
 
 const useStyles = makeStyles((theme) => ({
   formParts: {
@@ -261,119 +255,7 @@ const CreateProductPage = ({ location }) => {
 
   return (
     <Layout location={location}>
-      <ConfirmDialog
-        handleConfirm={handleConfirm}
-        handleCancel={handleCancel}
-        showDialog={showVariationDialog}
-        result={result}
-      />
-      <ConfirmDialog
-        handleConfirm={handleSubmissionConfirm}
-        handleCancel={handleSubmissionCancel}
-        showDialog={showSubmissionDialog}
-        result={result}
-        loading={loading}
-      />
-      <Container component="form" onSubmit={handleSubmit}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
-            <ImageSelector
-              images={images}
-              setValues={setImages}
-              setLoading={setLoading}
-              error={errors.images}
-            />
-            <TextField
-              className={classes.formParts}
-              error={toggleStatus("title").error}
-              helperText={toggleStatus("title").helperText}
-              id="title"
-              name="title"
-              label="Product name"
-              onChange={handleInputChange}
-              type="text"
-              value={values.title}
-              fullWidth
-              variant="outlined"
-            />
-            <TextField
-              className={classes.formParts}
-              error={toggleStatus("price").error}
-              helperText={toggleStatus("price").helperText}
-              id="price"
-              name="price"
-              label="Price"
-              onChange={handleInputChange}
-              type="number"
-              value={values.price}
-              variant="outlined"
-              fullWidth
-            />
-            <TextField
-              className={classes.formParts}
-              error={toggleStatus("quantity").error}
-              helperText={toggleStatus("quantity").helperText}
-              id="quantity"
-              name="quantity"
-              label="Quantity"
-              onChange={handleInputChange}
-              type="number"
-              value={values.quantity}
-              variant="outlined"
-              fullWidth
-            />
-            <VariationField
-              showVariations={showVariations}
-              handleCheckboxClick={handleCheckboxClick}
-              errors={errors}
-              setErrors={setErrors}
-              variations={variations}
-              setVariations={setVariations}
-              values={values}
-              handleVariationSelect={handleVariationSelect}
-              handleVariationDeSelect={handleVariationDeSelect}
-              selectedVariationsData={selectedVariationsData}
-              variationsData={variationsData}
-            />
-            <CategorySelector errors={errors} setCategory={setCategory} />
-            {category && (
-              <SubCategorySelector
-                errors={errors}
-                setSubCategory={setSubCategory}
-                parent={values.category}
-                category={category}
-              />
-            )}
-            <TextField
-              className={classes.formParts}
-              error={toggleStatus("brand").error}
-              helperText={toggleStatus("brand").helperText}
-              id="brand"
-              name="brand"
-              label="Brand name"
-              onChange={handleInputChange}
-              type="text"
-              value={values.brand}
-              variant="outlined"
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <RichTextField
-              success={result.success}
-              setValue={setDescription}
-              characters={description}
-              count={2000}
-              loading={loading}
-              label="Description"
-              error={errors.description}
-            />
-            <Button fullWidth variant="contained" type="submit" color="primary">
-              Submit
-            </Button>
-          </Grid>
-        </Grid>
-      </Container>
+      <ProductRegistrationForm />
     </Layout>
   );
 };
