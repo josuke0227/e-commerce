@@ -3,6 +3,7 @@ import VariationsTable from "./shared/VariationsTable";
 import { useState } from "react";
 import VariationEditor from "./VariationEditor";
 import { Box } from "@material-ui/core";
+import { getObjectKeysSet } from "../util/getObjectKeysSet";
 
 const VariationField = ({
   variations,
@@ -14,6 +15,7 @@ const VariationField = ({
   setErrors,
   variants,
   setShowVariationDialog,
+  setCurrentVariants,
 }) => {
   const [selectedVariation, setSelectedVariation] = useState("");
 

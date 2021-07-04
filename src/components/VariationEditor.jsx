@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const schema = Joi.object().keys({
-  color: Joi.number(),
+  color: Joi.string(),
   size: Joi.number(),
   qty: Joi.number(),
 });
@@ -56,7 +56,6 @@ const VariationEditor = ({
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm({
     resolver: joiResolver(schema),
@@ -91,6 +90,13 @@ const VariationEditor = ({
 
   const handleAdd = (data, e) => {
     e.stopPropagation();
+    const { error } = schema.validate(data);
+
+    if (error) {
+      console.log(error);
+      return;
+    }
+
     const variationData = createVariation(data);
 
     const combinedVariations = combineSameVariation(variations, variationData);
@@ -128,6 +134,8 @@ const VariationEditor = ({
     setSelectedVariation("");
   };
 
+  console.log(errors);
+
   return (
     <Dialog open={!!selectedVariation} onClose={handleClose}>
       <DialogTitle>Edit product</DialogTitle>
@@ -135,7 +143,7 @@ const VariationEditor = ({
         className={classes.formGroup}
         container
         alignItems="center"
-        component="form"
+        component="section"
         spacing={2}
       >
         {currentVariants.map((v) => (

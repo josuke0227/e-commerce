@@ -22,7 +22,9 @@ import ConfirmDialog from "../components/shared/ConfirmDialog";
 import { imageSchema } from "../schemas/imagesSchema";
 import { descriptionSchema, variationSchema } from "../schemas/productSchema";
 import {
+  getImages,
   uploadImage,
+  updateProduct,
   createProduct,
   deleteProduct,
 } from "../services/productServices";
@@ -52,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ProductRegistrationForm = () => {
   const classes = useStyles();
-  const { user } = useSelector((state) => ({ ...state }));
+  const { user, product } = useSelector((state) => ({ ...state }));
 
   const [categories, setCategories] = useState([]);
 

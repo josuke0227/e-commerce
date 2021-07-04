@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import VariationField from "../components/VariationField";
 import { isEqual } from "../util/isEqual";
-import { getVariations } from "../services/variationServices";
 import ConfirmDialog from "../components/shared/ConfirmDialog";
 import { Dialog, Chip, Box, Typography } from "@material-ui/core";
 import AddCircleIcon from "@material-ui/icons/AddCircleOutline";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
+import { getObjectKeysSet } from "../util/getObjectKeysSet";
 
 export default function VariationsDialog({
   showDialog,
@@ -17,30 +17,24 @@ export default function VariationsDialog({
   otherErrors,
   setOtherErrors,
   quantity,
+  variants,
 }) {
-  const [variants, setVariants] = useState([]);
-
   useEffect(() => {
-    loadVariants();
-  }, []);
+    if (!currentVariants.length && showDialog) applyVariants();
+  }, [currentVariants, showDialog]);
 
-  const loadVariants = async () => {
-    try {
-      const { data } = await getVariations();
-      setVariants(data);
-    } catch (error) {
-      console.log("fetching variations error", error);
-    }
-  };
+  const applyVariants = () => {
+    const keys = getObjectKeysSet(variations);
+    keys.splice(keys.indexOf("qty"), 1);
 
-  const handleConfirm = () => {
-    setVariations([]);
-    setCurrentVariants([]);
-    setShowVariationDialog(false);
-  };
+    const result = [];
+    keys.forEach((k) => {
+      variants.forEach((v) => {
+        if (v.name === k) result.push(v);
+      });
+    });
 
-  const handleCancel = () => {
-    setShowVariationDialog(false);
+    setCurrentVariants(result);
   };
 
   const handleVariationSelect = (variation) => {
@@ -91,6 +85,7 @@ export default function VariationsDialog({
           totalQty={quantity}
           showDialog={showDialog}
           setShowVariationDialog={setShowVariationDialog}
+          setCurrentVariants={setCurrentVariants}
         />
       </Dialog>
     </>

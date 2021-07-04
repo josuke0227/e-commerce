@@ -27,7 +27,7 @@ import VariationField from "../components/VariationField";
 import { isEqual } from "../util/isEqual";
 import ConfirmDialog from "../components/shared/ConfirmDialog";
 import { getObjectKeysSet } from "../util/getObjectKeysSet";
-import { getVariations } from "../services/variationServices";
+import { getVariants } from "../services/variationServices";
 import { isArray } from "../util/isArray";
 import CategorySelector from "../components/CategorySelector";
 import SubCategorySelector from "../components/SubCategorySelector";
@@ -96,7 +96,7 @@ const EditProductPage = ({ location }) => {
 
   const fetchVariationsData = async () => {
     try {
-      const { data } = await getVariations();
+      const { data } = await getVariants();
       setVariationsData(data);
     } catch (error) {
       console.log("fetching variations error", error);
