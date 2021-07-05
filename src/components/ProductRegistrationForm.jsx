@@ -30,12 +30,15 @@ import {
 } from "../services/productServices";
 import { isEmptyObject } from "../util/isEmptyObject";
 import { resizeImage } from "../util/resizeImage";
+import { getVariants } from "../services/variationServices";
+import Input from "../components/shared/Input";
+import Select from "../components/shared/Select";
 Joi.ObjectId = require("joi-objectid")(Joi);
 
 const schema = Joi.object().keys({
   title: Joi.string().min(1).max(255).label("Title"),
   price: Joi.number().min(1).label("Price"),
-  quantity: Joi.number().min(1).label("Quantity"),
+  qty: Joi.number().min(1).label("Quantity"),
   category: Joi.ObjectId().label("Category"),
   subCategory: Joi.ObjectId().label("Sub category"),
   brand: Joi.string().min(0).label("Brand"),
@@ -50,11 +53,15 @@ const useStyles = makeStyles((theme) => ({
   formParts: {
     marginBottom: theme.spacing(3),
   },
+  firstFormParts: {
+    marginTop: theme.spacing(3),
+    marginBottom: theme.spacing(3),
+  },
 }));
 
 const ProductRegistrationForm = () => {
   const classes = useStyles();
-  const { user, product } = useSelector((state) => ({ ...state }));
+  const { user } = useSelector((state) => ({ ...state }));
 
   const [categories, setCategories] = useState([]);
 
@@ -63,6 +70,7 @@ const ProductRegistrationForm = () => {
   const [images, setImages] = useState([]);
 
   const [variations, setVariations] = useState([]);
+  const [variants, setVariants] = useState([]);
   const [currentVariants, setCurrentVariants] = useState([]);
   const [enableVariations, setEnableVariations] = useState(false);
   const [showVariationDialog, setShowVariationDialog] = useState(false);
@@ -89,13 +97,15 @@ const ProductRegistrationForm = () => {
     handleSubmit,
     watch,
     formState: { errors },
+    control,
   } = useForm({ resolver: joiResolver(schema) });
 
   const category = watch("category");
-  const quantity = watch("quantity");
+  const quantity = watch("qty");
 
   useEffect(() => {
     loadCategories();
+    loadVariants();
   }, []);
 
   const loadCategories = async () => {
@@ -104,6 +114,16 @@ const ProductRegistrationForm = () => {
       setCategories(data);
     } catch (error) {
       console.log("category fetching error", error);
+    }
+  };
+
+  const loadVariants = async () => {
+    try {
+      const { data } = await getVariants();
+
+      setVariants(data);
+    } catch (error) {
+      console.log("fetching variations error", error);
     }
   };
 
@@ -257,95 +277,85 @@ const ProductRegistrationForm = () => {
           errors={otherErrors.images}
           user={user}
         />
-        <TextField
-          className={classes.formParts}
-          error={hasError("title")}
-          helperText={hasError("title") && errors.title.message}
-          id="title"
-          name="title"
-          label="Product name"
+        <Input
+          className={classes.firstFormParts}
           type="text"
+          name="title"
+          control={control}
+          defaultValue=""
           variant="outlined"
-          {...register("title")}
+          label="Product name"
+          helperText={hasError("title") && errors.title.message}
+          error={hasError("title")}
           required
           fullWidth
         />
-        <TextField
+        <Input
           className={classes.formParts}
-          error={hasError("price")}
-          helperText={hasError("price") && errors.price.message}
-          id="price"
+          type="number"
           name="price"
+          control={control}
+          defaultValue=""
+          variant="outlined"
           label="Price"
-          type="number"
-          variant="outlined"
-          {...register("price")}
+          helperText={hasError("price") && errors.price.message}
+          error={hasError("price")}
           required
           fullWidth
         />
-        <TextField
+        <Input
           className={classes.formParts}
-          error={hasError("quantity")}
-          helperText={hasError("quantity") && errors.price.message}
-          id="quantity"
-          name="quantity"
-          label="Quantity"
           type="number"
+          name="qty"
+          control={control}
+          defaultValue=""
           variant="outlined"
-          {...register("quantity")}
+          label="Qty"
+          helperText={hasError("qty") && errors.qty.message}
+          error={hasError("qty")}
           required
           fullWidth
         />
-        <TextField
-          className={classes.formParts}
-          error={hasError("category")}
-          helperText={hasError("category") && errors.category.message}
-          id="category"
-          name="category"
-          label="Category"
-          variant="outlined"
-          {...register("category")}
-          required
-          fullWidth
-          select
-        >
-          {categories.map((c) => (
-            <MenuItem key={c._id} value={c._id} name={c.name}>
-              {c.name}
-            </MenuItem>
-          ))}
-        </TextField>
-        {category && (
-          <TextField
+        {categories && (
+          <Select
             className={classes.formParts}
-            error={hasError("subCategory")}
-            helperText={hasError("subCategory") && errors.category.message}
-            id="subCategory"
-            name="subCategory"
-            label="Sub Category"
+            name="category"
+            control={control}
+            defaultValue=""
             variant="outlined"
-            {...register("subCategory")}
+            label="Category"
+            helperText={hasError("category") && errors.category.message}
+            error={hasError("category")}
+            list={categories}
             required
             fullWidth
-            select
-          >
-            {subCategories.map((c) => (
-              <MenuItem key={c._id} value={c._id} name={c.name}>
-                {c.name}
-              </MenuItem>
-            ))}
-          </TextField>
+          />
         )}
-        <TextField
+        {category && (
+          <Select
+            className={classes.formParts}
+            name="subCategory"
+            control={control}
+            defaultValue=""
+            variant="outlined"
+            label="Subcategory"
+            helperText={hasError("subCategory") && errors.subCategory.message}
+            error={hasError("subCategory")}
+            list={subCategories}
+            required
+            fullWidth
+          />
+        )}
+        <Input
           className={classes.formParts}
-          error={hasError("brand")}
-          helperText={hasError("brand") && errors.brand.message}
-          id="brand"
-          name="brand"
-          label="Brand name"
           type="text"
+          name="brand"
+          control={control}
+          defaultValue=""
           variant="outlined"
-          {...register("brand")}
+          label="Brand name"
+          helperText={hasError("brand") && errors.brand.message}
+          error={hasError("brand")}
           required
           fullWidth
         />
@@ -372,6 +382,7 @@ const ProductRegistrationForm = () => {
               setCurrentVariants={setCurrentVariants}
               otherErrors={otherErrors}
               setOtherErrors={setOtherErrors}
+              variants={variants}
             />
           )}
         </FormControl>

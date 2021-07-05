@@ -4,21 +4,12 @@ import { useForm, Controller } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
 import {
-  TextField,
-  MenuItem,
   Button,
   makeStyles,
   FormControl,
   FormControlLabel,
   Switch,
   FormHelperText,
-  Checkbox,
-  TableContainer,
-  Table,
-  TableBody,
-  TableHead,
-  TableRow,
-  TableCell,
   Grid,
 } from "@material-ui/core";
 import { getCategories } from "../services/categoryServices";
@@ -39,9 +30,8 @@ import {
 import { isEmptyObject } from "../util/isEmptyObject";
 import { resizeImage } from "../util/resizeImage";
 import Input from "../components/shared/Input";
-import VariationsPreview from "../components/shared/VariationsPreviewer";
-import Layout from "../components/Layout";
 import Select from "../components/shared/Select";
+import VariationsPreview from "../components/shared/VariationsPreviewer";
 import { isArray } from "../util/isArray";
 Joi.ObjectId = require("joi-objectid")(Joi);
 
@@ -112,7 +102,7 @@ const ProductRegistrationForm = () => {
   } = useForm({ resolver: joiResolver(schema) });
 
   const category = watch("category");
-  const quantity = watch("quantity");
+  const quantity = watch("qty");
 
   useEffect(() => {
     loadCategories();
@@ -383,6 +373,19 @@ const ProductRegistrationForm = () => {
             fullWidth
           />
         )}
+        <Input
+          className={classes.formParts}
+          type="text"
+          name="brand"
+          control={control}
+          defaultValue={product.brand}
+          variant="outlined"
+          label="Brand name"
+          helperText={hasError("brand") && errors.brand.message}
+          error={hasError("brand")}
+          required
+          fullWidth
+        />
         {variations.length > 0 && (
           <>
             <FormControl component="fieldset" className={classes.formParts}>
