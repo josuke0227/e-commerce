@@ -4,8 +4,6 @@ import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
 import {
-  TextField,
-  MenuItem,
   Button,
   makeStyles,
   FormControl,
@@ -14,6 +12,7 @@ import {
   FormHelperText,
 } from "@material-ui/core";
 import { getCategories } from "../services/categoryServices";
+import VariationsPreview from "../components/shared/VariationsPreviewer";
 import { pickByParentId } from "../services/subCategoryServices";
 import ImageSelector from "../components/ImageSelector";
 import RichTextField from "../components/shared/RichTextField";
@@ -22,9 +21,7 @@ import ConfirmDialog from "../components/shared/ConfirmDialog";
 import { imageSchema } from "../schemas/imagesSchema";
 import { descriptionSchema, variationSchema } from "../schemas/productSchema";
 import {
-  getImages,
   uploadImage,
-  updateProduct,
   createProduct,
   deleteProduct,
 } from "../services/productServices";
@@ -396,6 +393,7 @@ const ProductRegistrationForm = () => {
             Add variations
           </Button>
         )}
+        {variations.length > 0 && <VariationsPreview variations={variations} />}
         <RichTextField
           success={result.success}
           setValue={setDescription}
