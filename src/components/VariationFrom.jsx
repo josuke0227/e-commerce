@@ -7,6 +7,8 @@ import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
 import MenuItem from "@material-ui/core/MenuItem";
+import VariantSelect from "../components/shared/VariantSelect";
+import Input from "../components/shared/Input";
 
 const useStyles = makeStyles((theme) => ({
   formGroup: {
@@ -33,9 +35,8 @@ const VariationForm = ({
   const classes = useStyles();
 
   const {
-    register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors },
   } = useForm({ resolver: joiResolver(schema) });
 
@@ -125,40 +126,34 @@ const VariationForm = ({
     >
       {currentVariants.map((v) => (
         <Grid item xs={currentVariants.length === 1 ? 12 : 6} key={v.name}>
-          <TextField
+          <VariantSelect
+            name={v.name}
             error={hasError(v.name)}
             helperText={hasError(v.name) && errors[v.name].message}
-            id={v.name}
-            name={v.name}
+            control={control}
             label={v.name}
+            list={v.instances}
             variant="outlined"
-            {...register(v.name)}
             defaultValue=""
             required
             fullWidth
-            select
-          >
-            {v.instances.map((c, i) => (
-              <MenuItem key={c.name} value={i} name={c.name}>
-                {c.name}
-              </MenuItem>
-            ))}
-          </TextField>
+          />
         </Grid>
       ))}
       {currentVariants.length > 0 && (
         <>
           <Grid item xs={12}>
-            <TextField
-              variant="outlined"
-              id="qty"
-              name="qty"
-              label="Qty"
+            <Input
               type="number"
-              fullWidth
-              {...register("qty")}
+              name="qty"
+              control={control}
               defaultValue=""
+              variant="outlined"
+              label="Qty"
+              helperText={hasError("qty") && errors.qty.message}
+              error={hasError("qty")}
               required
+              fullWidth
             />
           </Grid>
           <Grid item xs={6}>
