@@ -63,6 +63,8 @@ const VariationField = ({
     return count;
   };
 
+  const currentQty = getCount(variations);
+
   return (
     <>
       {selectedVariation && (
@@ -80,7 +82,7 @@ const VariationField = ({
           selectedVariation={selectedVariation}
           variations={variations}
           setVariations={setVariations}
-          variationTotalQty={getCount(variations)}
+          variationTotalQty={currentQty}
           totalQty={totalQty}
           handleVariationSelect={handleVariationSelect}
           currentVariants={currentVariants}
@@ -92,6 +94,9 @@ const VariationField = ({
           variations={variations}
           handleEditClick={handleEditClick}
           handleDeleteClick={handleDeleteClick}
+          totalQty={totalQty}
+          // TODO: rename currentQty
+          variationTotalQty={currentQty}
         />
       </Box>
     </>

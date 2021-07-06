@@ -1,6 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
-import { Grid, Paper, Dialog, DialogTitle } from "@material-ui/core";
+import {
+  Grid,
+  Paper,
+  Dialog,
+  DialogTitle,
+  DialogContentText,
+  DialogContent,
+} from "@material-ui/core";
 import { isEqual } from "../util/isEqual";
 import SelectForm from "./shared/SelectForm";
 import { makeStyles } from "@material-ui/core/styles";
@@ -125,68 +132,69 @@ const VariationEditor = ({
   return (
     <Dialog open={!!selectedVariation}>
       <DialogTitle>Edit product</DialogTitle>
-      <Grid
-        className={classes.formGroup}
-        container
-        alignItems="center"
-        component="section"
-        spacing={2}
-      >
-        {currentVariants.map((v) => (
-          <Grid item xs={currentVariants.length === 1 ? 12 : 6} key={v.name}>
-            <VariantSelect
-              name={v.name}
-              error={hasError(v.name)}
-              helperText={hasError(v.name) && errors[v.name].message}
+      <DialogContent>
+        <Grid
+          className={classes.formGroup}
+          container
+          alignItems="center"
+          component="section"
+          spacing={2}
+        >
+          {currentVariants.map((v) => (
+            <Grid item xs={currentVariants.length === 1 ? 12 : 6} key={v.name}>
+              <VariantSelect
+                name={v.name}
+                error={hasError(v.name)}
+                helperText={hasError(v.name) && errors[v.name].message}
+                control={control}
+                label={v.name}
+                list={v.instances}
+                variant="outlined"
+                defaultValue=""
+                required
+                fullWidth
+              />
+            </Grid>
+          ))}
+          <Grid item xs={12}>
+            <Input
+              type="number"
+              name="qty"
               control={control}
-              label={v.name}
-              list={v.instances}
-              variant="outlined"
               defaultValue=""
+              variant="outlined"
+              label="Qty"
+              helperText={hasError("qty") && errors.qty.message}
+              error={hasError("qty")}
               required
               fullWidth
             />
           </Grid>
-        ))}
-        <Grid item xs={12}>
-          <Input
-            type="number"
-            name="qty"
-            control={control}
-            defaultValue=""
-            variant="outlined"
-            label="Qty"
-            helperText={hasError("qty") && errors.qty.message}
-            error={hasError("qty")}
-            required
-            fullWidth
-          />
+          <Grid item xs={6}>
+            <Button
+              disabled={false}
+              variant="outlined"
+              color="default"
+              fullWidth
+              classes={{ outlined: classes.button }}
+              onClick={handleClose}
+            >
+              Close
+            </Button>
+          </Grid>
+          <Grid item xs={6}>
+            <Button
+              onClick={handleSubmit(handleAdd)}
+              variant="outlined"
+              color="primary"
+              fullWidth
+              classes={{ outlined: classes.button }}
+            >
+              Confirm
+            </Button>
+          </Grid>
         </Grid>
-        <Grid item xs={6}>
-          <Button
-            disabled={false}
-            variant="outlined"
-            color="default"
-            fullWidth
-            classes={{ outlined: classes.button }}
-            onClick={handleClose}
-          >
-            Close
-          </Button>
-        </Grid>
-        <Grid item xs={6}>
-          <Button
-            disabled={false}
-            onClick={handleSubmit(handleAdd)}
-            variant="outlined"
-            color="primary"
-            fullWidth
-            classes={{ outlined: classes.button }}
-          >
-            Confirm
-          </Button>
-        </Grid>
-      </Grid>
+      </DialogContent>
     </Dialog>
   );
 };
