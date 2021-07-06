@@ -12,12 +12,12 @@ import {
   FormHelperText,
 } from "@material-ui/core";
 import { getCategories } from "../services/categoryServices";
-import VariationsPreview from "../components/shared/VariationsPreviewer";
+import VariationsPreview from "./shared/VariationsPreviewer";
 import { pickByParentId } from "../services/subCategoryServices";
-import ImageSelector from "../components/ImageSelector";
-import RichTextField from "../components/shared/RichTextField";
-import VariationsDialog from "../components/VariationsDialog";
-import ConfirmDialog from "../components/shared/ConfirmDialog";
+import ImageSelector from "./ImageSelector";
+import RichTextField from "./shared/RichTextField";
+import VariationsDialog from "./VariationsDialog";
+import ConfirmDialog from "./shared/ConfirmDialog";
 import { imageSchema } from "../schemas/imagesSchema";
 import { descriptionSchema, variationSchema } from "../schemas/productSchema";
 import {
@@ -28,8 +28,9 @@ import {
 import { isEmptyObject } from "../util/isEmptyObject";
 import { resizeImage } from "../util/resizeImage";
 import { getVariants } from "../services/variationServices";
-import Input from "../components/shared/Input";
-import Select from "../components/shared/Select";
+import Input from "./shared/Input";
+import Select from "./shared/Select";
+import Variations from "./Variations";
 Joi.ObjectId = require("joi-objectid")(Joi);
 
 const schema = Joi.object().keys({
@@ -56,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ProductRegistrationForm = () => {
+const CreateProductForm = () => {
   const classes = useStyles();
   const { user } = useSelector((state) => ({ ...state }));
 
@@ -356,43 +357,15 @@ const ProductRegistrationForm = () => {
           required
           fullWidth
         />
-        <FormControl component="fieldset" className={classes.formParts}>
-          <FormControlLabel
-            label="Enable variations"
-            control={
-              <Switch
-                checked={enableVariations}
-                onChange={handleCheckboxClick}
-                color="primary"
-              />
-            }
-          />
-          <FormHelperText error>{otherErrors.variations}</FormHelperText>
-        </FormControl>
-        {enableVariations && (
-          <VariationsDialog
-            quantity={quantity}
-            showDialog={showVariationDialog}
-            setShowVariationDialog={setShowVariationDialog}
-            variations={variations}
-            setVariations={setVariations}
-            currentVariants={currentVariants}
-            setCurrentVariants={setCurrentVariants}
-            otherErrors={otherErrors}
-            setOtherErrors={setOtherErrors}
-            variants={variants}
-          />
-        )}
-        {enableVariations && currentVariants.length > 0 && (
-          <Button
-            fullWidth
-            variant="outlined"
-            color="primary"
-            onClick={() => setShowVariationDialog(true)}
-          >
-            Add variations
-          </Button>
-        )}
+        <Variations
+          quantity={quantity}
+          variations={variations}
+          setVariations={setVariations}
+          variants={variants}
+          setVariants={setVariants}
+          errors={otherErrors}
+          setOtherErrors={setOtherErrors}
+        />
         {variations.length > 0 && <VariationsPreview variations={variations} />}
         <RichTextField
           success={result.success}
@@ -411,4 +384,4 @@ const ProductRegistrationForm = () => {
   );
 };
 
-export default ProductRegistrationForm;
+export default CreateProductForm;

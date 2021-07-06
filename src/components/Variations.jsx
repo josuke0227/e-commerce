@@ -12,21 +12,21 @@ const INITIAL_DIALOG_STATE = {
   message: "",
 };
 
-const Variations = ({ quantity }) => {
+const Variations = ({
+  quantity,
+  variations,
+  setVariations,
+  variants,
+  setVariants,
+  errors,
+  setErrors,
+}) => {
   const [enableVariations, setEnableVariations] = useState(false);
   const [showVariationDialog, setShowVariationDialog] = useState(false);
   const [currentVariation, setCurrentVariation] = useState("");
   const [showVariationResetDialog, setShowVariationResetDialog] =
     useState(INITIAL_DIALOG_STATE);
   const [currentVariants, setCurrentVariants] = useState([]);
-
-  const [variations, setVariations] = useState([]);
-  const [variants, setVariants] = useState([]);
-  const [otherErrors, setOtherErrors] = useState({
-    images: "",
-    description: "",
-    variations: "",
-  });
 
   useEffect(() => {
     loadVariants();
@@ -109,8 +109,8 @@ const Variations = ({ quantity }) => {
       />
       <VariationsDialog
         showDialog={showVariationDialog}
-        setErrors={setOtherErrors}
-        errors={otherErrors.variations}
+        setErrors={setErrors}
+        errors={errors.variations}
         variations={variations}
         setVariations={setVariations}
         handleVariationSelect={handleVariationSelect}
@@ -136,7 +136,7 @@ const Variations = ({ quantity }) => {
       <VariationsSwitch
         enableVariations={enableVariations}
         handleSwitch={handleSwitch}
-        errors={otherErrors.variations}
+        errors={errors.variations}
       />
       {enableVariations && (
         <VariantsPicker

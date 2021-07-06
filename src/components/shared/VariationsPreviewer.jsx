@@ -15,7 +15,9 @@ const VariationsTable = ({ variations }) => {
         <TableHead>
           <TableRow>
             {getObjectKeysSet(variations).map((k) => (
-              <TableCell align="center">{k}</TableCell>
+              <TableCell align="center" key={k}>
+                {k}
+              </TableCell>
             ))}
           </TableRow>
         </TableHead>

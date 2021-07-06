@@ -1,10 +1,10 @@
 import Layout from "../components/Layout";
-import ProductRegistrationForm from "../components/ProductRegistrationForm";
+import CreateProductForm from "../components/CreateProductForm";
 
 const CreateProductPage = ({ location }) => {
   return (
     <Layout location={location}>
-      <ProductRegistrationForm />
+      <CreateProductForm />
     </Layout>
   );
 };
