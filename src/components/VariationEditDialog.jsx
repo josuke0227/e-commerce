@@ -1,30 +1,12 @@
-import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
-import {
-  Grid,
-  Paper,
-  Dialog,
-  DialogTitle,
-  DialogContentText,
-  DialogContent,
-} from "@material-ui/core";
+import { Grid, Dialog, DialogTitle, DialogContent } from "@material-ui/core";
 import { isEqual } from "../util/isEqual";
-import SelectForm from "./shared/SelectForm";
 import { makeStyles } from "@material-ui/core/styles";
-import IconButton from "@material-ui/core/IconButton";
-import AddCircleIcon from "@material-ui/icons/AddCircleOutline";
-import CancelIcon from "@material-ui/icons/Cancel";
-import { getObjectKeysSet } from "../util/getObjectKeysSet";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
-import FormControl from "@material-ui/core/FormControl";
-import { variationsSchema } from "../schemas/productSchema";
-import VariantSelect from "../components/shared/VariantSelect";
-import Input from "../components/shared/Input";
+import VariantSelect from "./shared/VariantSelect";
+import Input from "./shared/Input";
 
 const useStyles = makeStyles((theme) => ({
   formGroup: {
@@ -41,12 +23,14 @@ const schema = Joi.object().keys({
   qty: Joi.number(),
 });
 
-const VariationEditor = ({
+const VariationEditModal = ({
   currentVariants,
   variations,
   setVariations,
-  selectedVariation,
-  setSelectedVariation,
+  currentVariation,
+  setCurrentVariation,
+  currentQty,
+  qty,
 }) => {
   const classes = useStyles();
 
@@ -54,9 +38,12 @@ const VariationEditor = ({
     handleSubmit,
     formState: { errors },
     control,
+    watch,
   } = useForm({
     resolver: joiResolver(schema),
   });
+
+  const incomingQty = watch("qty");
 
   const hasError = (name) => {
     if (Object.keys(errors).length) {
@@ -76,9 +63,13 @@ const VariationEditor = ({
 
     const variationData = createVariation(data);
     const combinedVariations = combineSameVariation(variations, variationData);
-    const index = selectedVariation.location;
+    const index = currentVariation.location;
 
     if (combinedVariations) {
+      if (variations.length === 1) {
+        return setVariations([{ ...variationData }]);
+      }
+      combinedVariations.splice(index, 1);
       setVariations(combinedVariations);
     } else {
       const currentVariations = [...variations];
@@ -86,7 +77,7 @@ const VariationEditor = ({
       setVariations(currentVariations);
     }
 
-    setSelectedVariation("");
+    setCurrentVariation("");
   };
 
   const createVariation = (data) => {
@@ -126,11 +117,28 @@ const VariationEditor = ({
   };
 
   const handleClose = () => {
-    setSelectedVariation("");
+    setCurrentVariation("");
+  };
+
+  const disableButton = () => {
+    if (!isValidQuantity() || currentQty + parseInt(incomingQty) > qty)
+      return true;
+    return false;
+  };
+
+  const isValidQuantity = () => {
+    if (getCurrentQty() < qty) return true;
+    return false;
+  };
+
+  const getCurrentQty = () => {
+    let count = 0;
+    variations.forEach((v) => (count += v.qty));
+    return count;
   };
 
   return (
-    <Dialog open={!!selectedVariation}>
+    <Dialog open={!!currentVariation}>
       <DialogTitle>Edit product</DialogTitle>
       <DialogContent>
         <Grid
@@ -184,13 +192,14 @@ const VariationEditor = ({
           </Grid>
           <Grid item xs={6}>
             <Button
+              disabled={disableButton()}
               onClick={handleSubmit(handleAdd)}
               variant="outlined"
               color="primary"
               fullWidth
               classes={{ outlined: classes.button }}
             >
-              Confirm
+              Add
             </Button>
           </Grid>
         </Grid>
@@ -199,4 +208,4 @@ const VariationEditor = ({
   );
 };
 
-export default VariationEditor;
+export default VariationEditModal;

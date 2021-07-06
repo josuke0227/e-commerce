@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
-import VariationField from "../components/VariationField";
+import VariationsSwitch from "../components/VariationsSwitch";
+import { getVariants } from "../services/variationServices";
 import { isEqual } from "../util/isEqual";
-import { getVariations } from "../services/variationServices";
+import VariationsDialog from "../components/VariationsDialog";
+import VariantsPicker from "../components/VariantsPicker";
+import VariationEditDialog from "../components/VariationEditDialog";
 import ConfirmDialog from "../components/shared/ConfirmDialog";
 
 const INITIAL_DIALOG_STATE = {
@@ -9,15 +12,16 @@ const INITIAL_DIALOG_STATE = {
   message: "",
 };
 
-const quantity = 10;
-
-export default function Variations() {
-  const [variants, setVariants] = useState([]);
-  const [currentVariants, setCurrentVariants] = useState([]);
-  const [showVariations, setShowVariations] = useState(false);
-  const [showVariationDialog, setShowVariationDialog] =
+const Variations = ({ quantity }) => {
+  const [enableVariations, setEnableVariations] = useState(false);
+  const [showVariationDialog, setShowVariationDialog] = useState(false);
+  const [currentVariation, setCurrentVariation] = useState("");
+  const [showVariationResetDialog, setShowVariationResetDialog] =
     useState(INITIAL_DIALOG_STATE);
+  const [currentVariants, setCurrentVariants] = useState([]);
+
   const [variations, setVariations] = useState([]);
+  const [variants, setVariants] = useState([]);
   const [otherErrors, setOtherErrors] = useState({
     images: "",
     description: "",
@@ -30,36 +34,34 @@ export default function Variations() {
 
   const loadVariants = async () => {
     try {
-      const { data } = await getVariations();
+      const { data } = await getVariants();
+
       setVariants(data);
     } catch (error) {
       console.log("fetching variations error", error);
     }
   };
 
-  const handleCheckboxClick = () => {
-    if (showVariations === true) setCurrentVariants([]);
-    setShowVariations(!showVariations);
-    if (showVariations && variations.length) {
-      setShowVariationDialog({
+  const handleSwitch = () => {
+    if (enableVariations && variations.length) {
+      return setShowVariationResetDialog({
         message: "All changes are lost. Are you sure to disable variations?",
         show: true,
       });
     }
+    setEnableVariations(!enableVariations);
+    setCurrentVariants([]);
   };
 
   const handleConfirm = () => {
+    setShowVariationResetDialog({ ...showVariationDialog, show: false });
     setVariations([]);
     setCurrentVariants([]);
-    setShowVariationDialog({
-      show: false,
-    });
+    setEnableVariations(false);
   };
 
   const handleCancel = () => {
-    setShowVariationDialog({
-      show: false,
-    });
+    setShowVariationResetDialog({ ...showVariationDialog, show: false });
   };
 
   const handleVariationSelect = (variation) => {
@@ -69,6 +71,12 @@ export default function Variations() {
     }
 
     setCurrentVariants([...currentVariants, variation]);
+  };
+
+  const handleVariationRemove = (index) => {
+    const currentData = [...currentVariants];
+    currentData.splice(index, 1);
+    setCurrentVariants(currentData);
   };
 
   const handleVariationDeSelect = (name, index) => {
@@ -81,28 +89,68 @@ export default function Variations() {
     setVariations(currentVariations);
   };
 
+  const getCount = (arr) => {
+    if (!arr.length) return 0;
+
+    let count = 0;
+    arr.forEach((v) => (count += parseInt(v.qty)));
+    return count;
+  };
+
+  const currentQty = getCount(variations);
+
   return (
     <>
       <ConfirmDialog
-        showDialog={showVariationDialog}
         handleConfirm={handleConfirm}
         handleCancel={handleCancel}
-        result={{ message: "", success: null }}
+        showDialog={showVariationResetDialog}
+        result={{ success: null, message: "" }}
       />
-      <VariationField
-        showVariations={showVariations}
-        handleCheckboxClick={handleCheckboxClick}
+      <VariationsDialog
+        showDialog={showVariationDialog}
         setErrors={setOtherErrors}
+        errors={otherErrors.variations}
         variations={variations}
         setVariations={setVariations}
-        quantity={quantity}
         handleVariationSelect={handleVariationSelect}
         handleVariationDeSelect={handleVariationDeSelect}
         currentVariants={currentVariants}
+        currentVariation={currentVariation}
+        setCurrentVariation={setCurrentVariation}
         variants={variants}
-        errors={otherErrors.variations}
-        totalQty={quantity}
+        qty={quantity}
+        setShowVariationDialog={setShowVariationDialog}
+        setCurrentVariants={setCurrentVariants}
+        currentQty={currentQty}
       />
+      <VariationEditDialog
+        currentVariants={currentVariants}
+        variations={variations}
+        qty={quantity}
+        setVariations={setVariations}
+        currentVariation={currentVariation}
+        setCurrentVariation={setCurrentVariation}
+        currentQty={currentQty}
+      />
+      <VariationsSwitch
+        enableVariations={enableVariations}
+        handleSwitch={handleSwitch}
+        errors={otherErrors.variations}
+      />
+      {enableVariations && (
+        <VariantsPicker
+          variations={variations}
+          variants={variants}
+          currentVariants={currentVariants}
+          handleVariationSelect={handleVariationSelect}
+          handleVariationRemove={handleVariationRemove}
+          enableVariations={enableVariations}
+          setShowVariationDialog={setShowVariationDialog}
+        />
+      )}
     </>
   );
-}
+};
+
+export default Variations;

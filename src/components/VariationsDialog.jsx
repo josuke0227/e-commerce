@@ -1,10 +1,7 @@
-import { useState, useEffect } from "react";
-import VariationField from "../components/VariationField";
-import { isEqual } from "../util/isEqual";
-import ConfirmDialog from "../components/shared/ConfirmDialog";
-import { Dialog, Chip, Box, Typography } from "@material-ui/core";
-import AddCircleIcon from "@material-ui/icons/AddCircleOutline";
-import HighlightOffIcon from "@material-ui/icons/HighlightOff";
+import { useEffect } from "react";
+import VariationsTable from "../components/shared/VariationsTable";
+import VariationsForm from "./VariationsForm";
+import { Dialog, DialogContent } from "@material-ui/core";
 import { getObjectKeysSet } from "../util/getObjectKeysSet";
 
 export default function VariationsDialog({
@@ -14,10 +11,14 @@ export default function VariationsDialog({
   setShowVariationDialog,
   currentVariants,
   setCurrentVariants,
-  otherErrors,
   setOtherErrors,
-  quantity,
+  qty,
   variants,
+  handleVariationSelect,
+  handleVariationDeSelect,
+  currentVariation,
+  setCurrentVariation,
+  currentQty,
 }) {
   useEffect(() => {
     if (!currentVariants.length && showDialog) applyVariants();
@@ -37,108 +38,66 @@ export default function VariationsDialog({
     setCurrentVariants(result);
   };
 
-  const handleVariationSelect = (variation) => {
-    const currentData = [...currentVariants];
-    for (let data of currentData) {
-      if (isEqual(data, variation)) return;
+  const handleEditClick = (variation, i) => {
+    const variantNames = Object.keys(variation).filter((k) => k !== "qty");
+
+    const variationData = createVariationDataWithIndex(variantNames, variation);
+    variationData.location = i;
+
+    setCurrentVariation(variationData);
+  };
+
+  const createVariationDataWithIndex = (variantNames, variation) => {
+    let data = {};
+    for (let i = 0; i < variantNames.length; i++) {
+      const name = variantNames[i];
+      const index = getIndexOfInstance(name, variation[name]);
+      data = { ...data, [name]: { index } };
     }
-
-    setCurrentVariants([...currentVariants, variation]);
+    data.qty = variation.qty;
+    return data;
   };
 
-  const handleVariationRemove = (index) => {
-    const currentData = [...currentVariants];
-    currentData.splice(index, 1);
-    setCurrentVariants(currentData);
+  const getIndexOfInstance = (variantName, variationData) => {
+    let index;
+    const instances = currentVariants.filter((v) => v.name === variantName)[0]
+      .instances;
+    instances.forEach((i, idx) => {
+      if (i.name === variationData.name) index = idx;
+    });
+    return index;
   };
 
-  const handleVariationDeSelect = (name, index) => {
-    const currentData = [...currentVariants];
-    currentData.splice(index, 1);
-    setCurrentVariants(currentData);
-
-    const currentVariations = { ...variations };
-    delete currentVariations[name];
-    setVariations(currentVariations);
+  const handleDeleteClick = (index) => {
+    const current = [...variations];
+    current.splice(index, 1);
+    setVariations(current);
   };
 
   return (
-    <>
-      <VariantsPicker
-        variants={variants}
-        currentVariants={currentVariants}
-        handleVariationSelect={handleVariationSelect}
-        handleVariationRemove={handleVariationRemove}
-        variations={variations}
-      />
-      <Dialog open={showDialog} style={{ width: "100vw" }}>
-        <VariationField
-          showDialog={showDialog}
-          setErrors={setOtherErrors}
-          errors={otherErrors.variations}
+    <Dialog open={showDialog} style={{ width: "100vw" }}>
+      <DialogContent>
+        <VariationsForm
+          variants={variants}
+          currentVariation={currentVariation}
           variations={variations}
           setVariations={setVariations}
+          currentQty={currentQty}
+          qty={qty}
           handleVariationSelect={handleVariationSelect}
-          handleVariationDeSelect={handleVariationDeSelect}
           currentVariants={currentVariants}
-          variants={variants}
-          totalQty={quantity}
-          showDialog={showDialog}
+          handleVariationDeSelect={handleVariationDeSelect}
+          setErrors={setOtherErrors}
           setShowVariationDialog={setShowVariationDialog}
-          setCurrentVariants={setCurrentVariants}
         />
-      </Dialog>
-    </>
+        <VariationsTable
+          variations={variations}
+          handleEditClick={handleEditClick}
+          handleDeleteClick={handleDeleteClick}
+          qty={qty}
+          currentQty={currentQty}
+        />
+      </DialogContent>
+    </Dialog>
   );
 }
-
-const VariantsPicker = ({
-  variations,
-  variants,
-  currentVariants,
-  handleVariationSelect,
-  handleVariationRemove,
-}) => {
-  const includes = (variationData) => {
-    for (let data of currentVariants) {
-      if (isEqual(data, variationData)) return true;
-    }
-
-    return false;
-  };
-
-  return (
-    <Box>
-      {!variations.length && (
-        <>
-          <Typography>Please choose variants</Typography>
-          <Box>
-            {variants.map((v, i) =>
-              !includes(v) ? (
-                <Chip
-                  key={v._id}
-                  style={{ marginRight: "0.5rem" }}
-                  label={`Add ${v.name}`}
-                  color="primary"
-                  onDelete={() => handleVariationSelect(v)}
-                  deleteIcon={<AddCircleIcon />}
-                  variant="outlined"
-                />
-              ) : (
-                <Chip
-                  key={v._id}
-                  style={{ marginRight: "0.5rem" }}
-                  label={`Remove ${v.name}`}
-                  color="secondary"
-                  onDelete={() => handleVariationRemove(i)}
-                  deleteIcon={<HighlightOffIcon />}
-                  variant="outlined"
-                />
-              )
-            )}
-          </Box>
-        </>
-      )}
-    </Box>
-  );
-};

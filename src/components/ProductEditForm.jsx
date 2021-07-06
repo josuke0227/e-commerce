@@ -180,7 +180,6 @@ const ProductRegistrationForm = () => {
   const handleConfirm = () => {
     setShowVariationResetDialog({ ...showVariationDialog, show: false });
     setVariations([]);
-    // setEnableVariations(false);
     setCurrentVariants([]);
   };
 
