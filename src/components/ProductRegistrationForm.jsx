@@ -368,21 +368,21 @@ const ProductRegistrationForm = () => {
             }
           />
           <FormHelperText error>{otherErrors.variations}</FormHelperText>
-          {enableVariations && (
-            <VariationsDialog
-              quantity={quantity}
-              showDialog={showVariationDialog}
-              setShowVariationDialog={setShowVariationDialog}
-              variations={variations}
-              setVariations={setVariations}
-              currentVariants={currentVariants}
-              setCurrentVariants={setCurrentVariants}
-              otherErrors={otherErrors}
-              setOtherErrors={setOtherErrors}
-              variants={variants}
-            />
-          )}
         </FormControl>
+        {enableVariations && (
+          <VariationsDialog
+            quantity={quantity}
+            showDialog={showVariationDialog}
+            setShowVariationDialog={setShowVariationDialog}
+            variations={variations}
+            setVariations={setVariations}
+            currentVariants={currentVariants}
+            setCurrentVariants={setCurrentVariants}
+            otherErrors={otherErrors}
+            setOtherErrors={setOtherErrors}
+            variants={variants}
+          />
+        )}
         {enableVariations && currentVariants.length > 0 && (
           <Button
             fullWidth

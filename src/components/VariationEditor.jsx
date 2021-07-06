@@ -58,42 +58,20 @@ const VariationEditor = ({
     return false;
   };
 
-  const combineSameVariation = (variations, variation) => {
-    let total = variation.qty;
-    for (let i = 0; i < variations.length; i++) {
-      const baseObject = { ...variations[i] };
-      const comparingObject = { ...variation };
-      delete baseObject.qty;
-      delete comparingObject.qty;
-
-      if (isEqual(baseObject, comparingObject)) {
-        total += variations[i].qty;
-        variations[i].qty = total;
-        variation.qty = total;
-        variations[i] = variation;
-        return variations;
-      }
-    }
-
-    return false;
-  };
-
   const handleAdd = (data, e) => {
     e.stopPropagation();
+
     const { error } = schema.validate(data);
 
     if (error) {
-      console.log(error);
-      return;
+      return console.log(error);
     }
 
     const variationData = createVariation(data);
-
     const combinedVariations = combineSameVariation(variations, variationData);
     const index = selectedVariation.location;
 
     if (combinedVariations) {
-      combinedVariations.splice(index, 1);
       setVariations(combinedVariations);
     } else {
       const currentVariations = [...variations];
@@ -118,6 +96,26 @@ const VariationEditor = ({
     });
 
     return result;
+  };
+
+  const combineSameVariation = (variations, variation) => {
+    const clone = [...variations];
+
+    let total = variation.qty;
+    for (let i = 0; i < clone.length; i++) {
+      const baseObject = { ...clone[i] };
+      const comparingObject = { ...variation };
+      delete baseObject.qty;
+      delete comparingObject.qty;
+
+      if (isEqual(baseObject, comparingObject)) {
+        total += variations[i].qty;
+        clone[i].qty = total;
+        return clone;
+      }
+    }
+
+    return false;
   };
 
   const handleClose = () => {

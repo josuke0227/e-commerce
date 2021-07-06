@@ -436,7 +436,6 @@ const ProductRegistrationForm = () => {
               Edit description
             </Button>
           )}
-
           {showEditor ? (
             <RichTextField
               success={result.success}
