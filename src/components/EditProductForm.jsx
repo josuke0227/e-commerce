@@ -15,10 +15,10 @@ import {
 import { getCategories } from "../services/categoryServices";
 import { getVariants } from "../services/variationServices";
 import { pickByParentId } from "../services/subCategoryServices";
-import ImageSelector from "../components/ImageSelector";
-import RichTextField from "../components/shared/RichTextField";
-import VariationsDialog from "../components/VariationsDialog";
-import ConfirmDialog from "../components/shared/ConfirmDialog";
+import ImageSelector from "./ImageSelector";
+import RichTextField from "./shared/RichTextField";
+import VariationsDialog from "./VariationsDialog";
+import ConfirmDialog from "./shared/ConfirmDialog";
 import { imageSchema } from "../schemas/imagesSchema";
 import { descriptionSchema, variationSchema } from "../schemas/productSchema";
 import {
@@ -29,9 +29,9 @@ import {
 } from "../services/productServices";
 import { isEmptyObject } from "../util/isEmptyObject";
 import { resizeImage } from "../util/resizeImage";
-import Input from "../components/shared/Input";
-import Select from "../components/shared/Select";
-import VariationsPreview from "../components/shared/VariationsPreviewer";
+import Input from "./shared/Input";
+import Select from "./shared/Select";
+import VariationsPreview from "./shared/VariationsPreviewer";
 import { isArray } from "../util/isArray";
 import Variations from "./Variations";
 Joi.ObjectId = require("joi-objectid")(Joi);
@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ProductRegistrationForm = () => {
+const EditProductForm = () => {
   const classes = useStyles();
   const { user, product } = useSelector((state) => ({ ...state }));
 
@@ -432,4 +432,4 @@ const ProductRegistrationForm = () => {
   );
 };
 
-export default ProductRegistrationForm;
+export default EditProductForm;

@@ -1,10 +1,10 @@
 import Layout from "../components/Layout";
-import ProductEditForm from "../components/ProductEditForm";
+import EditProductForm from "../components/EditProductForm";
 
 const EditProductPage = ({ location }) => {
   return (
     <Layout location={location}>
-      <ProductEditForm />
+      <EditProductForm />
     </Layout>
   );
 };
