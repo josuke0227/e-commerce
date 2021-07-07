@@ -210,8 +210,12 @@ const CreateProductForm = () => {
 
   const validateVariationsQty = () => {
     const totalVariationsQty = getVariationsQty(variations);
+    let int;
 
-    if (enableVariations && totalVariationsQty !== quantity)
+    if (typeof quantity === "string") int = parseInt(quantity);
+    else int = quantity;
+
+    if (enableVariations && totalVariationsQty !== int)
       return "Total quantity and variations total quantity not matching.";
 
     return "";
