@@ -77,6 +77,8 @@ const VariationsForm = ({
   const handleAdd = (data, e) => {
     e.stopPropagation();
 
+    console.log("called.");
+
     const newVariation = createVariation(data);
     const currentVariations = [...variations];
 

@@ -31,13 +31,8 @@ const VariationsTable = ({
   variations,
   handleDeleteClick,
   handleEditClick,
-  qty,
-  currentQty,
 }) => {
   const classes = useStyles();
-
-  console.log(`qty`, qty);
-  console.log(`currentQty`, currentQty);
 
   if (variations.length > 0)
     return (
@@ -66,7 +61,6 @@ const VariationsTable = ({
                 })}
                 <TableCell>
                   <IconButton
-                    disabled={qty <= currentQty}
                     color="primary"
                     onClick={() => handleEditClick(r, i)}
                   >

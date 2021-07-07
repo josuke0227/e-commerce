@@ -73,8 +73,6 @@ export default function VariationsDialog({
           variations={variations}
           handleEditClick={handleEditClick}
           handleDeleteClick={handleDeleteClick}
-          qty={qty}
-          currentQty={currentQty}
         />
       </DialogContent>
     </Dialog>

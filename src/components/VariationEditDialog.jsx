@@ -23,7 +23,7 @@ const schema = Joi.object().keys({
   qty: Joi.number(),
 });
 
-const VariationEditModal = ({
+const VariationEditDialog = ({
   currentVariants,
   variations,
   setVariations,
@@ -56,27 +56,33 @@ const VariationEditModal = ({
     e.stopPropagation();
 
     const { error } = schema.validate(data);
-
     if (error) {
       return console.log(error);
     }
 
     const variationData = createVariation(data);
-    const combinedVariations = combineSameVariation(variations, variationData);
-    const index = currentVariation.location;
+    const currentVariations = [...variations];
 
-    if (combinedVariations) {
-      if (variations.length === 1) {
-        return setVariations([{ ...variationData }]);
-      }
-      combinedVariations.splice(index, 1);
-      setVariations(combinedVariations);
-    } else {
-      const currentVariations = [...variations];
-      currentVariations[index] = variationData;
-      setVariations(currentVariations);
+    const index = getIndexOfSameVariationType(variationData);
+    if (index >= 0 && currentVariations.length > 1) {
+      if (index === currentVariation.location)
+        return insertVariation(currentVariations, variationData);
+      return mergeVariation(currentVariations, variationData, index);
     }
+    insertVariation(currentVariations, variationData);
+  };
 
+  const mergeVariation = (currentVariations, variationData, index) => {
+    currentVariations[index].qty += variationData.qty;
+    currentVariations.splice(currentVariation.location, 1);
+    setVariations(currentVariations);
+    setCurrentVariation("");
+  };
+
+  const insertVariation = (currentVariations, variationData) => {
+    const index = currentVariation.location;
+    currentVariations[index] = variationData;
+    setVariations(currentVariations);
     setCurrentVariation("");
   };
 
@@ -96,24 +102,19 @@ const VariationEditModal = ({
     return result;
   };
 
-  const combineSameVariation = (variations, variation) => {
-    const clone = [...variations];
-
-    let total = variation.qty;
-    for (let i = 0; i < clone.length; i++) {
-      const baseObject = { ...clone[i] };
-      const comparingObject = { ...variation };
+  const getIndexOfSameVariationType = (variation) => {
+    for (let i = 0; i < variations.length; i++) {
+      const baseObject = { ...variation };
+      const comparingObject = { ...variations[i] };
       delete baseObject.qty;
       delete comparingObject.qty;
 
       if (isEqual(baseObject, comparingObject)) {
-        total += variations[i].qty;
-        clone[i].qty = total;
-        return clone;
+        return i;
       }
     }
 
-    return false;
+    return -1;
   };
 
   const handleClose = () => {
@@ -121,20 +122,14 @@ const VariationEditModal = ({
   };
 
   const disableButton = () => {
-    if (!isValidQuantity() || currentQty + parseInt(incomingQty) > qty)
-      return true;
+    if (!isValidIncomingQuantity(currentVariation)) return true;
     return false;
   };
 
-  const isValidQuantity = () => {
-    if (getCurrentQty() < qty) return true;
-    return false;
-  };
+  const isValidIncomingQuantity = (currentVariation) => {
+    if (!currentVariation) return currentQty + parseInt(incomingQty) > qty;
 
-  const getCurrentQty = () => {
-    let count = 0;
-    variations.forEach((v) => (count += v.qty));
-    return count;
+    return qty >= currentQty + parseInt(incomingQty) - currentVariation.qty;
   };
 
   return (
@@ -208,4 +203,4 @@ const VariationEditModal = ({
   );
 };
 
-export default VariationEditModal;
+export default VariationEditDialog;

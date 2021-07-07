@@ -59,7 +59,7 @@ const VariantsPicker = ({
           color="primary"
           onClick={() => setShowVariationDialog(true)}
         >
-          Add variations
+          Add / Edit variations
         </Button>
       )}
     </Box>
