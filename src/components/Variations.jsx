@@ -8,6 +8,7 @@ import VariationEditDialog from "../components/VariationEditDialog";
 import ConfirmDialog from "../components/shared/ConfirmDialog";
 import VariationsPreview from "../components/shared/VariationsPreviewer";
 import { getObjectKeysSet } from "../util/getObjectKeysSet";
+import { getVariationsQty } from "../util/getVariationsQty";
 
 const INITIAL_DIALOG_STATE = {
   show: false,
@@ -20,7 +21,7 @@ const Variations = ({
   setVariations,
   variants,
   setVariants,
-  errors,
+  error,
   setErrors,
   enableVariations,
   setEnableVariations,
@@ -109,15 +110,7 @@ const Variations = ({
     setVariations(currentVariations);
   };
 
-  const getCount = (arr) => {
-    if (!arr.length) return 0;
-
-    let count = 0;
-    arr.forEach((v) => (count += parseInt(v.qty)));
-    return count;
-  };
-
-  const currentQty = getCount(variations);
+  const currentQty = getVariationsQty(variations);
 
   return (
     <>
@@ -130,7 +123,6 @@ const Variations = ({
       <VariationsDialog
         showDialog={showVariationDialog}
         setErrors={setErrors}
-        errors={errors.variations}
         variations={variations}
         setVariations={setVariations}
         handleVariationSelect={handleVariationSelect}
@@ -156,7 +148,7 @@ const Variations = ({
       <VariationsSwitch
         enableVariations={enableVariations}
         handleSwitch={handleSwitch}
-        errors={errors.variations}
+        error={error}
       />
       {enableVariations && (
         <VariantsPicker

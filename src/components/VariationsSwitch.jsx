@@ -5,7 +5,7 @@ import {
   FormHelperText,
 } from "@material-ui/core";
 
-const VariationsSwitch = ({ enableVariations, handleSwitch, errors }) => {
+const VariationsSwitch = ({ enableVariations, handleSwitch, error }) => {
   return (
     <FormControl component="fieldset">
       <FormControlLabel
@@ -18,7 +18,7 @@ const VariationsSwitch = ({ enableVariations, handleSwitch, errors }) => {
           />
         }
       />
-      <FormHelperText error>{errors}</FormHelperText>
+      <FormHelperText error>{error}</FormHelperText>
     </FormControl>
   );
 };

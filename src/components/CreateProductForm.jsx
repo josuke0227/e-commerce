@@ -363,8 +363,10 @@ const CreateProductForm = () => {
           setVariations={setVariations}
           variants={variants}
           setVariants={setVariants}
-          errors={otherErrors}
+          error={otherErrors.variations}
           setOtherErrors={setOtherErrors}
+          enableVariations={enableVariations}
+          setEnableVariations={setEnableVariations}
         />
         <RichTextField
           success={result.success}

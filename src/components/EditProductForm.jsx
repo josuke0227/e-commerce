@@ -34,6 +34,7 @@ import Select from "./shared/Select";
 import VariationsPreview from "./shared/VariationsPreviewer";
 import { isArray } from "../util/isArray";
 import Variations from "./Variations";
+import { getVariationsQty } from "../util/getVariationsQty";
 Joi.ObjectId = require("joi-objectid")(Joi);
 
 const schema = Joi.object().keys({
@@ -248,6 +249,11 @@ const EditProductForm = () => {
   };
 
   const onSubmit = async (data, e) => {
+    const errorMessage = validateVariationsQty();
+    if (errorMessage) {
+      return setOtherErrors({ ...otherErrors, variations: errorMessage });
+    }
+
     if (variations.length) {
       const { error } = variationSchema.validate(variations);
       if (error)
@@ -272,6 +278,15 @@ const EditProductForm = () => {
       show: true,
       message: "Are you sure to submit?",
     });
+  };
+
+  const validateVariationsQty = () => {
+    const totalVariationsQty = getVariationsQty(variations);
+
+    if (enableVariations && totalVariationsQty !== quantity)
+      return "Total quantity and variations total quantity not matching.";
+
+    return "";
   };
 
   const hasError = (name) => {
@@ -392,7 +407,7 @@ const EditProductForm = () => {
           setVariations={setVariations}
           variants={variants}
           setVariants={setVariants}
-          errors={otherErrors}
+          error={otherErrors.variations}
           setOtherErrors={setOtherErrors}
           enableVariations={enableVariations}
           setEnableVariations={setEnableVariations}
