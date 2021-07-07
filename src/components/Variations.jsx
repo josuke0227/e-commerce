@@ -6,7 +6,8 @@ import VariationsDialog from "../components/VariationsDialog";
 import VariantsPicker from "../components/VariantsPicker";
 import VariationEditDialog from "../components/VariationEditDialog";
 import ConfirmDialog from "../components/shared/ConfirmDialog";
-import VariationsPreview from "../components/shared/VariationsPreviewer";
+import LinearTable from "./shared/LinearTable";
+import TwoDimensionalTable from "./shared/TwoDimensionalTable";
 import { getObjectKeysSet } from "../util/getObjectKeysSet";
 import { getVariationsQty } from "../util/getVariationsQty";
 
@@ -110,6 +111,15 @@ const Variations = ({
     setVariations(currentVariations);
   };
 
+  const renderVariationsTable = () => {
+    if (!variations.length) return;
+
+    const keys = Object.keys(variations[0]);
+    if (keys.length === 3)
+      return <TwoDimensionalTable variations={variations} />;
+    else return <LinearTable variations={variations} />;
+  };
+
   const currentQty = getVariationsQty(variations);
 
   return (
@@ -161,7 +171,7 @@ const Variations = ({
           setShowVariationDialog={setShowVariationDialog}
         />
       )}
-      {variations.length > 0 && <VariationsPreview variations={variations} />}
+      {renderVariationsTable()}
     </>
   );
 };

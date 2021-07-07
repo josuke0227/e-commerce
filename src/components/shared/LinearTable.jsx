@@ -5,12 +5,13 @@ import {
   TableHead,
   TableRow,
   TableCell,
+  Paper,
 } from "@material-ui/core";
 import { getObjectKeysSet } from "../../util/getObjectKeysSet";
 
-const VariationsTable = ({ variations }) => {
+const LinearTable = ({ variations }) => {
   return (
-    <TableContainer>
+    <TableContainer component={Paper}>
       <Table>
         <TableHead>
           <TableRow>
@@ -43,4 +44,4 @@ const VariationsTable = ({ variations }) => {
   );
 };
 
-export default VariationsTable;
+export default LinearTable;
