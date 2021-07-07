@@ -1,23 +1,14 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
-import {
-  Button,
-  makeStyles,
-  FormControl,
-  FormControlLabel,
-  Switch,
-  FormHelperText,
-  Grid,
-} from "@material-ui/core";
+import { Button, makeStyles, Grid } from "@material-ui/core";
 import { getCategories } from "../services/categoryServices";
 import { getVariants } from "../services/variationServices";
 import { pickByParentId } from "../services/subCategoryServices";
 import ImageSelector from "./ImageSelector";
 import RichTextField from "./shared/RichTextField";
-import VariationsDialog from "./VariationsDialog";
 import ConfirmDialog from "./shared/ConfirmDialog";
 import { imageSchema } from "../schemas/imagesSchema";
 import { descriptionSchema, variationSchema } from "../schemas/productSchema";
@@ -31,7 +22,6 @@ import { isEmptyObject } from "../util/isEmptyObject";
 import { resizeImage } from "../util/resizeImage";
 import Input from "./shared/Input";
 import Select from "./shared/Select";
-import VariationsPreview from "./shared/VariationsPreviewer";
 import { isArray } from "../util/isArray";
 import Variations from "./Variations";
 import { getVariationsQty } from "../util/getVariationsQty";
@@ -64,31 +54,20 @@ const useStyles = makeStyles((theme) => ({
 const EditProductForm = () => {
   const classes = useStyles();
   const { user, product } = useSelector((state) => ({ ...state }));
-
   const [categories, setCategories] = useState([]);
-
   const [subCategories, setSubCategories] = useState([]);
   const [defaultDescriptionValue, setDefaultDescriptionValue] = useState("");
   const [showEditor, setShowEditor] = useState(false);
-
   const [images, setImages] = useState([]);
-
   const [variants, setVariants] = useState([]);
   const [variations, setVariations] = useState([]);
-  const [currentVariants, setCurrentVariants] = useState([]);
   const [enableVariations, setEnableVariations] = useState(false);
-  const [showVariationDialog, setShowVariationDialog] = useState(false);
-
   const [description, setDescription] = useState("");
-
   const [loading, setLoading] = useState(false);
-  const [showVariationResetDialog, setShowVariationResetDialog] =
-    useState(INITIAL_DIALOG_STATE);
   const [showSubmissionDialog, setShowSubmissionDialog] =
     useState(INITIAL_DIALOG_STATE);
   const [result, setResult] = useState({ success: null, message: "" });
   const [finalizedData, setFinalizedData] = useState(null);
-  const [values, setValues] = useState(null);
   // For inputs are not using react-hook-form
   const [otherErrors, setOtherErrors] = useState({
     images: "",
@@ -168,27 +147,6 @@ const EditProductForm = () => {
     }
   };
 
-  const onSwitch = () => {
-    if (enableVariations && variations.length) {
-      return setShowVariationResetDialog({
-        message: "All changes are lost. Are you sure to disable variations?",
-        show: true,
-      });
-    }
-    setEnableVariations(!enableVariations);
-    setCurrentVariants([]);
-  };
-
-  const handleConfirm = () => {
-    setShowVariationResetDialog({ ...showVariationDialog, show: false });
-    setVariations([]);
-    setCurrentVariants([]);
-  };
-
-  const handleCancel = () => {
-    setShowVariationResetDialog({ ...showVariationDialog, show: false });
-  };
-
   const handleSubmissionConfirm = () => {
     doSubmit();
   };
@@ -248,7 +206,7 @@ const EditProductForm = () => {
     setLoading(false);
   };
 
-  const onSubmit = async (data, e) => {
+  const onSubmit = async (data) => {
     const errorMessage = validateVariationsQty();
     if (errorMessage) {
       return setOtherErrors({ ...otherErrors, variations: errorMessage });
@@ -299,12 +257,6 @@ const EditProductForm = () => {
   if (product === null) return <div className="">Loading...</div>;
   return (
     <>
-      <ConfirmDialog
-        handleConfirm={handleConfirm}
-        handleCancel={handleCancel}
-        showDialog={showVariationDialog}
-        result={result}
-      />
       <ConfirmDialog
         handleConfirm={handleSubmissionConfirm}
         handleCancel={handleSubmissionCancel}

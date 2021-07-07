@@ -3,20 +3,11 @@ import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
-import {
-  Button,
-  makeStyles,
-  FormControl,
-  FormControlLabel,
-  Switch,
-  FormHelperText,
-} from "@material-ui/core";
+import { Button, makeStyles } from "@material-ui/core";
 import { getCategories } from "../services/categoryServices";
-import VariationsPreview from "./shared/VariationsPreviewer";
 import { pickByParentId } from "../services/subCategoryServices";
 import ImageSelector from "./ImageSelector";
 import RichTextField from "./shared/RichTextField";
-import VariationsDialog from "./VariationsDialog";
 import ConfirmDialog from "./shared/ConfirmDialog";
 import { imageSchema } from "../schemas/imagesSchema";
 import { descriptionSchema, variationSchema } from "../schemas/productSchema";
@@ -31,6 +22,7 @@ import { getVariants } from "../services/variationServices";
 import Input from "./shared/Input";
 import Select from "./shared/Select";
 import Variations from "./Variations";
+import { getVariationsQty } from "../util/getVariationsQty";
 Joi.ObjectId = require("joi-objectid")(Joi);
 
 const schema = Joi.object().keys({
@@ -60,29 +52,18 @@ const useStyles = makeStyles((theme) => ({
 const CreateProductForm = () => {
   const classes = useStyles();
   const { user } = useSelector((state) => ({ ...state }));
-
   const [categories, setCategories] = useState([]);
-
   const [subCategories, setSubCategories] = useState([]);
-
   const [images, setImages] = useState([]);
-
   const [variations, setVariations] = useState([]);
   const [variants, setVariants] = useState([]);
-  const [currentVariants, setCurrentVariants] = useState([]);
   const [enableVariations, setEnableVariations] = useState(false);
-  const [showVariationDialog, setShowVariationDialog] = useState(false);
-
   const [description, setDescription] = useState("");
-
   const [loading, setLoading] = useState(false);
-  const [showVariationResetDialog, setShowVariationResetDialog] =
-    useState(INITIAL_DIALOG_STATE);
   const [showSubmissionDialog, setShowSubmissionDialog] =
     useState(INITIAL_DIALOG_STATE);
   const [result, setResult] = useState({ success: null, message: "" });
   const [finalizedData, setFinalizedData] = useState(null);
-  const [values, setValues] = useState(null);
   // For inputs are not using react-hook-form
   const [otherErrors, setOtherErrors] = useState({
     images: "",
@@ -91,7 +72,6 @@ const CreateProductForm = () => {
   });
 
   const {
-    register,
     handleSubmit,
     watch,
     formState: { errors },
@@ -138,28 +118,6 @@ const CreateProductForm = () => {
     } catch (error) {
       console.log("sub categories fetching error", error);
     }
-  };
-
-  const handleCheckboxClick = () => {
-    if (enableVariations && variations.length) {
-      return setShowVariationResetDialog({
-        message: "All changes are lost. Are you sure to disable variations?",
-        show: true,
-      });
-    }
-    setEnableVariations(!enableVariations);
-    setCurrentVariants([]);
-  };
-
-  const handleConfirm = () => {
-    setShowVariationResetDialog({ ...showVariationDialog, show: false });
-    setVariations([]);
-    setEnableVariations(false);
-    setCurrentVariants([]);
-  };
-
-  const handleCancel = () => {
-    setShowVariationResetDialog({ ...showVariationDialog, show: false });
   };
 
   const handleSubmissionConfirm = () => {
@@ -222,6 +180,11 @@ const CreateProductForm = () => {
 
   const onSubmit = async (data, e) => {
     e.stopPropagation();
+    const errorMessage = validateVariationsQty();
+    if (errorMessage) {
+      return setOtherErrors({ ...otherErrors, variations: errorMessage });
+    }
+
     if (variations.length) {
       const { error } = variationSchema.validate(variations);
       if (error)
@@ -245,6 +208,15 @@ const CreateProductForm = () => {
     });
   };
 
+  const validateVariationsQty = () => {
+    const totalVariationsQty = getVariationsQty(variations);
+
+    if (enableVariations && totalVariationsQty !== quantity)
+      return "Total quantity and variations total quantity not matching.";
+
+    return "";
+  };
+
   const hasError = (name) => {
     if (Object.keys(errors).length) {
       return !!errors[name];
@@ -254,12 +226,6 @@ const CreateProductForm = () => {
 
   return (
     <>
-      <ConfirmDialog
-        handleConfirm={handleConfirm}
-        handleCancel={handleCancel}
-        showDialog={showVariationResetDialog}
-        result={result}
-      />
       <ConfirmDialog
         handleConfirm={handleSubmissionConfirm}
         handleCancel={handleSubmissionCancel}

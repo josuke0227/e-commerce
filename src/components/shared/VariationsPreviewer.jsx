@@ -24,11 +24,15 @@ const VariationsTable = ({ variations }) => {
         <TableBody>
           {variations.map((v, i) => (
             <TableRow key={i}>
-              {getObjectKeysSet(variations).map((k) =>
+              {getObjectKeysSet(variations).map((k, i) =>
                 k === "qty" ? (
-                  <TableCell align="center">{v[k]}</TableCell>
+                  <TableCell key={"tableCellA" + i} align="center">
+                    {v[k]}
+                  </TableCell>
                 ) : (
-                  <TableCell align="center">{v[k].name}</TableCell>
+                  <TableCell key={"tableCellB" + i} align="center">
+                    {v[k].name}
+                  </TableCell>
                 )
               )}
             </TableRow>
