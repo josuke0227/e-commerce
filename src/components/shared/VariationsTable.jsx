@@ -36,6 +36,9 @@ const VariationsTable = ({
 }) => {
   const classes = useStyles();
 
+  console.log(`qty`, qty);
+  console.log(`currentQty`, currentQty);
+
   if (variations.length > 0)
     return (
       <TableContainer component={Paper} className={classes.container}>

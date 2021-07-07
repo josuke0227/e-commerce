@@ -6,6 +6,8 @@ import VariationsDialog from "../components/VariationsDialog";
 import VariantsPicker from "../components/VariantsPicker";
 import VariationEditDialog from "../components/VariationEditDialog";
 import ConfirmDialog from "../components/shared/ConfirmDialog";
+import VariationsPreview from "../components/shared/VariationsPreviewer";
+import { getObjectKeysSet } from "../util/getObjectKeysSet";
 
 const INITIAL_DIALOG_STATE = {
   show: false,
@@ -20,13 +22,32 @@ const Variations = ({
   setVariants,
   errors,
   setErrors,
+  enableVariations,
+  setEnableVariations,
 }) => {
-  const [enableVariations, setEnableVariations] = useState(false);
   const [showVariationDialog, setShowVariationDialog] = useState(false);
   const [currentVariation, setCurrentVariation] = useState("");
   const [showVariationResetDialog, setShowVariationResetDialog] =
     useState(INITIAL_DIALOG_STATE);
   const [currentVariants, setCurrentVariants] = useState([]);
+
+  useEffect(() => {
+    if (!currentVariants.length && variations.length) applyVariants();
+  }, [currentVariants, variations]);
+
+  const applyVariants = () => {
+    const keys = getObjectKeysSet(variations);
+    keys.splice(keys.indexOf("qty"), 1);
+
+    const result = [];
+    keys.forEach((k) => {
+      variants.forEach((v) => {
+        if (v.name === k) result.push(v);
+      });
+    });
+
+    setCurrentVariants(result);
+  };
 
   useEffect(() => {
     loadVariants();
@@ -35,7 +56,6 @@ const Variations = ({
   const loadVariants = async () => {
     try {
       const { data } = await getVariants();
-
       setVariants(data);
     } catch (error) {
       console.log("fetching variations error", error);
@@ -149,6 +169,7 @@ const Variations = ({
           setShowVariationDialog={setShowVariationDialog}
         />
       )}
+      {variations.length > 0 && <VariationsPreview variations={variations} />}
     </>
   );
 };

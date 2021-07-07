@@ -36,7 +36,7 @@ Joi.ObjectId = require("joi-objectid")(Joi);
 const schema = Joi.object().keys({
   title: Joi.string().min(1).max(255).label("Title"),
   price: Joi.number().min(1).label("Price"),
-  qty: Joi.number().min(1).label("Quantity"),
+  quantity: Joi.number().min(1).label("Quantity"),
   category: Joi.ObjectId().label("Category"),
   subCategory: Joi.ObjectId().label("Sub category"),
   brand: Joi.string().min(0).label("Brand"),
@@ -99,7 +99,7 @@ const CreateProductForm = () => {
   } = useForm({ resolver: joiResolver(schema) });
 
   const category = watch("category");
-  const quantity = watch("qty");
+  const quantity = watch("quantity");
 
   useEffect(() => {
     loadCategories();
@@ -304,13 +304,13 @@ const CreateProductForm = () => {
         <Input
           className={classes.formParts}
           type="number"
-          name="qty"
+          name="quantity"
           control={control}
           defaultValue=""
           variant="outlined"
           label="Qty"
-          helperText={hasError("qty") && errors.qty.message}
-          error={hasError("qty")}
+          helperText={hasError("quantity") && errors.quantity.message}
+          error={hasError("quantity")}
           required
           fullWidth
         />
@@ -366,7 +366,6 @@ const CreateProductForm = () => {
           errors={otherErrors}
           setOtherErrors={setOtherErrors}
         />
-        {variations.length > 0 && <VariationsPreview variations={variations} />}
         <RichTextField
           success={result.success}
           setValue={setDescription}

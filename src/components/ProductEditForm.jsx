@@ -33,6 +33,7 @@ import Input from "../components/shared/Input";
 import Select from "../components/shared/Select";
 import VariationsPreview from "../components/shared/VariationsPreviewer";
 import { isArray } from "../util/isArray";
+import Variations from "./Variations";
 Joi.ObjectId = require("joi-objectid")(Joi);
 
 const schema = Joi.object().keys({
@@ -385,46 +386,17 @@ const ProductRegistrationForm = () => {
           required
           fullWidth
         />
-        {variations.length > 0 && (
-          <>
-            <FormControl component="fieldset" className={classes.formParts}>
-              <FormControlLabel
-                label="Enable variations"
-                control={
-                  <Switch
-                    checked={enableVariations}
-                    onChange={onSwitch}
-                    color="primary"
-                  />
-                }
-              />
-              <FormHelperText error>{otherErrors.variations}</FormHelperText>
-            </FormControl>
-            <VariationsPreview variations={variations} />
-            <Button
-              fullWidth
-              variant="outlined"
-              color="primary"
-              onClick={() => setShowVariationDialog(true)}
-            >
-              Edit variations
-            </Button>
-          </>
-        )}
-        {enableVariations && (
-          <VariationsDialog
-            quantity={quantity}
-            showDialog={showVariationDialog}
-            setShowVariationDialog={setShowVariationDialog}
-            variations={variations}
-            variants={variants}
-            setVariations={setVariations}
-            currentVariants={currentVariants}
-            setCurrentVariants={setCurrentVariants}
-            otherErrors={otherErrors}
-            setOtherErrors={setOtherErrors}
-          />
-        )}
+        <Variations
+          quantity={quantity}
+          variations={variations}
+          setVariations={setVariations}
+          variants={variants}
+          setVariants={setVariants}
+          errors={otherErrors}
+          setOtherErrors={setOtherErrors}
+          enableVariations={enableVariations}
+          setEnableVariations={setEnableVariations}
+        />
         <Grid item xs={12} md={6}>
           {!showEditor && (
             <Button

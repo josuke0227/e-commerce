@@ -1,8 +1,6 @@
-import { useEffect } from "react";
 import VariationsTable from "../components/shared/VariationsTable";
 import VariationsForm from "./VariationsForm";
 import { Dialog, DialogContent } from "@material-ui/core";
-import { getObjectKeysSet } from "../util/getObjectKeysSet";
 
 export default function VariationsDialog({
   showDialog,
@@ -10,7 +8,6 @@ export default function VariationsDialog({
   setVariations,
   setShowVariationDialog,
   currentVariants,
-  setCurrentVariants,
   setOtherErrors,
   qty,
   variants,
@@ -20,24 +17,6 @@ export default function VariationsDialog({
   setCurrentVariation,
   currentQty,
 }) {
-  useEffect(() => {
-    if (!currentVariants.length && showDialog) applyVariants();
-  }, [currentVariants, showDialog]);
-
-  const applyVariants = () => {
-    const keys = getObjectKeysSet(variations);
-    keys.splice(keys.indexOf("qty"), 1);
-
-    const result = [];
-    keys.forEach((k) => {
-      variants.forEach((v) => {
-        if (v.name === k) result.push(v);
-      });
-    });
-
-    setCurrentVariants(result);
-  };
-
   const handleEditClick = (variation, i) => {
     const variantNames = Object.keys(variation).filter((k) => k !== "qty");
 
