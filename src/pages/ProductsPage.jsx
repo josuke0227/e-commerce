@@ -27,10 +27,10 @@ const ProductsPage = ({ location }) => {
   const { user } = useSelector((state) => ({ ...state }));
 
   useEffect(() => {
-    loadImages();
+    loadProducts();
   }, []);
 
-  const loadImages = async () => {
+  const loadProducts = async () => {
     const { data } = await getProducts();
     setProducts(data);
     console.log(data);

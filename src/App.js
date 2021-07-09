@@ -15,6 +15,7 @@ import Playground from "./Playground";
 import CreateProductPage from "./pages/CreateProductPage";
 import EditProductPage from "./pages/EditProductPage";
 import ProductsPage from "./pages/ProductsPage";
+import ShopPage from "./Playground";
 
 const App = () => (
   <ThemeProvider theme={theme}>
@@ -27,6 +28,8 @@ const App = () => (
         <Route exact path="/activate/:token" component={ActivationPage} />
         <Route exact path="/forgotpassword" component={SignupPage} />
         <Route exact path="/resetpassword/:token" component={ActivationPage} />
+        <Route exact path="/shop" component={ShopPage} />
+        <Route exact path="/shop/:slug" component={() => <div>hello</div>} />
         <Route exact path="/admin/dashboard" component={Dashboard} />
         <Route exact path="/admin/categories" component={CategoryPage} />
         <Route exact path="/admin/subcategories" component={SubCategoryPage} />
