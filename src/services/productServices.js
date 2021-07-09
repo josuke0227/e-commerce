@@ -33,9 +33,9 @@ export const getImages = async (productId, user) =>
   await axios({
     method: "get",
     url: `${process.env.REACT_APP_API}/images/${productId}`,
-    headers: {
-      "x-auth-token": user.token,
-    },
+    // headers: {
+    //   "x-auth-token": user.token,
+    // },
   });
 
 export const getProducts = async (sort, order, page) =>

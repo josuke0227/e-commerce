@@ -43,7 +43,7 @@ const ProductCard = ({ product }) => {
   }, [user]);
 
   const loadImages = async () => {
-    const { data } = await getImages(product._id, user);
+    const { data } = await getImages(product._id);
     setImages(data);
   };
 
