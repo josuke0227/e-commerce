@@ -1,0 +1,68 @@
+import { CardActions, IconButton } from "@material-ui/core";
+import { makeStyles } from "@material-ui/styles";
+import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
+import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
+import StarBorderIcon from "@material-ui/icons/StarBorder";
+
+const useStyles = makeStyles((theme) => ({
+  iconButtons: {
+    borderRadius: 0,
+    borderColor: theme.palette.grey[300],
+    border: "1px solid",
+    flex: 1,
+  },
+  cardActions: {
+    padding: "8px 0",
+  },
+  buttonLabels: {
+    flexDirection: "column",
+    ...theme.typography.caption,
+  },
+  icons: {
+    fontSize: "20px",
+  },
+}));
+
+const ProductPageButtons = () => {
+  const classes = useStyles();
+
+  return (
+    <CardActions classes={{ root: classes.cardActions }}>
+      <IconButton
+        classes={{
+          root: classes.iconButtons,
+          label: classes.buttonLabels,
+        }}
+        color="primary"
+        size="small"
+      >
+        <AddShoppingCartIcon className={classes.icons} />
+        <span>Add to cart</span>
+      </IconButton>
+      <IconButton
+        classes={{
+          root: classes.iconButtons,
+          label: classes.buttonLabels,
+        }}
+        color="secondary"
+        size="small"
+      >
+        <FavoriteBorderIcon className={classes.icons} />
+        <span>Add to wishlist</span>
+      </IconButton>
+      <IconButton
+        color="default"
+        size="small"
+        classes={{
+          root: classes.iconButtons,
+          label: classes.buttonLabels,
+        }}
+      >
+        <StarBorderIcon className={classes.icons} />
+        <span>Leave rating</span>
+      </IconButton>
+    </CardActions>
+  );
+};
+
+export default ProductPageButtons;
