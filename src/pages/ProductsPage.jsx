@@ -33,7 +33,6 @@ const ProductsPage = ({ location }) => {
   const loadProducts = async () => {
     const { data } = await getProducts();
     setProducts(data);
-    console.log(data);
   };
 
   const handleEditButtonClick = (product) => {

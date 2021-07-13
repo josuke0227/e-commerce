@@ -3,7 +3,7 @@ Joi.ObjectId = require("joi-objectid")(Joi);
 
 const titleSchema = Joi.string().min(1).max(100).label("Title");
 
-const descriptionSchema = Joi.string().min(1).max(2000).label("Description");
+const descriptionSchema = Joi.string().min(1).label("Description");
 
 const priceSchema = Joi.number().min(1).label("Price");
 

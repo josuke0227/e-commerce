@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const schema = Joi.object().keys({
-  color: Joi.string(),
+  color: Joi.number(),
   size: Joi.number(),
   qty: Joi.number(),
 });
@@ -143,28 +143,44 @@ const VariationEditDialog = ({
           component="section"
           spacing={2}
         >
-          {currentVariants.map((v) => (
-            <Grid item xs={currentVariants.length === 1 ? 12 : 6} key={v.name}>
-              <VariantSelect
-                name={v.name}
-                error={hasError(v.name)}
-                helperText={hasError(v.name) && errors[v.name].message}
-                control={control}
-                label={v.name}
-                list={v.instances}
-                variant="outlined"
-                defaultValue=""
-                required
-                fullWidth
-              />
-            </Grid>
-          ))}
+          {currentVariants.map((v) => {
+            console.log(currentVariation);
+            console.log(v.name);
+            console.log(
+              currentVariation[v.name] ? currentVariation[v.name].index : ""
+            );
+
+            return (
+              <Grid
+                item
+                xs={currentVariants.length === 1 ? 12 : 6}
+                key={v.name}
+              >
+                <VariantSelect
+                  name={v.name}
+                  error={hasError(v.name)}
+                  helperText={hasError(v.name) && errors[v.name].message}
+                  control={control}
+                  label={v.name}
+                  list={v.instances}
+                  variant="outlined"
+                  defaultValue={
+                    currentVariation[v.name]
+                      ? currentVariation[v.name].index
+                      : ""
+                  }
+                  required
+                  fullWidth
+                />
+              </Grid>
+            );
+          })}
           <Grid item xs={12}>
             <Input
               type="number"
               name="qty"
               control={control}
-              defaultValue=""
+              defaultValue={currentVariation.qty}
               variant="outlined"
               label="Qty"
               helperText={hasError("qty") && errors.qty.message}

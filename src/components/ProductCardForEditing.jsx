@@ -46,7 +46,6 @@ const ProductCardForEditing = ({
   }, [user]);
 
   const loadImages = async () => {
-    console.log(user);
     const { data } = await getImages(product._id, user);
     setImages(data);
   };
