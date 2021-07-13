@@ -1,8 +1,9 @@
 import { Typography, Card } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
-import Rating from "@material-ui/lab/Rating";
+
 import ProductDetailTable from "./ProductDetailTable";
 import ProductPageButtons from "./ProductPageButtons";
+import RatingIndicator from "../components/shared/RatingIndicator";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -17,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ProductDetails = ({ product }) => {
+const ProductDetails = ({ product, setShowDialog }) => {
   const classes = useStyles();
   return (
     <>
@@ -25,12 +26,11 @@ const ProductDetails = ({ product }) => {
         {product.title}
       </Typography>
       <div className={classes.ratingIndicator}>
-        <Rating name="read-only" value={4} readOnly />
-        <span>({product.ratings.length})</span>
+        <RatingIndicator ratings={product.ratings} />
       </div>
       <Card classes={{ root: classes.card }} elevation={0}>
         <ProductDetailTable product={product} />
-        <ProductPageButtons />
+        <ProductPageButtons setShowDialog={setShowDialog} />
       </Card>
       <div dangerouslySetInnerHTML={{ __html: product.description }}></div>
     </>

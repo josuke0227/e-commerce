@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ProductPageButtons = () => {
+const ProductPageButtons = ({ setShowDialog }) => {
   const classes = useStyles();
 
   return (
@@ -57,6 +57,7 @@ const ProductPageButtons = () => {
           root: classes.iconButtons,
           label: classes.buttonLabels,
         }}
+        onClick={() => setShowDialog(true)}
       >
         <StarBorderIcon className={classes.icons} />
         <span>Leave rating</span>

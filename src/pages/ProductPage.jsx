@@ -1,9 +1,15 @@
 import { useState, useEffect } from "react";
 import { Container, makeStyles, Paper } from "@material-ui/core";
-import { getImages, getProduct } from "../services/productServices";
+import {
+  getImages,
+  getProduct,
+  rateProduct,
+} from "../services/productServices";
 import ProductImageViewer from "../components/ProductImageViewer";
 import ProductDetails from "../components/ProductDetails";
 import Layout from "../components/Layout";
+import { useSelector } from "react-redux";
+import RatingDialog from "../components/RatingDialog";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -13,11 +19,14 @@ const useStyles = makeStyles((theme) => ({
 
 const ProductPage = ({ match, location }) => {
   const classes = useStyles();
+  const { user } = useSelector((state) => ({ ...state }));
 
   const { params } = match;
 
   const [images, setImages] = useState([]);
   const [product, setProduct] = useState("");
+  const [showDialog, setShowDialog] = useState(false);
+  const [status, setStatus] = useState("");
 
   useEffect(() => {
     loadProduct();
@@ -37,16 +46,42 @@ const ProductPage = ({ match, location }) => {
     setImages(data);
   };
 
+  const handleConfirm = async (value) => {
+    if (!user) return setStatus("unauthorized");
+
+    try {
+      const { data } = await rateProduct(product, value, user);
+      setStatus("success");
+    } catch (error) {
+      setStatus("failure");
+    }
+  };
+
+  const handleCancel = () => {
+    setShowDialog(false);
+
+    // To stop blinking of dialog panel when button is pushed.
+    setTimeout(() => setStatus(""), 1000);
+  };
+
   if (!product) return <div className="">Loading...</div>;
   return (
-    <Layout location={location}>
-      <Container className={classes.container}>
-        <Paper>
-          <ProductImageViewer images={images} />
-          <ProductDetails product={product} />
-        </Paper>
-      </Container>
-    </Layout>
+    <>
+      <RatingDialog
+        status={status}
+        open={showDialog}
+        handleConfirm={handleConfirm}
+        handleCancel={handleCancel}
+      />
+      <Layout location={location}>
+        <Container className={classes.container}>
+          <Paper>
+            <ProductImageViewer images={images} />
+            <ProductDetails product={product} setShowDialog={setShowDialog} />
+          </Paper>
+        </Container>
+      </Layout>
+    </>
   );
 };
 

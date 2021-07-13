@@ -33,9 +33,6 @@ export const getImages = async (productId, user) =>
   await axios({
     method: "get",
     url: `${process.env.REACT_APP_API}/images/${productId}`,
-    // headers: {
-    //   "x-auth-token": user.token,
-    // },
   });
 
 export const getProducts = async (sort, order, page) =>
@@ -45,7 +42,7 @@ export const getProducts = async (sort, order, page) =>
     page,
   });
 
-export const getProductsByCount = async (count, user, slug) =>
+export const getProductsByCount = async (user, slug) =>
   await axios.get(`${process.env.REACT_APP_API}/products/${slug}`, {
     headers: {
       "x-auth-token": user.token,
@@ -77,4 +74,16 @@ export const deleteProduct = async (product, user) => {
       "x-auth-token": user.token,
     },
   });
+};
+
+export const rateProduct = async (product, rate, user) => {
+  return await axios.put(
+    `${process.env.REACT_APP_API}/products/rating/${product._id}`,
+    { rate, user },
+    {
+      headers: {
+        "x-auth-token": user.token,
+      },
+    }
+  );
 };
