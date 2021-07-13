@@ -64,7 +64,6 @@ const ProductPage = ({ match, location }) => {
     setTimeout(() => setStatus(""), 1000);
   };
 
-  if (!product) return <div className="">Loading...</div>;
   return (
     <>
       <RatingDialog
@@ -74,12 +73,16 @@ const ProductPage = ({ match, location }) => {
         handleCancel={handleCancel}
       />
       <Layout location={location}>
-        <Container className={classes.container}>
-          <Paper>
-            <ProductImageViewer images={images} />
-            <ProductDetails product={product} setShowDialog={setShowDialog} />
-          </Paper>
-        </Container>
+        {!product ? (
+          <div className="">Loading...</div>
+        ) : (
+          <Container className={classes.container}>
+            <Paper>
+              <ProductImageViewer images={images} />
+              <ProductDetails product={product} setShowDialog={setShowDialog} />
+            </Paper>
+          </Container>
+        )}
       </Layout>
     </>
   );

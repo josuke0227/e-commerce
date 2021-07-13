@@ -10,7 +10,7 @@ import Skeleton from "@material-ui/lab/Skeleton";
 import { getImages } from "../services/productServices";
 import { CardContent } from "@material-ui/core";
 import { useSelector } from "react-redux";
-import Rating from "@material-ui/lab/Rating";
+import RatingIndicator from "./shared/RatingIndicator";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -66,18 +66,12 @@ const ProductCard = ({ product }) => {
       >
         <Typography>{product.title}</Typography>
       </Link>
-      {renderRating(product.ratings)}
+      <RatingIndicator ratings={product.ratings} />
       <Typography variant="subtitle1" color="secondary">
         AUD {product.price}
       </Typography>
     </>
   );
-
-  const renderRating = (ratings) => {
-    // TODO: here comes ave of rating number.
-    if (ratings.length) return <Rating name="read-only" value={4} readOnly />;
-    return <Typography color="textSecondary">No rating yet.</Typography>;
-  };
 
   // TODO: add "在庫希少お早めに" notice
 
