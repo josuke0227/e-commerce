@@ -87,3 +87,9 @@ export const rateProduct = async (product, rate, user) => {
     }
   );
 };
+
+export const filterByAttribute = async (name, data) =>
+  await axios.post(`${process.env.REACT_APP_API}/products/search/attributes`, [
+    { name },
+    [...data],
+  ]);
