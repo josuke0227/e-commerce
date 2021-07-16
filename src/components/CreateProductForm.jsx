@@ -279,7 +279,7 @@ const CreateProductForm = () => {
           required
           fullWidth
         />
-        {categories && (
+        {categories.length > 0 && (
           <MultiPurposeAutoCompleteForm
             options={categories}
             value={category}
