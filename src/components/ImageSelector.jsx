@@ -149,9 +149,9 @@ const ImageSelector = ({ images, setImages, errors, user }) => {
         />
         <Grid item xs={12}>
           {initialImages.length > 0 &&
-            initialImages.map((i) => (
+            initialImages.map((i, idx) => (
               <Badge
-                key={i._id}
+                key={idx}
                 badgeContent={"x"}
                 color="secondary"
                 onClick={() => handleInitialImageRemove(i)}
