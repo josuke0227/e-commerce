@@ -1,29 +1,36 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
-import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
+import { joiResolver } from "@hookform/resolvers/joi";
 import { Button, makeStyles } from "@material-ui/core";
-import { getCategories } from "../services/categoryServices";
-import { pickByParentId } from "../services/subCategoryServices";
+
 import ImageSelector from "./ImageSelector";
-import RichTextField from "./shared/RichTextField";
-import ConfirmDialog from "./shared/ConfirmDialog";
-import { imageSchema } from "../schemas/imagesSchema";
-import { descriptionSchema, variationSchema } from "../schemas/productSchema";
-import {
-  uploadImage,
-  createProduct,
-  deleteProduct,
-} from "../services/productServices";
-import { isEmptyObject } from "../util/isEmptyObject";
-import { resizeImage } from "../util/resizeImage";
-import { getVariants } from "../services/variationServices";
 import Input from "./shared/Input";
 import Variations from "./Variations";
-import { getVariationsQty } from "../util/getVariationsQty";
+import ConfirmDialog from "./shared/ConfirmDialog";
 import MultiPurposeAutoCompleteForm from "./shared/MultiPurposeAutoCompleteForm";
+import RichTextField from "./shared/RichTextField";
+
+import { imageSchema } from "../schemas/imagesSchema";
+
+import { getRawInputData } from "../util/getRawInputData";
+import { isEmptyObject } from "../util/isEmptyObject";
+import { resizeImage } from "../util/resizeImage";
+import { validateVariationsQty } from "../util/validateVariationsQty";
+
+import {
+  createProduct,
+  deleteProduct,
+  uploadImage,
+} from "../services/productServices";
+import { getCategories } from "../services/categoryServices";
+import { getVariants } from "../services/variationServices";
+import { pickByParentId } from "../services/subCategoryServices";
+
 Joi.ObjectId = require("joi-objectid")(Joi);
+
+const descriptionSchema = Joi.string().min(1).max(2000).label("Description");
 
 const schema = Joi.object().keys({
   brand: Joi.string().min(0).label("Brand"),
@@ -74,14 +81,14 @@ const CreateProductForm = () => {
     description: "",
     variations: "",
     category: "",
-    subCategory: "error",
+    subCategory: "",
   });
 
   const {
+    control,
+    formState: { errors },
     handleSubmit,
     watch,
-    formState: { errors },
-    control,
   } = useForm({ resolver: joiResolver(schema) });
 
   const quantity = watch("quantity");
@@ -110,6 +117,7 @@ const CreateProductForm = () => {
 
   useEffect(() => {
     if (!category) return;
+    if (subCategory) setSubCategory();
     loadSubCategories(category._id);
   }, [category]);
   const loadSubCategories = async (id) => {
@@ -125,10 +133,24 @@ const CreateProductForm = () => {
 
   const onSubmit = async (data, e) => {
     e.stopPropagation();
-    const errorMessage = validateVariationsQty();
-    if (errorMessage) {
-      return setOtherErrors({ ...otherErrors, variations: errorMessage });
+
+    if (enableVariations) {
+      const variationsQuantityError = validateVariationsQty(
+        variations,
+        quantity
+      );
+      if (variationsQuantityError) {
+        return setOtherErrors({
+          ...otherErrors,
+          variations: variationsQuantityError,
+        });
+      }
     }
+
+    const rawInputData = getRawInputData(description);
+    const { error } = descriptionSchema.validate(rawInputData);
+    if (error)
+      return setOtherErrors({ ...otherErrors, description: error.message });
 
     const submittingData = {
       ...data,
@@ -186,6 +208,13 @@ const CreateProductForm = () => {
     }
   };
 
+  const handleImageSubmit = async (image, productId) => {
+    const resizedImageUri = await resizeImage(image);
+    const { error } = imageSchema.validate(resizedImageUri);
+    if (error) throw new Error("Invalid image URI.");
+    await uploadImage(resizedImageUri, productId, user);
+  };
+
   const endWithSuccess = () => {
     setResult({ ...result, success: true });
     setLoading(false);
@@ -194,26 +223,6 @@ const CreateProductForm = () => {
   const endWithFailure = (error) => {
     setResult({ message: error.message, success: false });
     setLoading(false);
-  };
-
-  const handleImageSubmit = async (image, productId) => {
-    const resizedImageUri = await resizeImage(image);
-    const { error } = imageSchema.validate(resizedImageUri);
-    if (error) throw new Error("Invalid image URI.");
-    await uploadImage(resizedImageUri, productId, user);
-  };
-
-  const validateVariationsQty = () => {
-    const totalVariationsQty = getVariationsQty(variations);
-    let int;
-
-    if (typeof quantity === "string") int = parseInt(quantity);
-    else int = quantity;
-
-    if (enableVariations && totalVariationsQty !== int)
-      return "Total quantity and variations total quantity not matching.";
-
-    return "";
   };
 
   const hasError = (name) => {

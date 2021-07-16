@@ -8,7 +8,8 @@ import {
 import { Editor } from "react-draft-wysiwyg";
 import draftToHtml from "draftjs-to-html";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { Box, Chip, Grid, makeStyles, Typography } from "@material-ui/core";
+import { Chip, Grid, makeStyles, Typography } from "@material-ui/core";
+import { getRawInputData } from "../../util/getRawInputData";
 
 const useStyles = makeStyles({
   charCounter: {
@@ -28,7 +29,7 @@ const RichTextField = ({
 }) => {
   const classes = useStyles();
 
-  const strippedString = characters.replace(/(<([^>]+)>)/gi, "");
+  const rawInputData = getRawInputData(characters);
 
   const [editorState, setEditorState] = useState(() =>
     EditorState.createWithContent(
@@ -71,7 +72,7 @@ const RichTextField = ({
         <Grid item>
           {count && (
             <Chip
-              label={`${count - strippedString.length + 1}  characters left`}
+              label={`${count - rawInputData.length}  characters left`}
               color="default"
             />
           )}

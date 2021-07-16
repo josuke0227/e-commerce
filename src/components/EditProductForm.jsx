@@ -4,33 +4,39 @@ import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
 import { Button, makeStyles, Grid } from "@material-ui/core";
-import { getCategories } from "../services/categoryServices";
-import { getVariants } from "../services/variationServices";
-import { pickByParentId } from "../services/subCategoryServices";
+
 import ImageSelector from "./ImageSelector";
-import RichTextField from "./shared/RichTextField";
+import Variations from "./Variations";
 import ConfirmDialog from "./shared/ConfirmDialog";
+import Input from "./shared/Input";
+import MultiPurposeAutoCompleteForm from "./shared/MultiPurposeAutoCompleteForm";
+import RichTextField from "./shared/RichTextField";
+
 import { imageSchema } from "../schemas/imagesSchema";
-import { descriptionSchema, variationSchema } from "../schemas/productSchema";
-import {
-  getImages,
-  uploadImage,
-  updateProduct,
-  deleteProduct,
-} from "../services/productServices";
+
+import { getRawInputData } from "../util/getRawInputData";
+import { isArray } from "../util/isArray";
 import { isEmptyObject } from "../util/isEmptyObject";
 import { resizeImage } from "../util/resizeImage";
-import Input from "./shared/Input";
-import { isArray } from "../util/isArray";
-import Variations from "./Variations";
-import { getVariationsQty } from "../util/getVariationsQty";
-import MultiPurposeAutoCompleteForm from "./shared/MultiPurposeAutoCompleteForm";
+import { validateVariationsQty } from "../util/validateVariationsQty";
+
+import { getCategories } from "../services/categoryServices";
+import { getVariants } from "../services/variationServices";
+import {
+  deleteProduct,
+  getImages,
+  updateProduct,
+  uploadImage,
+} from "../services/productServices";
+import { pickByParentId } from "../services/subCategoryServices";
 Joi.ObjectId = require("joi-objectid")(Joi);
+
+const descriptionSchema = Joi.string().min(1).max(2000).label("Description");
 
 const schema = Joi.object().keys({
   brand: Joi.string().min(0).label("Brand"),
   category: Joi.ObjectId().label("Category"),
-  description: Joi.string().min(1).label("Description"),
+  description: Joi.string().label("Description"),
   price: Joi.number().min(1).label("Price"),
   quantity: Joi.number().min(1).label("Quantity"),
   subCategory: Joi.ObjectId().label("Sub category"),
@@ -57,9 +63,9 @@ const EditProductForm = () => {
   const classes = useStyles();
   const { user, product } = useSelector((state) => ({ ...state }));
   const [categories, setCategories] = useState([]);
-  const [category, setCategory] = useState([]);
+  const [category, setCategory] = useState();
   const [subCategories, setSubCategories] = useState([]);
-  const [subCategory, setSubCategory] = useState([]);
+  const [subCategory, setSubCategory] = useState();
   const [defaultDescriptionValue, setDefaultDescriptionValue] = useState("");
   const [showEditor, setShowEditor] = useState(false);
   const [images, setImages] = useState([]);
@@ -83,8 +89,8 @@ const EditProductForm = () => {
 
   const {
     control,
-    handleSubmit,
     formState: { errors },
+    handleSubmit,
     watch,
   } = useForm({ resolver: joiResolver(schema) });
 
@@ -94,7 +100,6 @@ const EditProductForm = () => {
     loadCategories();
     loadVariants();
   }, []);
-
   const loadCategories = async () => {
     try {
       const { data } = await getCategories();
@@ -118,16 +123,23 @@ const EditProductForm = () => {
     if (product === null) return;
 
     const initialProduct = { ...product };
-    const { _id, variations, description } = initialProduct;
+    const {
+      _id,
+      variations,
+      description,
+      category: defaultCategory,
+      subCategory,
+    } = initialProduct;
     loadImages(_id);
     setDefaultDescriptionValue(description);
+    setCategory(defaultCategory);
+    setSubCategory(subCategory);
 
     if (variations.length > 0) setEnableVariations(true);
 
     const initialVariations = [...variations];
     setVariations(initialVariations);
   }, [product]);
-
   const loadImages = async (id) => {
     try {
       const { data } = await getImages(id, user);
@@ -138,9 +150,10 @@ const EditProductForm = () => {
   };
 
   useEffect(() => {
-    loadSubCategories(category);
+    if (!category) return;
+    if (subCategory) setSubCategory();
+    loadSubCategories(category._id);
   }, [category]);
-
   const loadSubCategories = async (id) => {
     if (!id) return;
 
@@ -150,6 +163,48 @@ const EditProductForm = () => {
     } catch (error) {
       console.log("sub categories fetching error", error);
     }
+  };
+
+  const onSubmit = async (data, e) => {
+    e.stopPropagation();
+
+    if (enableVariations) {
+      const variationsQuantityError = validateVariationsQty(
+        variations,
+        quantity
+      );
+      if (variationsQuantityError) {
+        return setOtherErrors({
+          ...otherErrors,
+          variations: variationsQuantityError,
+        });
+      }
+    }
+
+    const finalDescriptionData = showEditor ? description : product.description;
+    const rawInputData = getRawInputData(finalDescriptionData);
+    const { error } = descriptionSchema.validate(rawInputData);
+    if (error)
+      return setOtherErrors({ ...otherErrors, description: error.message });
+
+    const submittingData = {
+      ...data,
+      category: category ? category._id : "",
+      subCategory: subCategory ? subCategory._id : "",
+      description: finalDescriptionData,
+      variations,
+    };
+
+    setFinalizedData(submittingData);
+    setShowSubmissionDialog({
+      show: true,
+      message: "Are you sure to submit?",
+    });
+  };
+
+  const handleSubmissionCancel = () => {
+    setShowSubmissionDialog({ message: "", show: false });
+    setResult({ message: "", success: null });
   };
 
   const handleSubmissionConfirm = () => {
@@ -197,11 +252,6 @@ const EditProductForm = () => {
     await uploadImage(resizedImageUri, productId, user);
   };
 
-  const handleSubmissionCancel = () => {
-    setShowSubmissionDialog({ message: "", show: false });
-    setResult({ message: "", success: null });
-  };
-
   const endWithSuccess = () => {
     setResult({ ...result, success: true });
     setLoading(false);
@@ -210,43 +260,6 @@ const EditProductForm = () => {
   const endWithFailure = (error) => {
     setResult({ message: error.message, success: false });
     setLoading(false);
-  };
-
-  const onSubmit = async (data, e) => {
-    e.stopPropagation();
-    const errorMessage = validateVariationsQty();
-    if (errorMessage) {
-      return setOtherErrors({ ...otherErrors, variations: errorMessage });
-    }
-
-    const submittingData = {
-      ...data,
-      category: category ? category._id : "",
-      subCategory: subCategory ? subCategory._id : "",
-      description,
-      variations,
-    };
-
-    console.log(schema.validate(submittingData));
-
-    setFinalizedData(submittingData);
-    setShowSubmissionDialog({
-      show: true,
-      message: "Are you sure to submit?",
-    });
-  };
-
-  const validateVariationsQty = () => {
-    const totalVariationsQty = getVariationsQty(variations);
-    let int;
-
-    if (typeof quantity === "string") int = parseInt(quantity);
-    else int = quantity;
-
-    if (enableVariations && totalVariationsQty !== int)
-      return "Total quantity and variations total quantity not matching.";
-
-    return "";
   };
 
   const hasError = (name) => {
@@ -312,28 +325,14 @@ const EditProductForm = () => {
           required
           fullWidth
         />
-        {categories && (
+        {categories.length > 0 && (
           <MultiPurposeAutoCompleteForm
             options={categories}
             value={category}
             setValue={setCategory}
             label="Category"
             error={otherErrors.category}
-            defaultValue={product.category}
           />
-          // <Select
-          //   className={classes.formParts}
-          //   name="category"
-          //   control={control}
-          //   defaultValue={product.category._id}
-          //   variant="outlined"
-          //   label="Category"
-          //   helperText={hasError("category") && errors.category.message}
-          //   error={hasError("category")}
-          //   list={categories}
-          //   required
-          //   fullWidth
-          // />
         )}
         {category && (
           <MultiPurposeAutoCompleteForm
@@ -342,21 +341,7 @@ const EditProductForm = () => {
             setValue={setSubCategory}
             label="Sub category"
             error={otherErrors.subCategory}
-            defaultValue={product.subCategory}
           />
-          // <Select
-          //   className={classes.formParts}
-          //   name="subCategory"
-          //   control={control}
-          //   defaultValue={product.subCategory._id}
-          //   variant="outlined"
-          //   label="Subcategory"
-          //   helperText={hasError("subCategory") && errors.subCategory.message}
-          //   error={hasError("subCategory")}
-          //   list={subCategories}
-          //   required
-          //   fullWidth
-          // />
         )}
         <Input
           className={classes.formParts}
@@ -400,7 +385,7 @@ const EditProductForm = () => {
               count={2000}
               loading={loading}
               label="Description"
-              error={errors.description}
+              error={otherErrors.description}
               defaultValue={defaultDescriptionValue}
             />
           ) : (
