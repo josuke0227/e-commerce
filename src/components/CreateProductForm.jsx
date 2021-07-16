@@ -20,18 +20,20 @@ import { isEmptyObject } from "../util/isEmptyObject";
 import { resizeImage } from "../util/resizeImage";
 import { getVariants } from "../services/variationServices";
 import Input from "./shared/Input";
-import Select from "./shared/Select";
 import Variations from "./Variations";
 import { getVariationsQty } from "../util/getVariationsQty";
+import MultiPurposeAutoCompleteForm from "./shared/MultiPurposeAutoCompleteForm";
 Joi.ObjectId = require("joi-objectid")(Joi);
 
 const schema = Joi.object().keys({
-  title: Joi.string().min(1).max(255).label("Title"),
+  brand: Joi.string().min(0).label("Brand"),
+  category: Joi.ObjectId().label("Category"),
+  description: Joi.string().min(1).label("Description"),
   price: Joi.number().min(1).label("Price"),
   quantity: Joi.number().min(1).label("Quantity"),
-  category: Joi.ObjectId().label("Category"),
   subCategory: Joi.ObjectId().label("Sub category"),
-  brand: Joi.string().min(0).label("Brand"),
+  title: Joi.string().min(1).max(255).label("Title"),
+  variations: Joi.array().optional().label("Variations"),
 });
 
 const INITIAL_DIALOG_STATE = {
@@ -53,7 +55,9 @@ const CreateProductForm = () => {
   const classes = useStyles();
   const { user } = useSelector((state) => ({ ...state }));
   const [categories, setCategories] = useState([]);
+  const [category, setCategory] = useState();
   const [subCategories, setSubCategories] = useState([]);
+  const [subCategory, setSubCategory] = useState();
   const [images, setImages] = useState([]);
   const [variations, setVariations] = useState([]);
   const [variants, setVariants] = useState([]);
@@ -69,6 +73,8 @@ const CreateProductForm = () => {
     images: "",
     description: "",
     variations: "",
+    category: "",
+    subCategory: "error",
   });
 
   const {
@@ -78,14 +84,12 @@ const CreateProductForm = () => {
     control,
   } = useForm({ resolver: joiResolver(schema) });
 
-  const category = watch("category");
   const quantity = watch("quantity");
 
   useEffect(() => {
     loadCategories();
     loadVariants();
   }, []);
-
   const loadCategories = async () => {
     try {
       const { data } = await getCategories();
@@ -94,7 +98,6 @@ const CreateProductForm = () => {
       console.log("category fetching error", error);
     }
   };
-
   const loadVariants = async () => {
     try {
       const { data } = await getVariants();
@@ -106,9 +109,9 @@ const CreateProductForm = () => {
   };
 
   useEffect(() => {
-    loadSubCategories(category);
+    if (!category) return;
+    loadSubCategories(category._id);
   }, [category]);
-
   const loadSubCategories = async (id) => {
     if (!id) return;
 
@@ -118,6 +121,33 @@ const CreateProductForm = () => {
     } catch (error) {
       console.log("sub categories fetching error", error);
     }
+  };
+
+  const onSubmit = async (data, e) => {
+    e.stopPropagation();
+    const errorMessage = validateVariationsQty();
+    if (errorMessage) {
+      return setOtherErrors({ ...otherErrors, variations: errorMessage });
+    }
+
+    const submittingData = {
+      ...data,
+      category: category ? category._id : "",
+      subCategory: subCategory ? subCategory._id : "",
+      description,
+      variations,
+    };
+
+    setFinalizedData(submittingData);
+    setShowSubmissionDialog({
+      show: true,
+      message: "Are you sure to submit?",
+    });
+  };
+
+  const handleSubmissionCancel = () => {
+    setShowSubmissionDialog({ message: "", show: false });
+    setResult({ message: "", success: null });
   };
 
   const handleSubmissionConfirm = () => {
@@ -156,18 +186,6 @@ const CreateProductForm = () => {
     }
   };
 
-  const handleImageSubmit = async (image, productId) => {
-    const resizedImageUri = await resizeImage(image);
-    const { error } = imageSchema.validate(resizedImageUri);
-    if (error) throw new Error("Invalid image URI.");
-    await uploadImage(resizedImageUri, productId, user);
-  };
-
-  const handleSubmissionCancel = () => {
-    setShowSubmissionDialog({ message: "", show: false });
-    setResult({ message: "", success: null });
-  };
-
   const endWithSuccess = () => {
     setResult({ ...result, success: true });
     setLoading(false);
@@ -178,34 +196,11 @@ const CreateProductForm = () => {
     setLoading(false);
   };
 
-  const onSubmit = async (data, e) => {
-    e.stopPropagation();
-    const errorMessage = validateVariationsQty();
-    if (errorMessage) {
-      return setOtherErrors({ ...otherErrors, variations: errorMessage });
-    }
-
-    if (variations.length) {
-      const { error } = variationSchema.validate(variations);
-      if (error)
-        return setOtherErrors({ ...otherErrors, variations: error.message });
-    }
-
-    const { error } = descriptionSchema.validate(description);
-    if (error)
-      return setOtherErrors({ ...otherErrors, description: error.message });
-
-    const submittingData = {
-      ...data,
-      description,
-      variations,
-    };
-
-    setFinalizedData(submittingData);
-    setShowSubmissionDialog({
-      show: true,
-      message: "Are you sure to submit?",
-    });
+  const handleImageSubmit = async (image, productId) => {
+    const resizedImageUri = await resizeImage(image);
+    const { error } = imageSchema.validate(resizedImageUri);
+    if (error) throw new Error("Invalid image URI.");
+    await uploadImage(resizedImageUri, productId, user);
   };
 
   const validateVariationsQty = () => {
@@ -285,33 +280,21 @@ const CreateProductForm = () => {
           fullWidth
         />
         {categories && (
-          <Select
-            className={classes.formParts}
-            name="category"
-            control={control}
-            defaultValue=""
-            variant="outlined"
+          <MultiPurposeAutoCompleteForm
+            options={categories}
+            value={category}
+            setValue={setCategory}
             label="Category"
-            helperText={hasError("category") && errors.category.message}
-            error={hasError("category")}
-            list={categories}
-            required
-            fullWidth
+            error={otherErrors.category}
           />
         )}
         {category && (
-          <Select
-            className={classes.formParts}
-            name="subCategory"
-            control={control}
-            defaultValue=""
-            variant="outlined"
-            label="Subcategory"
-            helperText={hasError("subCategory") && errors.subCategory.message}
-            error={hasError("subCategory")}
-            list={subCategories}
-            required
-            fullWidth
+          <MultiPurposeAutoCompleteForm
+            options={subCategories}
+            value={subCategory}
+            setValue={setSubCategory}
+            label="Sub category"
+            error={otherErrors.subCategory}
           />
         )}
         <Input
