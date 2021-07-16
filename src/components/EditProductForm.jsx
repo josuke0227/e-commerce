@@ -21,19 +21,21 @@ import {
 import { isEmptyObject } from "../util/isEmptyObject";
 import { resizeImage } from "../util/resizeImage";
 import Input from "./shared/Input";
-import Select from "./shared/Select";
 import { isArray } from "../util/isArray";
 import Variations from "./Variations";
 import { getVariationsQty } from "../util/getVariationsQty";
+import MultiPurposeAutoCompleteForm from "./shared/MultiPurposeAutoCompleteForm";
 Joi.ObjectId = require("joi-objectid")(Joi);
 
 const schema = Joi.object().keys({
-  title: Joi.string().min(1).max(255).label("Title"),
-  price: Joi.number().min(1).label("Price"),
-  qty: Joi.number().min(1).label("Quantity"),
-  category: Joi.ObjectId().label("Category"),
-  subCategory: Joi.ObjectId().label("Sub category"),
   brand: Joi.string().min(0).label("Brand"),
+  category: Joi.ObjectId().label("Category"),
+  description: Joi.string().min(1).label("Description"),
+  price: Joi.number().min(1).label("Price"),
+  quantity: Joi.number().min(1).label("Quantity"),
+  subCategory: Joi.ObjectId().label("Sub category"),
+  title: Joi.string().min(1).max(255).label("Title"),
+  variations: Joi.array().optional().label("Variations"),
 });
 
 const INITIAL_DIALOG_STATE = {
@@ -55,7 +57,9 @@ const EditProductForm = () => {
   const classes = useStyles();
   const { user, product } = useSelector((state) => ({ ...state }));
   const [categories, setCategories] = useState([]);
+  const [category, setCategory] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
+  const [subCategory, setSubCategory] = useState([]);
   const [defaultDescriptionValue, setDefaultDescriptionValue] = useState("");
   const [showEditor, setShowEditor] = useState(false);
   const [images, setImages] = useState([]);
@@ -73,6 +77,8 @@ const EditProductForm = () => {
     images: "",
     description: "",
     variations: "",
+    category: "",
+    subCategory: "",
   });
 
   const {
@@ -82,8 +88,7 @@ const EditProductForm = () => {
     watch,
   } = useForm({ resolver: joiResolver(schema) });
 
-  const category = watch("category");
-  const quantity = watch("qty");
+  const quantity = watch("quantity");
 
   useEffect(() => {
     loadCategories();
@@ -154,6 +159,7 @@ const EditProductForm = () => {
   const doSubmit = async () => {
     setLoading(true);
     try {
+      finalizedData.slug = product.slug;
       const { data } = await updateProduct(finalizedData, user);
       // images = empty object means no images is chosen.
       // images = array no additional images are chosen.
@@ -206,30 +212,22 @@ const EditProductForm = () => {
     setLoading(false);
   };
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data, e) => {
+    e.stopPropagation();
     const errorMessage = validateVariationsQty();
     if (errorMessage) {
       return setOtherErrors({ ...otherErrors, variations: errorMessage });
     }
 
-    if (variations.length) {
-      const { error } = variationSchema.validate(variations);
-      if (error)
-        return setOtherErrors({ ...otherErrors, variations: error.message });
-    }
-
-    const { error } = descriptionSchema.validate(
-      description || defaultDescriptionValue
-    );
-    if (error)
-      return setOtherErrors({ ...otherErrors, description: error.message });
-
     const submittingData = {
       ...data,
+      category: category ? category._id : "",
+      subCategory: subCategory ? subCategory._id : "",
       description,
       variations,
-      slug: product.slug,
     };
+
+    console.log(schema.validate(submittingData));
 
     setFinalizedData(submittingData);
     setShowSubmissionDialog({
@@ -304,45 +302,61 @@ const EditProductForm = () => {
         <Input
           className={classes.formParts}
           type="number"
-          name="qty"
+          name="quantity"
           control={control}
           defaultValue={product.quantity}
           variant="outlined"
           label="Qty"
-          helperText={hasError("qty") && errors.qty.message}
-          error={hasError("qty")}
+          helperText={hasError("quantity") && errors.quantity.message}
+          error={hasError("quantity")}
           required
           fullWidth
         />
         {categories && (
-          <Select
-            className={classes.formParts}
-            name="category"
-            control={control}
-            defaultValue={product.category._id}
-            variant="outlined"
+          <MultiPurposeAutoCompleteForm
+            options={categories}
+            value={category}
+            setValue={setCategory}
             label="Category"
-            helperText={hasError("category") && errors.category.message}
-            error={hasError("category")}
-            list={categories}
-            required
-            fullWidth
+            error={otherErrors.category}
+            defaultValue={product.category}
           />
+          // <Select
+          //   className={classes.formParts}
+          //   name="category"
+          //   control={control}
+          //   defaultValue={product.category._id}
+          //   variant="outlined"
+          //   label="Category"
+          //   helperText={hasError("category") && errors.category.message}
+          //   error={hasError("category")}
+          //   list={categories}
+          //   required
+          //   fullWidth
+          // />
         )}
         {category && (
-          <Select
-            className={classes.formParts}
-            name="subCategory"
-            control={control}
-            defaultValue={product.subCategory._id}
-            variant="outlined"
-            label="Subcategory"
-            helperText={hasError("subCategory") && errors.subCategory.message}
-            error={hasError("subCategory")}
-            list={subCategories}
-            required
-            fullWidth
+          <MultiPurposeAutoCompleteForm
+            options={subCategories}
+            value={subCategory}
+            setValue={setSubCategory}
+            label="Sub category"
+            error={otherErrors.subCategory}
+            defaultValue={product.subCategory}
           />
+          // <Select
+          //   className={classes.formParts}
+          //   name="subCategory"
+          //   control={control}
+          //   defaultValue={product.subCategory._id}
+          //   variant="outlined"
+          //   label="Subcategory"
+          //   helperText={hasError("subCategory") && errors.subCategory.message}
+          //   error={hasError("subCategory")}
+          //   list={subCategories}
+          //   required
+          //   fullWidth
+          // />
         )}
         <Input
           className={classes.formParts}

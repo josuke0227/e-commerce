@@ -144,12 +144,6 @@ const VariationEditDialog = ({
           spacing={2}
         >
           {currentVariants.map((v) => {
-            console.log(currentVariation);
-            console.log(v.name);
-            console.log(
-              currentVariation[v.name] ? currentVariation[v.name].index : ""
-            );
-
             return (
               <Grid
                 item
