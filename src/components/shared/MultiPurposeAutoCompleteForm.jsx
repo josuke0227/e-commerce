@@ -22,7 +22,6 @@ const MultiPurposeAutoCompleteForm = ({
   value,
   setValue,
   label,
-  defaultValue = "",
   error,
 }) => {
   const { user } = useSelector((state) => ({ ...state }));
@@ -33,7 +32,7 @@ const MultiPurposeAutoCompleteForm = ({
 
   useEffect(() => {
     if (!options.length) return;
-    const initialValue = defaultValue ? defaultValue : options[0];
+    const initialValue = value ? value : options[0];
     setValue(initialValue);
   }, [options]);
 
@@ -183,6 +182,9 @@ const AutoCompleteForm = ({
               }}
               id={label}
               options={options}
+              getOptionSelected={(option, value) =>
+                JSON.stringify(option) === JSON.stringify(value)
+              }
               getOptionLabel={(option) => option.name}
               style={{ width: 300 }}
               renderInput={(params) => (
