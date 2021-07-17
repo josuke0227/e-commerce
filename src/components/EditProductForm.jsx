@@ -159,7 +159,8 @@ const EditProductForm = () => {
 
     try {
       const { data } = await pickByParentId(id);
-      setSubCategories(data);
+      const subCategoriesData = data.length > 0 ? data : null;
+      setSubCategories(subCategoriesData);
     } catch (error) {
       console.log("sub categories fetching error", error);
     }
@@ -339,7 +340,9 @@ const EditProductForm = () => {
         <MultiPurposeAutoCompleteForm
           options={subCategories}
           value={subCategory}
+          dependency={category}
           setValue={setSubCategory}
+          setOptions={setSubCategories}
           label="Sub category"
           name="subCategory"
           error={otherErrors.subCategory}
@@ -354,9 +357,6 @@ const EditProductForm = () => {
              error={otherErrors.subCategory}
            />
          )} */}
-        {category && !subCategories.length && (
-          <div className="">No data is registered so far...</div>
-        )}
         <Input
           className={classes.formParts}
           type="text"

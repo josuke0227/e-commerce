@@ -56,6 +56,7 @@ const MultiPurposeAutoCompleteForm = ({
   label,
   error,
   name,
+  dependency,
 }) => {
   const { user } = useSelector((state) => ({ ...state }));
 
@@ -66,12 +67,17 @@ const MultiPurposeAutoCompleteForm = ({
   const [enabledAction, setEnabledAction] = useState("");
 
   useEffect(() => {
+    if (options === null) {
+      setInputValue("");
+      return setButtonState({ ...INITIAL_BUTTON_STATE, add: true });
+    }
+
     if (!options.length) return;
     const initialValue = value ? value : options[0];
     setValue(initialValue);
   }, [options]);
 
-  const handleClick = async () => {
+  const handleAddClick = async () => {
     const { error } = rawInputSchema.validate(inputValue);
     if (error)
       return setResult({ success: false, message: error.details[0].message });
@@ -79,12 +85,9 @@ const MultiPurposeAutoCompleteForm = ({
     setResult(INITIAL_RESULT_STATE);
     setLoading(true);
     try {
-      const httpService = serviceMap[name][enabledAction];
-      const { data } =
-        enabledAction === "add"
-          ? await httpService(inputValue, user)
-          : await httpService({ ...value, name: inputValue }, user);
-      const currentCategories = updateUiFuncMap[enabledAction](data);
+      const httpService = serviceMap[name].add;
+      const { data } = await httpService(inputValue, user);
+      const currentCategories = updateUiFuncMap.add(data);
       setResult({ success: true, message: "Success!" });
       setOptions(currentCategories);
       enabledAction !== "delete" && setValue(data);
@@ -98,9 +101,57 @@ const MultiPurposeAutoCompleteForm = ({
     setLoading(false);
   };
 
+  const handleClick = async () => {
+    const { error } = rawInputSchema.validate(inputValue);
+    if (error)
+      return setResult({ success: false, message: error.details[0].message });
+
+    setResult(INITIAL_RESULT_STATE);
+    setLoading(true);
+    try {
+      const { data } = await makeAPICall();
+      const currentCategories = updateUiFuncMap[enabledAction](data);
+      setResult({ success: true, message: "Success!" });
+      console.log(currentCategories);
+      setOptions(currentCategories);
+      enabledAction !== "delete" && setValue(data);
+    } catch (error) {
+      console.log(error);
+      const message = error.response
+        ? error.response.data
+        : "Category create failed.";
+      setResult({ success: false, message });
+    }
+    setLoading(false);
+  };
+
+  const makeAPICall = async () => {
+    const httpService = serviceMap[name][enabledAction];
+    if (name === "category") {
+      return enabledAction === "add"
+        ? await httpService(inputValue, user)
+        : await httpService({ ...value, name: inputValue }, user);
+    } else if (name === "subCategory") {
+      const data =
+        enabledAction === "add"
+          ? {
+              name: inputValue,
+              parent: dependency._id,
+            }
+          : {
+              name: inputValue,
+              parent: dependency._id,
+              slug: value.slug,
+            };
+      return enabledAction === "add"
+        ? await httpService(data, user)
+        : await httpService(data, user);
+    }
+  };
+
   const updateUiFuncMap = {
     add: (data) => {
-      const current = [...options];
+      const current = options ? [...options] : [];
       current.push(data);
       return current;
     },
@@ -110,15 +161,19 @@ const MultiPurposeAutoCompleteForm = ({
       return current;
     },
     delete: () => {
-      const current = [...options];
-      current.splice(getIndex(current, value), 1);
+      const current = options.length > 1 ? [...options] : null;
+      current && current.splice(getIndex(current, value), 1);
       return current;
     },
   };
 
   return (
     <div className="" style={{ marginBottom: "1rem" }}>
-      <ActionSelector state={buttonState} setState={setButtonState} />
+      <ActionSelector
+        options={options}
+        state={buttonState}
+        setState={setButtonState}
+      />
       <FormControl>
         <div style={{ display: "flex" }}>
           <AutoCompleteForm
@@ -128,6 +183,7 @@ const MultiPurposeAutoCompleteForm = ({
             setInputValue={setInputValue}
             options={options}
             label={label}
+            handleAddClick={handleAddClick}
           />
           <ActionButton
             buttonState={buttonState}
@@ -145,7 +201,7 @@ const MultiPurposeAutoCompleteForm = ({
   );
 };
 
-const ActionSelector = ({ state, setState }) => {
+const ActionSelector = ({ state, setState, options }) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleChange = ({ target }) => {
@@ -163,6 +219,8 @@ const ActionSelector = ({ state, setState }) => {
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
+
+  console.log(options);
 
   return (
     <>
@@ -196,30 +254,34 @@ const ActionSelector = ({ state, setState }) => {
             }
             label="Add new category"
           />
-          <FormControlLabel
-            style={{ display: "block" }}
-            control={
-              <Switch
-                checked={state.edit}
-                onChange={handleChange}
-                name="edit"
-                color="primary"
+          {options && (
+            <>
+              <FormControlLabel
+                style={{ display: "block" }}
+                control={
+                  <Switch
+                    checked={state.edit}
+                    onChange={handleChange}
+                    name="edit"
+                    color="primary"
+                  />
+                }
+                label="Edit category"
               />
-            }
-            label="Edit category"
-          />
-          <FormControlLabel
-            style={{ display: "block" }}
-            control={
-              <Switch
-                checked={state.delete}
-                onChange={handleChange}
-                name="delete"
-                color="primary"
+              <FormControlLabel
+                style={{ display: "block" }}
+                control={
+                  <Switch
+                    checked={state.delete}
+                    onChange={handleChange}
+                    name="delete"
+                    color="primary"
+                  />
+                }
+                label="Delete category"
               />
-            }
-            label="Delete category"
-          />
+            </>
+          )}
         </div>
       </Popover>
     </>
@@ -245,46 +307,21 @@ const ActionButton = ({
     setEnabledAction(action);
   }, [buttonState]);
 
-  const buttons = {
-    add: (
-      <Grow in={enabledAction === "add"}>
+  const renderButton = (label) => {
+    return (
+      <Grow in={enabledAction === label}>
         <Button
           disabled={loading}
           variant="outlined"
           color="primary"
           onClick={handleClick}
         >
-          Add
+          {label}
         </Button>
       </Grow>
-    ),
-    edit: (
-      <Grow in={enabledAction === "edit"}>
-        <Button
-          disabled={loading}
-          variant="outlined"
-          color="primary"
-          onClick={handleClick}
-        >
-          Edit
-        </Button>
-      </Grow>
-    ),
-    delete: (
-      <Grow in={enabledAction === "delete"}>
-        <Button
-          disabled={loading}
-          variant="outlined"
-          color="primary"
-          onClick={handleClick}
-        >
-          Delete
-        </Button>
-      </Grow>
-    ),
+    );
   };
-
-  return enabledAction && buttons[enabledAction];
+  return enabledAction && renderButton(enabledAction);
 };
 
 const AutoCompleteForm = ({
@@ -295,9 +332,20 @@ const AutoCompleteForm = ({
   options,
   label,
 }) => {
+  if (options === null)
+    return (
+      <FormControl>
+        <TextField
+          label={`Add ${label}`}
+          variant="outlined"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+        />
+      </FormControl>
+    );
   return (
     <FormControl>
-      {value !== undefined ? (
+      {value !== undefined && options.length > 0 && (
         <Autocomplete
           clearOnBlur={false}
           value={value}
@@ -318,13 +366,6 @@ const AutoCompleteForm = ({
           renderInput={(params) => (
             <TextField {...params} label={label} variant="outlined" />
           )}
-        />
-      ) : (
-        <TextField
-          label={`Add ${label}`}
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          variant="outlined"
         />
       )}
     </FormControl>
