@@ -328,20 +328,34 @@ const EditProductForm = () => {
         {categories.length > 0 && (
           <MultiPurposeAutoCompleteForm
             options={categories}
+            setOptions={setCategories}
             value={category}
             setValue={setCategory}
             label="Category"
+            name="category"
             error={otherErrors.category}
           />
         )}
-        {category && (
-          <MultiPurposeAutoCompleteForm
-            options={subCategories}
-            value={subCategory}
-            setValue={setSubCategory}
-            label="Sub category"
-            error={otherErrors.subCategory}
-          />
+        <MultiPurposeAutoCompleteForm
+          options={subCategories}
+          value={subCategory}
+          setValue={setSubCategory}
+          label="Sub category"
+          name="subCategory"
+          error={otherErrors.subCategory}
+        />
+        {/* {category && subCategories.length > 0 && (
+           <MultiPurposeAutoCompleteForm
+             options={subCategories}
+             value={subCategory}
+             setValue={setSubCategory}
+             label="Sub category"
+             name="subCategory"
+             error={otherErrors.subCategory}
+           />
+         )} */}
+        {category && !subCategories.length && (
+          <div className="">No data is registered so far...</div>
         )}
         <Input
           className={classes.formParts}
