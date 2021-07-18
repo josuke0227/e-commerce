@@ -19,6 +19,11 @@ import {
   updateSubCategory,
   deleteSubCategory,
 } from "../../services/subCategoryServices";
+import {
+  createBrand,
+  updateBrand,
+  deleteBrand,
+} from "../../services/brandsService";
 import { useSelector } from "react-redux";
 import Grow from "@material-ui/core/Grow";
 import Joi from "joi";
@@ -42,9 +47,9 @@ const serviceMap = {
     delete: deleteSubCategory,
   },
   brand: {
-    add: "",
-    edit: "",
-    delete: "",
+    add: createBrand,
+    edit: updateBrand,
+    delete: deleteBrand,
   },
 };
 
@@ -127,11 +132,8 @@ const MultiPurposeAutoCompleteForm = ({
 
   const makeAPICall = async () => {
     const httpService = serviceMap[name][enabledAction];
-    if (name === "category") {
-      return enabledAction === "add"
-        ? await httpService(inputValue, user)
-        : await httpService({ ...value, name: inputValue }, user);
-    } else if (name === "subCategory") {
+
+    if (name === "subCategory") {
       const data =
         enabledAction === "add"
           ? {
@@ -146,6 +148,10 @@ const MultiPurposeAutoCompleteForm = ({
       return enabledAction === "add"
         ? await httpService(data, user)
         : await httpService(data, user);
+    } else {
+      return enabledAction === "add"
+        ? await httpService(inputValue, user)
+        : await httpService({ ...value, name: inputValue }, user);
     }
   };
 
@@ -219,8 +225,6 @@ const ActionSelector = ({ state, setState, options }) => {
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-
-  console.log(options);
 
   return (
     <>

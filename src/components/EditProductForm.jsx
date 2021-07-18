@@ -20,22 +20,23 @@ import { isEmptyObject } from "../util/isEmptyObject";
 import { resizeImage } from "../util/resizeImage";
 import { validateVariationsQty } from "../util/validateVariationsQty";
 
-import { getCategories } from "../services/categoryServices";
-import { getVariants } from "../services/variationServices";
 import {
   deleteProduct,
   getImages,
   updateProduct,
   uploadImage,
 } from "../services/productServices";
+import { getCategories } from "../services/categoryServices";
+import { getVariants } from "../services/variationServices";
+import { getBrands } from "../services/brandsService";
 import { pickByParentId } from "../services/subCategoryServices";
 Joi.ObjectId = require("joi-objectid")(Joi);
 
 const descriptionSchema = Joi.string().min(1).max(2000).label("Description");
 
 const schema = Joi.object().keys({
-  brand: Joi.string().min(0).label("Brand"),
   category: Joi.ObjectId().label("Category"),
+  brand: Joi.ObjectId().label("Brand"),
   description: Joi.string().label("Description"),
   price: Joi.number().min(1).label("Price"),
   quantity: Joi.number().min(1).label("Quantity"),
@@ -66,6 +67,8 @@ const EditProductForm = () => {
   const [category, setCategory] = useState();
   const [subCategories, setSubCategories] = useState([]);
   const [subCategory, setSubCategory] = useState();
+  const [brands, setBrands] = useState([]);
+  const [brand, setBrand] = useState();
   const [defaultDescriptionValue, setDefaultDescriptionValue] = useState("");
   const [showEditor, setShowEditor] = useState(false);
   const [images, setImages] = useState([]);
@@ -85,6 +88,7 @@ const EditProductForm = () => {
     variations: "",
     category: "",
     subCategory: "",
+    brand: "",
   });
 
   const {
@@ -99,16 +103,16 @@ const EditProductForm = () => {
   useEffect(() => {
     loadCategories();
     loadVariants();
+    loadBrands();
   }, []);
   const loadCategories = async () => {
     try {
       const { data } = await getCategories();
       setCategories(data);
     } catch (error) {
-      console.log("category fetching error", error);
+      console.log("fetching category error", error);
     }
   };
-
   const loadVariants = async () => {
     try {
       const { data } = await getVariants();
@@ -116,6 +120,16 @@ const EditProductForm = () => {
       setVariants(data);
     } catch (error) {
       console.log("fetching variations error", error);
+    }
+  };
+  const loadBrands = async () => {
+    try {
+      const { data } = await getBrands();
+
+      const brandsData = data.length > 0 ? data : null;
+      setBrands(brandsData);
+    } catch (error) {
+      console.log("fetching brands error", error);
     }
   };
 
@@ -128,12 +142,14 @@ const EditProductForm = () => {
       variations,
       description,
       category: defaultCategory,
-      subCategory,
+      subCategory: defaultSubCategory,
+      brand,
     } = initialProduct;
     loadImages(_id);
     setDefaultDescriptionValue(description);
+    setSubCategory(defaultSubCategory);
     setCategory(defaultCategory);
-    setSubCategory(subCategory);
+    setBrand(brand);
 
     if (variations.length > 0) setEnableVariations(true);
 
@@ -151,8 +167,14 @@ const EditProductForm = () => {
 
   useEffect(() => {
     if (!category) return;
-    if (subCategory) setSubCategory();
+
+    if (!subCategories || subCategories.length === 0) {
+      loadSubCategories(category._id);
+      return;
+    }
+
     loadSubCategories(category._id);
+    setSubCategory();
   }, [category]);
   const loadSubCategories = async (id) => {
     if (!id) return;
@@ -192,6 +214,7 @@ const EditProductForm = () => {
       ...data,
       category: category ? category._id : "",
       subCategory: subCategory ? subCategory._id : "",
+      brand: brand ? brand._id : "",
       description: finalDescriptionData,
       variations,
     };
@@ -326,49 +349,33 @@ const EditProductForm = () => {
           required
           fullWidth
         />
-        {categories.length > 0 && (
-          <MultiPurposeAutoCompleteForm
-            options={categories}
-            setOptions={setCategories}
-            value={category}
-            setValue={setCategory}
-            label="Category"
-            name="category"
-            error={otherErrors.category}
-          />
-        )}
+        <MultiPurposeAutoCompleteForm
+          options={categories}
+          setOptions={setCategories}
+          value={category}
+          setValue={setCategory}
+          label="Category"
+          name="category"
+          error={otherErrors.category}
+        />
         <MultiPurposeAutoCompleteForm
           options={subCategories}
-          value={subCategory}
-          dependency={category}
-          setValue={setSubCategory}
           setOptions={setSubCategories}
+          value={subCategory}
+          setValue={setSubCategory}
+          dependency={category}
           label="Sub category"
           name="subCategory"
           error={otherErrors.subCategory}
         />
-        {/* {category && subCategories.length > 0 && (
-           <MultiPurposeAutoCompleteForm
-             options={subCategories}
-             value={subCategory}
-             setValue={setSubCategory}
-             label="Sub category"
-             name="subCategory"
-             error={otherErrors.subCategory}
-           />
-         )} */}
-        <Input
-          className={classes.formParts}
-          type="text"
+        <MultiPurposeAutoCompleteForm
+          options={brands}
+          value={brand}
+          setValue={setBrand}
+          setOptions={setBrands}
+          label="Brands"
           name="brand"
-          control={control}
-          defaultValue={product.brand}
-          variant="outlined"
-          label="Brand name"
-          helperText={hasError("brand") && errors.brand.message}
-          error={hasError("brand")}
-          required
-          fullWidth
+          error={otherErrors.brands}
         />
         <Variations
           quantity={quantity}

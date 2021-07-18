@@ -24,18 +24,18 @@ import {
   deleteProduct,
   uploadImage,
 } from "../services/productServices";
+import { getBrands } from "../services/brandsService";
 import { getCategories } from "../services/categoryServices";
 import { getVariants } from "../services/variationServices";
 import { pickByParentId } from "../services/subCategoryServices";
-
 Joi.ObjectId = require("joi-objectid")(Joi);
 
 const descriptionSchema = Joi.string().min(1).max(2000).label("Description");
 
 const schema = Joi.object().keys({
-  brand: Joi.string().min(0).label("Brand"),
   category: Joi.ObjectId().label("Category"),
-  description: Joi.string().min(1).label("Description"),
+  brand: Joi.ObjectId().label("Brand"),
+  description: Joi.string().label("Description"),
   price: Joi.number().min(1).label("Price"),
   quantity: Joi.number().min(1).label("Quantity"),
   subCategory: Joi.ObjectId().label("Sub category"),
@@ -65,6 +65,8 @@ const CreateProductForm = () => {
   const [category, setCategory] = useState();
   const [subCategories, setSubCategories] = useState([]);
   const [subCategory, setSubCategory] = useState();
+  const [brands, setBrands] = useState([]);
+  const [brand, setBrand] = useState();
   const [images, setImages] = useState([]);
   const [variations, setVariations] = useState([]);
   const [variants, setVariants] = useState([]);
@@ -96,6 +98,7 @@ const CreateProductForm = () => {
   useEffect(() => {
     loadCategories();
     loadVariants();
+    loadBrands();
   }, []);
   const loadCategories = async () => {
     try {
@@ -112,6 +115,16 @@ const CreateProductForm = () => {
       setVariants(data);
     } catch (error) {
       console.log("fetching variations error", error);
+    }
+  };
+  const loadBrands = async () => {
+    try {
+      const { data } = await getBrands();
+
+      const brandsData = data.length > 0 ? data : null;
+      setBrands(brandsData);
+    } catch (error) {
+      console.log("fetching brands error", error);
     }
   };
 
@@ -156,6 +169,7 @@ const CreateProductForm = () => {
       ...data,
       category: category ? category._id : "",
       subCategory: subCategory ? subCategory._id : "",
+      brand: brand ? brand._id : "",
       description,
       variations,
     };
@@ -306,18 +320,14 @@ const CreateProductForm = () => {
             error={otherErrors.subCategory}
           />
         )}
-        <Input
-          className={classes.formParts}
-          type="text"
+        <MultiPurposeAutoCompleteForm
+          options={brands}
+          value={brand}
+          setValue={setBrand}
+          setOptions={setBrands}
+          label="Brands"
           name="brand"
-          control={control}
-          defaultValue=""
-          variant="outlined"
-          label="Brand name"
-          helperText={hasError("brand") && errors.brand.message}
-          error={hasError("brand")}
-          required
-          fullWidth
+          error={otherErrors.brands}
         />
         <Variations
           quantity={quantity}
