@@ -282,6 +282,7 @@ const EditProductForm = () => {
   };
 
   const endWithFailure = (error) => {
+    const message = error.response.data || "Operation failed.";
     setResult({ message: error.message, success: false });
     setLoading(false);
   };

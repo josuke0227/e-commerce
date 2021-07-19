@@ -111,7 +111,6 @@ const CreateProductForm = () => {
   const loadVariants = async () => {
     try {
       const { data } = await getVariants();
-
       setVariants(data);
     } catch (error) {
       console.log("fetching variations error", error);
@@ -120,9 +119,7 @@ const CreateProductForm = () => {
   const loadBrands = async () => {
     try {
       const { data } = await getBrands();
-
-      const brandsData = data.length > 0 ? data : null;
-      setBrands(brandsData);
+      setBrands(data);
     } catch (error) {
       console.log("fetching brands error", error);
     }
@@ -165,6 +162,7 @@ const CreateProductForm = () => {
     if (error)
       return setOtherErrors({ ...otherErrors, description: error.message });
 
+    console.log(brand);
     const submittingData = {
       ...data,
       category: category ? category._id : "",
@@ -235,7 +233,8 @@ const CreateProductForm = () => {
   };
 
   const endWithFailure = (error) => {
-    setResult({ message: error.message, success: false });
+    const message = error.response.data || "Operation failed.";
+    setResult({ message, success: false });
     setLoading(false);
   };
 
@@ -307,7 +306,9 @@ const CreateProductForm = () => {
             options={categories}
             value={category}
             setValue={setCategory}
+            setOptions={setCategories}
             label="Category"
+            name="category"
             error={otherErrors.category}
           />
         )}
@@ -316,7 +317,10 @@ const CreateProductForm = () => {
             options={subCategories}
             value={subCategory}
             setValue={setSubCategory}
+            setOptions={setSubCategories}
+            dependency={category}
             label="Sub category"
+            name="subCategory"
             error={otherErrors.subCategory}
           />
         )}
