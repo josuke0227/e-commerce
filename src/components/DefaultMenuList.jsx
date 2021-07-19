@@ -5,6 +5,7 @@ import SubCategoryAccordionFilter from "./SubCategoryAccordionFilter";
 import BrandAccordionFilter from "./BrandAccordionFilter";
 import VariantAccordionFilter from "./VariantAccordionFilter";
 import RatingAccordionFilter from "./RatingAccordionFilter";
+import PriceAccordionFilter from "./PriceAddordionFilter";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const listItems = [
-  { label: "Price", content: <div /> },
+  { label: "Price", content: <PriceAccordionFilter /> },
   { label: "Categories", content: <CategoryAccordionFilter /> },
   { label: "Rating", content: <RatingAccordionFilter /> },
   { label: "Sub Categories", content: <SubCategoryAccordionFilter /> },
