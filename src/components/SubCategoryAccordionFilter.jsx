@@ -10,9 +10,8 @@ import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { getSubCategories } from "./services/subCategoryServices";
-import { filterByAttribute } from "./services/productServices";
-import ProductCard from "./components/ProductCard";
+import { getSubCategories } from "../services/subCategoryServices";
+import { filterByAttribute } from "../services/productServices";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 
 const INITIAL_CHECKBOX_STATE = {};
 
-export default function Playground() {
+const SubCategoryAccordionFilter = () => {
   const classes = useStyles();
 
   const [checkBoxState, setCheckBoxState] = useState(INITIAL_CHECKBOX_STATE);
@@ -73,21 +72,16 @@ export default function Playground() {
   };
 
   return (
-    <div className={classes.root}>
-      <div className="">
-        <FilterOptions
-          label="Sub category"
-          options={subCategories}
-          value={checkBoxState}
-          handleChange={handleChange}
-        />
-        {products.map((p) => (
-          <ProductCard product={p} />
-        ))}
-      </div>
-    </div>
+    <FilterOptions
+      label="Sub category"
+      options={subCategories}
+      value={checkBoxState}
+      handleChange={handleChange}
+    />
   );
-}
+};
+
+export default SubCategoryAccordionFilter;
 
 const FilterOptions = ({ options, value, handleChange, label }) => {
   const classes = useStyles();

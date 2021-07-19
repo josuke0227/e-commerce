@@ -10,7 +10,7 @@ import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { getCategories } from "../services/categoryServices";
+import { getBrands } from "../services/brandsService";
 import { filterByAttribute } from "../services/productServices";
 
 const useStyles = makeStyles((theme) => ({
@@ -25,37 +25,36 @@ const useStyles = makeStyles((theme) => ({
 
 const INITIAL_CHECKBOX_STATE = {};
 
-export default function Playground() {
+const CategoryAccordionFilter = () => {
   const classes = useStyles();
 
   const [checkBoxState, setCheckBoxState] = useState(INITIAL_CHECKBOX_STATE);
-  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
 
   useEffect(() => {
-    loadCategories();
+    loadBrands();
   }, []);
-  const loadCategories = async () => {
-    const { data } = await getCategories();
-    setCategories(data);
+  const loadBrands = async () => {
+    const { data } = await getBrands();
+    setBrands(data);
   };
 
   useEffect(() => {
-    if (!categories.length) return;
+    if (!brands.length) return;
 
     let checkBoxState = {};
-    categories.forEach(
+    brands.forEach(
       (c) => (checkBoxState = { ...checkBoxState, [c._id]: false })
     );
     setCheckBoxState(checkBoxState);
-  }, [categories]);
+  }, [brands]);
 
   useEffect(() => {
-    const selectedCategory = [];
-    categories.forEach((c) => {
-      if (checkBoxState[c._id] === true) selectedCategory.push(c);
+    const selectedBrand = [];
+    brands.forEach((b) => {
+      if (checkBoxState[b._id] === true) selectedBrand.push(b);
     });
-    if (selectedCategory.length)
-      loadFilteredProduct("category", selectedCategory);
+    if (selectedBrand.length) loadFilteredProduct("brand", selectedBrand);
   }, [checkBoxState]);
 
   const loadFilteredProduct = async (name, data) => {
@@ -72,24 +71,24 @@ export default function Playground() {
   return (
     <div className={classes.root}>
       <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />} id="categorySelector">
-          <Typography className={classes.heading}>Category</Typography>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography className={classes.heading}>Brands</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <FormGroup row>
-            {categories.length > 0 &&
-              categories.map((c) => (
+            {brands.length > 0 &&
+              brands.map((b) => (
                 <FormControlLabel
-                  key={c._id}
+                  key={b._id}
                   control={
                     <Checkbox
-                      checked={checkBoxState[c.name]}
+                      checked={checkBoxState[b.name]}
                       onChange={handleChange}
-                      name={c._id}
+                      name={b._id}
                       color="primary"
                     />
                   }
-                  label={c.name}
+                  label={b.name}
                 />
               ))}
             <div className=""></div>
@@ -98,4 +97,6 @@ export default function Playground() {
       </Accordion>
     </div>
   );
-}
+};
+
+export default CategoryAccordionFilter;

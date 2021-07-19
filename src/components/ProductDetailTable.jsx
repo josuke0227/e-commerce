@@ -11,10 +11,6 @@ import {
   IconButton,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
-import Rating from "@material-ui/lab/Rating";
-import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
-import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
-import StarBorderIcon from "@material-ui/icons/StarBorder";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -99,7 +95,7 @@ const ProductDetailTable = ({ product }) => {
               >
                 Brand
               </TableCell>
-              <TableCell component="td">{product.brand}</TableCell>
+              <TableCell component="td">{product.brand.name}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell

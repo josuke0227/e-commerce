@@ -11,7 +11,6 @@ import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { filterByAttribute } from "../services/productServices";
-import ProductCard from "../components/ProductCard";
 import { getVariants } from "../services/variationServices";
 
 const useStyles = makeStyles((theme) => ({
@@ -26,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 
 const INITIAL_CHECKBOX_STATE = {};
 
-export default function Playground() {
+const VariantAccordionFilter = () => {
   const classes = useStyles();
 
   const [checkBoxState, setCheckBoxState] = useState(INITIAL_CHECKBOX_STATE);
@@ -85,25 +84,18 @@ export default function Playground() {
     });
   };
 
-  return (
-    <div className={classes.root}>
-      <div className="">
-        {variants.map((v) => (
-          <FilterOptions
-            key={v._id}
-            label={v.name}
-            options={v.instances}
-            value={checkBoxState}
-            handleChange={handleChange}
-          />
-        ))}
-        {products.map((p) => (
-          <ProductCard product={p} />
-        ))}
-      </div>
-    </div>
-  );
-}
+  return variants.map((v) => (
+    <FilterOptions
+      key={v._id}
+      label={v.name}
+      options={v.instances}
+      value={checkBoxState}
+      handleChange={handleChange}
+    />
+  ));
+};
+
+export default VariantAccordionFilter;
 
 const FilterOptions = ({ options, value, handleChange, label }) => {
   const classes = useStyles();
