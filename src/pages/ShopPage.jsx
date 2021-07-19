@@ -1,29 +1,37 @@
-import { Container, Grid } from "@material-ui/core";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { Container, Grid } from "@material-ui/core";
 import Layout from "../components/Layout";
 import ProductCard from "../components/ProductCard";
 import { getProducts } from "../services/productServices";
 
 const ShopPage = ({ location }) => {
-  const [products, setProducts] = useState([]);
+  const { products } = useSelector((state) => ({ ...state }));
+  const [initialProducts, setInitialProducts] = useState([]);
 
   useEffect(() => {
-    loadProducts();
+    loadInitialProducts();
   }, []);
 
-  const loadProducts = async () => {
+  const loadInitialProducts = async () => {
     const { data } = await getProducts();
-    setProducts(data);
+    setInitialProducts(data);
   };
 
   return (
     <Layout location={location}>
       <Grid container component={Container}>
-        {products.map((p) => (
-          <Grid item xs={12} sm={6} md={4}>
-            <ProductCard key={p._id} product={p} />
-          </Grid>
-        ))}
+        {products.length
+          ? products.map((p) => (
+              <Grid item xs={12} sm={6} md={4}>
+                <ProductCard key={p._id} product={p} />
+              </Grid>
+            ))
+          : initialProducts.map((p) => (
+              <Grid item xs={12} sm={6} md={4}>
+                <ProductCard key={p._id} product={p} />
+              </Grid>
+            ))}
       </Grid>
     </Layout>
   );

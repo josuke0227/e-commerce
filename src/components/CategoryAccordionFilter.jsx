@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Accordion,
@@ -11,7 +12,7 @@ import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { getCategories } from "../services/categoryServices";
-import { filterByAttribute } from "../services/productServices";
+import { filterByAttribute, getProducts } from "../services/productServices";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -27,6 +28,7 @@ const INITIAL_CHECKBOX_STATE = {};
 
 const CategoryAccordionFilter = () => {
   const classes = useStyles();
+  const dispatch = useDispatch();
 
   const [checkBoxState, setCheckBoxState] = useState(INITIAL_CHECKBOX_STATE);
   const [categories, setCategories] = useState([]);
@@ -55,11 +57,24 @@ const CategoryAccordionFilter = () => {
       if (checkBoxState[c._id] === true) selectedCategory.push(c);
     });
     if (selectedCategory.length)
-      loadFilteredProduct("category", selectedCategory);
+      loadFilteredProducts("category", selectedCategory);
+    else loadWholeProducts();
   }, [checkBoxState]);
 
-  const loadFilteredProduct = async (name, data) => {
-    await filterByAttribute(name, data);
+  const loadFilteredProducts = async (name, data) => {
+    const { data: products } = await filterByAttribute(name, data);
+    dispatch({
+      type: "SET_PRODUCTS",
+      payload: products,
+    });
+  };
+
+  const loadWholeProducts = async () => {
+    const { data } = await getProducts();
+    dispatch({
+      type: "SET_PRODUCTS",
+      payload: data,
+    });
   };
 
   const handleChange = (event) => {
