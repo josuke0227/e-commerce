@@ -1,4 +1,5 @@
 import Rating from "@material-ui/lab/Rating";
+import { useDispatch } from "react-redux";
 import {
   Accordion,
   AccordionSummary,
@@ -23,10 +24,14 @@ const useStyles = makeStyles(() => ({
 
 const RatingAccordionFilter = () => {
   const classes = useStyles();
+  const dispatch = useDispatch();
 
   const handleClick = async (value) => {
-    const response = await filterByAttribute("ratings", [{ value }]);
-    console.log(response);
+    const { data } = await filterByAttribute("ratings", [{ value }]);
+    dispatch({
+      type: "SET_PRODUCTS",
+      payload: data,
+    });
   };
 
   const renderStars = () => {
