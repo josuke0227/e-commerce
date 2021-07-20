@@ -68,17 +68,23 @@ const VariantAccordionFilter = () => {
     );
 
     if (selectedVariant.length)
-      loadFilteredProduct("variations", selectedVariant);
+      loadFilteredProducts("variations", selectedVariant);
     else loadWholeProducts();
   }, [checkBoxState]);
-
-  const loadFilteredProduct = async (name, data) => {
-    const { data: products } = await filterByAttribute(name, data);
+  const loadFilteredProducts = async (name, data) => {
     dispatch({
-      type: "SET_PRODUCTS",
-      payload: products,
+      type: "SET_QUERY",
+      payload: { name, data: [...data] },
     });
   };
+
+  // const loadFilteredProduct = async (name, data) => {
+  //   const { data: products } = await filterByAttribute(name, data);
+  //   dispatch({
+  //     type: "SET_PRODUCTS",
+  //     payload: products,
+  //   });
+  // };
   const loadWholeProducts = async () => {
     const { data } = await getProducts();
     dispatch({

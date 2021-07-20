@@ -38,10 +38,10 @@ const PriceAccordionFilter = () => {
   };
 
   const handleMouseup = async () => {
-    const { data } = await filterByAttribute("price", value);
+    console.log("ca");
     dispatch({
-      type: "SET_PRODUCTS",
-      payload: data,
+      type: "SET_QUERY",
+      payload: { name: "price", data: value },
     });
   };
 

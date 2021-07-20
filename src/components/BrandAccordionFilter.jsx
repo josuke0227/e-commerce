@@ -56,14 +56,13 @@ const CategoryAccordionFilter = () => {
     brands.forEach((b) => {
       if (checkBoxState[b._id] === true) selectedBrand.push(b);
     });
-    if (selectedBrand.length) loadFilteredProduct("brand", selectedBrand);
+    if (selectedBrand.length) loadFilteredProducts("brand", selectedBrand);
     else loadWholeProducts();
   }, [checkBoxState]);
-  const loadFilteredProduct = async (name, data) => {
-    const { data: products } = await filterByAttribute(name, data);
+  const loadFilteredProducts = async (name, data) => {
     dispatch({
-      type: "SET_PRODUCTS",
-      payload: products,
+      type: "SET_QUERY",
+      payload: { name, data: [...data] },
     });
   };
   const loadWholeProducts = async () => {

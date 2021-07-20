@@ -57,15 +57,13 @@ const SubCategoryAccordionFilter = () => {
       if (checkBoxState[c._id] === true) selectedCategory.push(c);
     });
     if (selectedCategory.length)
-      loadFilteredProduct("subCategory", selectedCategory);
+      loadFilteredProducts("subCategory", selectedCategory);
     else loadWholeProducts();
   }, [checkBoxState]);
-
-  const loadFilteredProduct = async (name, data) => {
-    const { data: products } = await filterByAttribute(name, data);
+  const loadFilteredProducts = async (name, data) => {
     dispatch({
-      type: "SET_PRODUCTS",
-      payload: products,
+      type: "SET_QUERY",
+      payload: { name, data: [...data] },
     });
   };
   const loadWholeProducts = async () => {

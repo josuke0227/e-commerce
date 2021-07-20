@@ -26,11 +26,10 @@ const RatingAccordionFilter = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const handleClick = async (value) => {
-    const { data } = await filterByAttribute("ratings", [{ value }]);
+  const handleClick = (value) => {
     dispatch({
-      type: "SET_PRODUCTS",
-      payload: data,
+      type: "SET_QUERY",
+      payload: { name: "ratings", data: [{ value }] },
     });
   };
 

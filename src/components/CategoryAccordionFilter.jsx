@@ -61,10 +61,12 @@ const CategoryAccordionFilter = () => {
     else loadWholeProducts();
   }, [checkBoxState]);
   const loadFilteredProducts = async (name, data) => {
-    const { data: products } = await filterByAttribute(name, data);
     dispatch({
-      type: "SET_PRODUCTS",
-      payload: products,
+      type: "RESET_QUERY",
+    });
+    dispatch({
+      type: "SET_QUERY",
+      payload: { name, data: [...data] },
     });
   };
   const loadWholeProducts = async () => {
