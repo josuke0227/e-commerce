@@ -3,35 +3,36 @@ import { useSelector } from "react-redux";
 import { Container, Grid } from "@material-ui/core";
 import Layout from "../components/Layout";
 import ProductCard from "../components/ProductCard";
-import { getProducts } from "../services/productServices";
+import { filterByAttribute, getProducts } from "../services/productServices";
 
 const ShopPage = ({ location }) => {
-  const { products } = useSelector((state) => ({ ...state }));
-  const [initialProducts, setInitialProducts] = useState([]);
+  const { query } = useSelector((state) => ({ ...state }));
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    loadInitialProducts();
-  }, []);
-
-  const loadInitialProducts = async () => {
+    if (!query.length) {
+      loadWholeProducts();
+      return;
+    }
+    loadFilteredProducts(query);
+  }, [query]);
+  const loadWholeProducts = async () => {
     const { data } = await getProducts();
-    setInitialProducts(data);
+    setProducts(data);
+  };
+  const loadFilteredProducts = async () => {
+    const { data } = await filterByAttribute(query);
+    setProducts(data);
   };
 
   return (
     <Layout location={location}>
       <Grid container component={Container}>
-        {products.length
-          ? products.map((p) => (
-              <Grid item xs={12} sm={6} md={4}>
-                <ProductCard key={p._id} product={p} />
-              </Grid>
-            ))
-          : initialProducts.map((p) => (
-              <Grid item xs={12} sm={6} md={4}>
-                <ProductCard key={p._id} product={p} />
-              </Grid>
-            ))}
+        {products.map((p) => (
+          <Grid item xs={12} sm={6} md={4}>
+            <ProductCard key={p._id} product={p} />
+          </Grid>
+        ))}
       </Grid>
     </Layout>
   );
