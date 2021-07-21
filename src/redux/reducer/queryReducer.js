@@ -1,24 +1,28 @@
 export const queryReducer = (state = [], action) => {
+  const currentQuery = [...state];
+  let index;
+
   switch (action.type) {
     case "SET_QUERY":
-      const newQuery = [...state];
-
-      const index = getIndexOfExistingQueryName(newQuery, action.payload.name);
-      console.log(index);
+      index = getIndexOfExistingQueryName(currentQuery, action.payload.name);
       if (index >= 0) {
-        newQuery[index] = action.payload.name;
-        newQuery[index + 1] = action.payload.data;
-        return newQuery;
+        currentQuery[index] = action.payload.name;
+        currentQuery[index + 1] = action.payload.data;
+        return currentQuery;
       }
 
       for (let key in action.payload) {
         const value = action.payload[key];
-        newQuery.push(value);
+        currentQuery.push(value);
       }
-      return newQuery;
+      return currentQuery;
 
     case "RESET_QUERY":
-      return [];
+      console.log(`currentQuery before`, currentQuery);
+      const { name } = action.payload;
+      index = getIndexOfExistingQueryName(currentQuery, name);
+      currentQuery.splice(index, 2);
+      return currentQuery;
 
     default:
       return state;

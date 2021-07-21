@@ -12,7 +12,6 @@ import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { getCategories } from "../services/categoryServices";
-import { filterByAttribute, getProducts } from "../services/productServices";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -43,7 +42,6 @@ const CategoryAccordionFilter = () => {
 
   useEffect(() => {
     if (!categories.length) return;
-
     let checkBoxState = {};
     categories.forEach(
       (c) => (checkBoxState = { ...checkBoxState, [c._id]: false })
@@ -56,25 +54,19 @@ const CategoryAccordionFilter = () => {
     categories.forEach((c) => {
       if (checkBoxState[c._id] === true) selectedCategory.push(c);
     });
-    if (selectedCategory.length)
-      loadFilteredProducts("category", selectedCategory);
-    else loadWholeProducts();
+    loadFilteredProducts("category", selectedCategory);
   }, [checkBoxState]);
   const loadFilteredProducts = async (name, data) => {
-    dispatch({
-      type: "RESET_QUERY",
-    });
-    dispatch({
-      type: "SET_QUERY",
-      payload: { name, data: [...data] },
-    });
-  };
-  const loadWholeProducts = async () => {
-    const { data } = await getProducts();
-    dispatch({
-      type: "SET_PRODUCTS",
-      payload: data,
-    });
+    if (!data.length) {
+      dispatch({
+        type: "RESET_QUERY",
+        payload: { name },
+      });
+    } else if (data.length)
+      dispatch({
+        type: "SET_QUERY",
+        payload: { name, data: [...data] },
+      });
   };
 
   const handleChange = (event) => {

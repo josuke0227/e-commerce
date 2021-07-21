@@ -9,7 +9,6 @@ import {
   Slider,
 } from "@material-ui/core/";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { filterByAttribute } from "../services/productServices";
 
 const useStyles = makeStyles(() => ({
   accordionDetails: {
@@ -38,7 +37,6 @@ const PriceAccordionFilter = () => {
   };
 
   const handleMouseup = async () => {
-    console.log("ca");
     dispatch({
       type: "SET_QUERY",
       payload: { name: "price", data: value },

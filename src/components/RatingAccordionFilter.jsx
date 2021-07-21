@@ -8,7 +8,6 @@ import {
   makeStyles,
 } from "@material-ui/core/";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { filterByAttribute } from "../services/productServices";
 
 const useStyles = makeStyles(() => ({
   accordionDetails: {
