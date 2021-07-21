@@ -19,6 +19,9 @@ const useStyles = makeStyles(() => ({
       cursor: "pointer",
     },
   },
+  root: {
+    width: "100%",
+  },
 }));
 
 const RatingAccordionFilter = () => {
@@ -46,7 +49,7 @@ const RatingAccordionFilter = () => {
   };
 
   return (
-    <Accordion>
+    <Accordion classes={{ root: classes.root }}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography>Rating</Typography>
       </AccordionSummary>

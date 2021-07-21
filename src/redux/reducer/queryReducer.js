@@ -18,7 +18,6 @@ export const queryReducer = (state = [], action) => {
       return currentQuery;
 
     case "RESET_QUERY":
-      console.log(`currentQuery before`, currentQuery);
       const { name } = action.payload;
       index = getIndexOfExistingQueryName(currentQuery, name);
       currentQuery.splice(index, 2);

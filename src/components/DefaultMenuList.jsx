@@ -5,7 +5,7 @@ import SubCategoryAccordionFilter from "./SubCategoryAccordionFilter";
 import BrandAccordionFilter from "./BrandAccordionFilter";
 import VariantAccordionFilter from "./VariantAccordionFilter";
 import RatingAccordionFilter from "./RatingAccordionFilter";
-import PriceAccordionFilter from "./PriceAddordionFilter";
+import PriceAccordionFilter from "./PriceAccordionFilter";
 
 const useStyles = makeStyles((theme) => ({
   root: {

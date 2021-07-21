@@ -11,7 +11,7 @@ import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { getSubCategories } from "../services/subCategoryServices";
+import { pickByParentId } from "../services/subCategoryServices";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 
 const INITIAL_CHECKBOX_STATE = {};
 
-const SubCategoryAccordionFilter = () => {
+const SubCategoryAccordionFilter = ({ category }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -33,10 +33,10 @@ const SubCategoryAccordionFilter = () => {
   const [subCategories, setSubCategories] = useState([]);
 
   useEffect(() => {
-    loadSubCategories();
-  }, []);
-  const loadSubCategories = async () => {
-    const { data } = await getSubCategories();
+    loadSubCategories(category._id);
+  }, [category]);
+  const loadSubCategories = async (id) => {
+    const { data } = await pickByParentId(id);
     setSubCategories(data);
   };
 

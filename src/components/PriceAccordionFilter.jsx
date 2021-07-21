@@ -21,7 +21,7 @@ const useStyles = makeStyles(() => ({
     },
   },
   root: {
-    width: 300,
+    width: "100%",
   },
 }));
 
@@ -44,7 +44,7 @@ const PriceAccordionFilter = () => {
   };
 
   return (
-    <Accordion>
+    <Accordion classes={{ root: classes.root }}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography>Price</Typography>
       </AccordionSummary>
