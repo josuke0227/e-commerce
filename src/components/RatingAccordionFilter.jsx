@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Rating from "@material-ui/lab/Rating";
 import { useDispatch } from "react-redux";
 import {
@@ -8,6 +9,7 @@ import {
   makeStyles,
 } from "@material-ui/core/";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import CheckIcon from "@material-ui/icons/Check";
 
 const useStyles = makeStyles(() => ({
   accordionDetails: {
@@ -27,8 +29,10 @@ const useStyles = makeStyles(() => ({
 const RatingAccordionFilter = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [current, setCurrent] = useState("");
 
   const handleClick = (value) => {
+    setCurrent(value);
     dispatch({
       type: "SET_QUERY",
       payload: { name: "ratings", data: [{ value }] },
@@ -46,6 +50,7 @@ const RatingAccordionFilter = () => {
           onClick={() => handleClick(i)}
         >
           <Rating name="read-only" value={i} readOnly />
+          {i === current && <CheckIcon />}
         </div>
       );
     }

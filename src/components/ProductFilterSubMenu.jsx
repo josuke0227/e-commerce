@@ -35,7 +35,7 @@ const ProductFilterSubMenu = ({ category, handleBackClick, products }) => {
         <BrandAccordionFilter products={products} />
       </ListItem>
       <ListItem>
-        <RatingAccordionFilter />
+        <RatingAccordionFilter products={products} />
       </ListItem>
       <ListItem>
         <PriceAccordionFilter />
