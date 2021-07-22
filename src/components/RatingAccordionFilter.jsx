@@ -40,7 +40,11 @@ const RatingAccordionFilter = () => {
 
     for (let i = 1; i <= 4; i++) {
       elements.push(
-        <div className={classes.starsWrapper} onClick={() => handleClick(i)}>
+        <div
+          key={i}
+          className={classes.starsWrapper}
+          onClick={() => handleClick(i)}
+        >
           <Rating name="read-only" value={i} readOnly />
         </div>
       );

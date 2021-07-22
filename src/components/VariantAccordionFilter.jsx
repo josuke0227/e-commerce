@@ -53,20 +53,22 @@ const VariantAccordionFilter = () => {
   }, [variants]);
 
   useEffect(() => {
-    const selectedVariations = [];
-    variants.forEach((v) =>
-      v.instances.forEach((i) => {
-        if (checkBoxState[i.name] === true) {
-          const data = {
-            name: v.name,
-            data: { ...i },
-          };
-          selectedVariations.push(data);
-        }
-      })
-    );
-    loadFilteredProducts("variations", selectedVariations);
-  }, [checkBoxState]);
+    if (variants.length && Object.keys(checkBoxState).length) {
+      const selectedVariations = [];
+      variants.forEach((v) =>
+        v.instances.forEach((i) => {
+          if (checkBoxState[i.name] === true) {
+            const data = {
+              name: v.name,
+              data: { ...i },
+            };
+            selectedVariations.push(data);
+          }
+        })
+      );
+      loadFilteredProducts("variations", selectedVariations);
+    }
+  }, [checkBoxState, variants]);
   const loadFilteredProducts = async (name, data) => {
     if (!data.length) {
       dispatch({

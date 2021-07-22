@@ -50,13 +50,15 @@ const CategoryAccordionFilter = () => {
   }, [categories]);
 
   useEffect(() => {
-    const selectedCategory = [];
-    categories.forEach((c) => {
-      if (checkBoxState[c._id] === true) selectedCategory.push(c);
-    });
-    loadFilteredProducts("category", selectedCategory);
-  }, [checkBoxState]);
-  const loadFilteredProducts = async (name, data) => {
+    if (categories.length && Object.keys(checkBoxState).length) {
+      const selectedCategory = [];
+      categories.forEach((c) => {
+        if (checkBoxState[c._id] === true) selectedCategory.push(c);
+      });
+      loadFilteredProducts("category", selectedCategory);
+    }
+  }, [checkBoxState, categories]);
+  const loadFilteredProducts = (name, data) => {
     if (!data.length) {
       dispatch({
         type: "RESET_QUERY",
