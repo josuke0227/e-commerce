@@ -11,7 +11,10 @@ import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { getSubCategories } from "../services/subCategoryServices";
+import {
+  getSubCategories,
+  pickByParentId,
+} from "../services/subCategoryServices";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,22 +36,14 @@ const SubCategoryAccordionFilter = ({ category }) => {
   const [subCategories, setSubCategories] = useState([]);
 
   useEffect(() => {
+    console.log(`category`, category);
+    if (!category) return;
     loadSubCategories();
   }, [category]);
   const loadSubCategories = async () => {
-    const { data } = await getSubCategories();
+    const { data } = await pickByParentId(category);
     setSubCategories(data);
   };
-
-  useEffect(() => {
-    if (!subCategories.length) return;
-
-    let checkBoxState = {};
-    subCategories.forEach(
-      (c) => (checkBoxState = { ...checkBoxState, [c._id]: false })
-    );
-    setCheckBoxState(checkBoxState);
-  }, [subCategories]);
 
   useEffect(() => {
     if (subCategories.length && Object.keys(checkBoxState).length) {
@@ -60,7 +55,7 @@ const SubCategoryAccordionFilter = ({ category }) => {
     }
   }, [checkBoxState, subCategories]);
   const loadFilteredProducts = async (name, data) => {
-    if (!data.length) {
+    if (Object.keys(checkBoxState).length && !data.length) {
       dispatch({
         type: "RESET_QUERY",
         payload: { name },

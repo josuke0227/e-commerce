@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 
 const INITIAL_CHECKBOX_STATE = {};
 
-const CategoryAccordionFilter = () => {
+const CategoryAccordionFilter = ({ setSlide, setCategory }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -41,15 +41,6 @@ const CategoryAccordionFilter = () => {
   };
 
   useEffect(() => {
-    if (!categories.length) return;
-    let checkBoxState = {};
-    categories.forEach(
-      (c) => (checkBoxState = { ...checkBoxState, [c._id]: false })
-    );
-    setCheckBoxState(checkBoxState);
-  }, [categories]);
-
-  useEffect(() => {
     if (categories.length && Object.keys(checkBoxState).length) {
       const selectedCategory = [];
       categories.forEach((c) => {
@@ -59,7 +50,7 @@ const CategoryAccordionFilter = () => {
     }
   }, [checkBoxState, categories]);
   const loadFilteredProducts = (name, data) => {
-    if (!data.length) {
+    if (Object.keys(checkBoxState).length && !data.length) {
       dispatch({
         type: "RESET_QUERY",
         payload: { name },
@@ -72,6 +63,8 @@ const CategoryAccordionFilter = () => {
   };
 
   const handleChange = (event) => {
+    setSlide(true);
+    setCategory(event.target.name);
     setCheckBoxState({
       ...checkBoxState,
       [event.target.name]: event.target.checked,

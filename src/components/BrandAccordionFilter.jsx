@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 
 const INITIAL_CHECKBOX_STATE = {};
 
-const CategoryAccordionFilter = () => {
+const CategoryAccordionFilter = ({ products }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -34,21 +34,19 @@ const CategoryAccordionFilter = () => {
 
   useEffect(() => {
     loadBrands();
-  }, []);
+  }, [products]);
   const loadBrands = async () => {
     const { data } = await getBrands();
-    setBrands(data);
-  };
-
-  useEffect(() => {
-    if (!brands.length) return;
-
-    let checkBoxState = {};
-    brands.forEach(
-      (c) => (checkBoxState = { ...checkBoxState, [c._id]: false })
+    const availableBrands = [];
+    data.forEach((d) =>
+      products.forEach((p) => {
+        if (p.brand._id === d._id) {
+          availableBrands.push(d);
+        }
+      })
     );
-    setCheckBoxState(checkBoxState);
-  }, [brands]);
+    setBrands(availableBrands);
+  };
 
   useEffect(() => {
     if (brands.length && Object.keys(checkBoxState).length) {
@@ -60,7 +58,7 @@ const CategoryAccordionFilter = () => {
     }
   }, [checkBoxState, brands]);
   const loadFilteredProducts = async (name, data) => {
-    if (!data.length) {
+    if (Object.keys(checkBoxState).length && !data.length) {
       dispatch({
         type: "RESET_QUERY",
         payload: { name },

@@ -23,6 +23,9 @@ export const queryReducer = (state = [], action) => {
       currentQuery.splice(index, 2);
       return currentQuery;
 
+    case "CLEAR_QUERY":
+      return [];
+
     default:
       return state;
   }

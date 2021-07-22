@@ -17,12 +17,12 @@ const useStyles = makeStyles({
   },
 });
 
-const ProductFilterSubMenu = ({ category, setSlide }) => {
+const ProductFilterSubMenu = ({ category, handleBackClick, products }) => {
   const classes = useStyles();
 
   return (
     <List>
-      <ListItem button onClick={() => setSlide(false)}>
+      <ListItem button onClick={handleBackClick}>
         <ListItemIcon>
           <ArrowBackIcon className={classes.listItemIcon} />
         </ListItemIcon>
@@ -32,7 +32,7 @@ const ProductFilterSubMenu = ({ category, setSlide }) => {
         <SubCategoryAccordionFilter category={category} />
       </ListItem>
       <ListItem>
-        <BrandAccordionFilter />
+        <BrandAccordionFilter products={products} />
       </ListItem>
       <ListItem>
         <RatingAccordionFilter />
