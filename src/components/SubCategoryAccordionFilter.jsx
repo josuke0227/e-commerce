@@ -11,7 +11,7 @@ import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { pickByParentId } from "../services/subCategoryServices";
+import { getSubCategories } from "../services/subCategoryServices";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,10 +33,10 @@ const SubCategoryAccordionFilter = ({ category }) => {
   const [subCategories, setSubCategories] = useState([]);
 
   useEffect(() => {
-    loadSubCategories(category._id);
+    loadSubCategories();
   }, [category]);
-  const loadSubCategories = async (id) => {
-    const { data } = await pickByParentId(id);
+  const loadSubCategories = async () => {
+    const { data } = await getSubCategories();
     setSubCategories(data);
   };
 
