@@ -1,23 +1,11 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { makeStyles } from "@material-ui/core/styles";
 import Slide from "../components/Slide";
 import { filterByAttribute, getProducts } from "../services/productServices";
 import ProductFilterMenu from "../components/ProductFilterMenu";
 import ProductFilterSubMenu from "../components/ProductFilterSubMenu";
 
-const useStyles = makeStyles({
-  list: {
-    width: 250,
-  },
-  drawer: {
-    height: "auto",
-  },
-});
-
 export default function TemporaryDrawer() {
-  const classes = useStyles();
-  const [state, setState] = React.useState(false);
   const [products, setProducts] = React.useState([]);
   const [slide, setSlide] = React.useState(false);
   const [category, setCategory] = React.useState("");
