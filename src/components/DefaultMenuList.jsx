@@ -1,42 +1,74 @@
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
-import CategoryAccordionFilter from "./CategoryAccordionFilter";
-import SubCategoryAccordionFilter from "./SubCategoryAccordionFilter";
-import BrandAccordionFilter from "./BrandAccordionFilter";
-import VariantAccordionFilter from "./VariantAccordionFilter";
-import RatingAccordionFilter from "./RatingAccordionFilter";
-import PriceAccordionFilter from "./PriceAccordionFilter";
+import Slide from "../components/Slide";
+import { filterByAttribute, getProducts } from "../services/productServices";
+import ProductFilterMenu from "../components/ProductFilterMenu";
+import ProductFilterSubMenu from "../components/ProductFilterSubMenu";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: "100%",
+const useStyles = makeStyles({
+  list: {
+    width: 250,
   },
-  heading: {
-    fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular,
+  drawer: {
+    height: "auto",
   },
-  accordionDetailsRoot: {
-    display: "block",
-    padding: "0 1rem 0.5rem 1rem",
-  },
-}));
+});
 
-const listItems = [
-  { label: "Price", content: <PriceAccordionFilter /> },
-  { label: "Categories", content: <CategoryAccordionFilter /> },
-  { label: "Rating", content: <RatingAccordionFilter /> },
-  { label: "Sub Categories", content: <SubCategoryAccordionFilter /> },
-  { label: "Brands", content: <BrandAccordionFilter /> },
-  { label: "Variations", content: <VariantAccordionFilter /> },
-];
-
-const DefaultMenuList = () => {
+export default function TemporaryDrawer() {
   const classes = useStyles();
+  const [state, setState] = React.useState(false);
+  const [products, setProducts] = React.useState([]);
+  const [slide, setSlide] = React.useState(false);
+  const [category, setCategory] = React.useState("");
+
+  const { query } = useSelector((state) => ({ ...state }));
+  const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    if (!query.length) {
+      loadWholeProducts();
+      return;
+    }
+    loadFilteredProducts(query);
+  }, [query]);
+  const loadWholeProducts = async () => {
+    const { data } = await getProducts();
+    setProducts(data);
+  };
+  const loadFilteredProducts = async () => {
+    const { data } = await filterByAttribute(query);
+    setProducts(data);
+  };
+
+  const handleBackClick = () => {
+    setSlide(false);
+    dispatch({
+      type: "RESET_STATE",
+    });
+    dispatch({
+      type: "CLEAR_QUERY",
+    });
+  };
+
   return (
-    <div className={classes.root}>
-      {listItems.map(({ content }) => content)}
+    <div className="">
+      <Slide
+        slide={slide}
+        frameWidth="250px"
+        frameHeight="100vh"
+        defaultContent={
+          <ProductFilterMenu setSlide={setSlide} setCategory={setCategory} />
+        }
+        alternativeContent={
+          <ProductFilterSubMenu
+            handleBackClick={handleBackClick}
+            category={category}
+            products={products}
+            setSlide={setSlide}
+          />
+        }
+      />
     </div>
   );
-};
-
-export default DefaultMenuList;
+}

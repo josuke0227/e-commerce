@@ -7,6 +7,7 @@ import {
   AccordionDetails,
   Typography,
   makeStyles,
+  Link,
 } from "@material-ui/core/";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import CheckIcon from "@material-ui/icons/Check";
@@ -39,6 +40,13 @@ const RatingAccordionFilter = () => {
     });
   };
 
+  const handleResetClick = (value) => {
+    setCurrent(value);
+    dispatch({
+      type: "RESET_QUERY",
+      payload: { name: "ratings" },
+    });
+  };
   const renderStars = () => {
     const elements = [];
 
@@ -63,6 +71,9 @@ const RatingAccordionFilter = () => {
         <Typography>Rating</Typography>
       </AccordionSummary>
       <AccordionDetails classes={{ root: classes.accordionDetails }}>
+        <Link color="textPrimary">
+          <Typography onClick={handleResetClick}>Show all items</Typography>
+        </Link>
         {renderStars()}
       </AccordionDetails>
     </Accordion>
