@@ -38,12 +38,13 @@ export const getImages = async (productId, user) =>
 export const getProducts = async () =>
   await axios.get(`${process.env.REACT_APP_API}/products`);
 
-export const getProductsList = async (sort, order, page, itemsPerPage) =>
+export const getProductsList = async (sort, order, page, itemsPerPage, query) =>
   await axios.post(`${process.env.REACT_APP_API}/products/list`, {
     sort,
     order,
     page,
     itemsPerPage,
+    query,
   });
 
 export const getProductsCount = async () =>

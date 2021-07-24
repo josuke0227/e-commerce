@@ -1,67 +1,58 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Container, Grid } from "@material-ui/core";
 import Layout from "../components/Layout";
+import { makeStyles } from "@material-ui/core";
 import ProductCard from "../components/ProductCard";
 import Pagination from "@material-ui/lab/Pagination";
-import {
-  filterByAttribute,
-  getProducts,
-  getProductsList,
-  getProductsCount,
-} from "../services/productServices";
+import { getProductsList } from "../services/productServices";
+
+const useStyles = makeStyles({
+  pagination: {
+    display: "flex",
+    justifyContent: "center",
+    width: "100%",
+  },
+});
 
 const ShopPage = ({ location }) => {
-  const { query } = useSelector((state) => ({ ...state }));
-  const [products, setProducts] = useState([]);
-  const [page, setPage] = useState(1);
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const { query, products, page } = useSelector((state) => ({ ...state }));
   const [count, setCount] = useState(1);
 
   useEffect(() => {
+    loadProducts();
+  }, [query, page]);
+
+  const loadProducts = async () => {
+    let response;
     if (!query.length) {
-      loadWholeProducts();
+      response = await getProductsList("createdAt", "desc", page, 2);
+      applyData(response);
       return;
     }
-    loadFilteredProducts(query);
-  }, [query]);
-  const loadWholeProducts = async () => {
-    const { data } = await getProductsList("createdAt", "desc", page, 2);
-    setProducts(data);
-  };
-  const loadFilteredProducts = async () => {
-    const { data } = await filterByAttribute(query);
-    setProducts(data);
+    response = await getProductsList("createdAt", "desc", page, 2, query);
+    applyData(response);
   };
 
-  useEffect(() => {
-    loadProducts();
-  }, [page]);
-  const loadProducts = async () => {
-    try {
-      const { data } = await getProductsList("createdAt", "desc", page, 2);
-      setProducts(data);
-    } catch (error) {
-      console.log("product fetching error", error);
-    }
-  };
-
-  useEffect(() => {
-    loadCount();
-  }, []);
-  const loadCount = async () => {
-    try {
-      const { data } = await getProductsCount();
-      console.log(data);
-      setCount(data);
-    } catch (error) {
-      console.log("product count fetching error", error);
-    }
+  const applyData = (response) => {
+    const { data } = response;
+    setCount(data.count);
+    dispatch({
+      type: "SET_PRODUCTS",
+      payload: data.products,
+    });
   };
 
   const handleChange = (event, value) => {
-    setPage(value);
+    dispatch({
+      type: "SET_PAGE",
+      payload: value,
+    });
   };
 
+  const pageLength = Math.ceil(count / 2);
   return (
     <Layout location={location}>
       <Grid container component={Container}>
@@ -70,7 +61,9 @@ const ShopPage = ({ location }) => {
             <ProductCard key={p._id} product={p} />
           </Grid>
         ))}
-        <Pagination count={count / 2} page={page} onChange={handleChange} />
+        <footer className={classes.pagination}>
+          <Pagination count={pageLength} page={page} onChange={handleChange} />
+        </footer>
       </Grid>
     </Layout>
   );

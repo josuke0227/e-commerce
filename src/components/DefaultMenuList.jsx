@@ -1,33 +1,14 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Slide from "../components/Slide";
-import { filterByAttribute, getProducts } from "../services/productServices";
 import ProductFilterMenu from "../components/ProductFilterMenu";
 import ProductFilterSubMenu from "../components/ProductFilterSubMenu";
 
 export default function TemporaryDrawer() {
-  const [products, setProducts] = React.useState([]);
+  const dispatch = useDispatch();
+  const { products } = useSelector((state) => ({ ...state }));
   const [slide, setSlide] = React.useState(false);
   const [category, setCategory] = React.useState("");
-
-  const { query } = useSelector((state) => ({ ...state }));
-  const dispatch = useDispatch();
-
-  React.useEffect(() => {
-    if (!query.length) {
-      loadWholeProducts();
-      return;
-    }
-    loadFilteredProducts(query);
-  }, [query]);
-  const loadWholeProducts = async () => {
-    const { data } = await getProducts();
-    setProducts(data);
-  };
-  const loadFilteredProducts = async () => {
-    const { data } = await filterByAttribute(query);
-    setProducts(data);
-  };
 
   const handleBackClick = () => {
     setSlide(false);

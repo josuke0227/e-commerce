@@ -69,6 +69,9 @@ const CategoryAccordionFilter = ({ setSlide, setCategory }) => {
       type: "SET_STATE",
       payload: { [category._id]: true },
     });
+    dispatch({
+      type: "RESET_PAGE",
+    });
   };
 
   return (
