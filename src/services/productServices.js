@@ -35,12 +35,19 @@ export const getImages = async (productId, user) =>
     url: `${process.env.REACT_APP_API}/images/${productId}`,
   });
 
-export const getProducts = async (sort, order, page) =>
-  await axios.get(`${process.env.REACT_APP_API}/products`, {
+export const getProducts = async () =>
+  await axios.get(`${process.env.REACT_APP_API}/products`);
+
+export const getProductsList = async (sort, order, page, itemsPerPage) =>
+  await axios.post(`${process.env.REACT_APP_API}/products/list`, {
     sort,
     order,
     page,
+    itemsPerPage,
   });
+
+export const getProductsCount = async () =>
+  await axios.get(`${process.env.REACT_APP_API}/products/count`);
 
 export const getProductsByCount = async (user, slug) =>
   await axios.get(`${process.env.REACT_APP_API}/products/${slug}`, {
@@ -51,9 +58,6 @@ export const getProductsByCount = async (user, slug) =>
 
 export const getProduct = async (slug) =>
   await axios.get(`${process.env.REACT_APP_API}/products/${slug}`);
-
-export const getCount = async () =>
-  await axios.get(`${process.env.REACT_APP_API}/products/total`);
 
 export const updateProduct = async (product, user) =>
   await axios.put(
@@ -93,7 +97,6 @@ export const filterByAttribute = async (query) => {
 
   return await axios.post(
     `${process.env.REACT_APP_API}/products/search/attributes`,
-    // [{ name }, [...data]]
     query
   );
 };
