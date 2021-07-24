@@ -47,9 +47,6 @@ export const getProductsList = async (sort, order, page, itemsPerPage, query) =>
     query,
   });
 
-export const getProductsCount = async () =>
-  await axios.get(`${process.env.REACT_APP_API}/products/count`);
-
 export const getProductsByCount = async (user, slug) =>
   await axios.get(`${process.env.REACT_APP_API}/products/${slug}`, {
     headers: {
