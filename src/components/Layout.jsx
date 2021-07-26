@@ -5,6 +5,7 @@ import PopupMenuMobile from "./PopupMenuMobile";
 import Header from "./Header";
 import SideBar from "./SideBar";
 import MainWindow from "./MainWindow";
+import CartDrawer from "./CartDrawer";
 import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
@@ -72,6 +73,7 @@ const Layout = ({ children, location }) => {
         location={location}
         open={open}
       />
+      <CartDrawer />
       <PopupMenuMobile
         user={user}
         mobileMenuId={mobileMenuId}

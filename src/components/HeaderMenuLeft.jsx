@@ -2,6 +2,7 @@ import Badge from "@material-ui/core/Badge";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart"; // cart
 import StorefrontIcon from "@material-ui/icons/Storefront";
 import React from "react";
+import { useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
@@ -30,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
 
 const HeaderMenuLeft = () => {
   const classes = useStyles();
+  const { cart } = useSelector((state) => ({ ...state }));
 
   return (
     <div className={classes.headerMenuLeft}>
@@ -46,10 +48,9 @@ const HeaderMenuLeft = () => {
         </IconButton>
       </Link>
 
-      {/* TODO: Implement another drawer for cart */}
       <IconButton color="inherit">
         <Badge
-          badgeContent={4}
+          badgeContent={cart.length}
           color="secondary"
           className={classes.iconWrapper}
         >

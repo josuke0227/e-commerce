@@ -28,8 +28,6 @@ const SelectForm = ({
       <InputLabel id={labelId}>{inputLabel}</InputLabel>
       <Select
         labelId={labelId}
-        // value={value}
-        // onChange={onChange}
         name={name}
         label={inputLabel}
         classes={{ select: classes.select }}

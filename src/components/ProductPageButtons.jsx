@@ -23,7 +23,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ProductPageButtons = ({ setShowDialog }) => {
+const ProductPageButtons = ({
+  handleStarButtonClick,
+  handleCartButtonClick,
+}) => {
   const classes = useStyles();
 
   return (
@@ -35,6 +38,7 @@ const ProductPageButtons = ({ setShowDialog }) => {
         }}
         color="primary"
         size="small"
+        onClick={handleCartButtonClick}
       >
         <AddShoppingCartIcon className={classes.icons} />
         <span>Add to cart</span>
@@ -57,7 +61,7 @@ const ProductPageButtons = ({ setShowDialog }) => {
           root: classes.iconButtons,
           label: classes.buttonLabels,
         }}
-        onClick={() => setShowDialog(true)}
+        onClick={handleStarButtonClick}
       >
         <StarBorderIcon className={classes.icons} />
         <span>Leave rating</span>
