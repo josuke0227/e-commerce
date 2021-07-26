@@ -11,6 +11,8 @@ import Layout from "../components/Layout";
 import { useSelector } from "react-redux";
 import RatingDialog from "../components/RatingDialog";
 
+import { sampleProduct } from "../data-sample/sampleProductData";
+
 const useStyles = makeStyles((theme) => ({
   container: {
     marginTop: theme.spacing(3),
@@ -28,23 +30,23 @@ const ProductPage = ({ match, location }) => {
   const [showDialog, setShowDialog] = useState(false);
   const [status, setStatus] = useState("");
 
-  useEffect(() => {
-    loadProduct();
-  }, []);
-  const loadProduct = async () => {
-    const { data } = await getProduct(params.slug);
-    setProduct(data);
-  };
+  // useEffect(() => {
+  //   loadProduct();
+  // }, []);
+  // const loadProduct = async () => {
+  //   const { data } = await getProduct(params.slug);
+  //   setProduct(data);
+  // };
 
-  useEffect(() => {
-    if (!product) return;
+  // useEffect(() => {
+  //   if (!product) return;
 
-    loadImages();
-  }, [product]);
-  const loadImages = async () => {
-    const { data } = await getImages(product._id);
-    setImages(data);
-  };
+  //   loadImages();
+  // }, [product]);
+  // const loadImages = async () => {
+  //   const { data } = await getImages(product._id);
+  //   setImages(data);
+  // };
 
   const handleConfirm = async (value) => {
     if (!user) return setStatus("unauthorized");
@@ -64,6 +66,8 @@ const ProductPage = ({ match, location }) => {
     setTimeout(() => setStatus(""), 1000);
   };
 
+  console.log(product);
+
   return (
     <>
       <RatingDialog
@@ -73,16 +77,28 @@ const ProductPage = ({ match, location }) => {
         handleCancel={handleCancel}
       />
       <Layout location={location}>
-        {!product ? (
+        <Container className={classes.container}>
+          <Paper>
+            <ProductImageViewer images={[]} />
+            <ProductDetails
+              product={sampleProduct}
+              setShowDialog={setShowDialog}
+            />
+          </Paper>
+        </Container>
+        {/* {!product ? (
           <div className="">Loading...</div>
         ) : (
           <Container className={classes.container}>
             <Paper>
-              <ProductImageViewer images={images} />
-              <ProductDetails product={product} setShowDialog={setShowDialog} />
+              <ProductImageViewer images={[]} />
+              <ProductDetails
+                product={sampleProduct}
+                setShowDialog={setShowDialog}
+              />
             </Paper>
           </Container>
-        )}
+        )} */}
       </Layout>
     </>
   );
