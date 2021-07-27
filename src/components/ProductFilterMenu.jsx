@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CategoryAccordionFilter = ({ setSlide, setCategory }) => {
+const ProductFilterMenu = ({ setSlide, setCategory }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { sideBar } = useSelector((state) => ({ ...state }));
@@ -81,18 +81,16 @@ const CategoryAccordionFilter = ({ setSlide, setCategory }) => {
           <ListItemText primary={""} />
         </ListItem>
         {categories.map((c) => (
-          <>
-            <ListItem button key={c._id} onClick={() => handleClick(c)}>
-              <ListItemText primary={c.name} />
-              <ListItemIcon className={classes.listIconContainer}>
-                <ArrowForwardIosIcon className={classes.listItemIcon} />
-              </ListItemIcon>
-            </ListItem>
-          </>
+          <ListItem button key={c._id} onClick={() => handleClick(c)}>
+            <ListItemText primary={c.name} />
+            <ListItemIcon className={classes.listIconContainer}>
+              <ArrowForwardIosIcon className={classes.listItemIcon} />
+            </ListItemIcon>
+          </ListItem>
         ))}
       </List>
     </div>
   );
 };
 
-export default CategoryAccordionFilter;
+export default ProductFilterMenu;

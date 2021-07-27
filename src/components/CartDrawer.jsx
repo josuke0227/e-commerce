@@ -94,8 +94,14 @@ const CartDrawer = () => {
             </div>
           </Paper>
           <List>
-            {cart.map((p) => (
-              <CartItem key={p._id} product={p} imageUrl={sampleImage} />
+            {cart.map((p, i) => (
+              <CartItem
+                key={p._id}
+                product={p}
+                imageUrl={sampleImage}
+                index={i}
+                cart={cart}
+              />
             ))}
           </List>
         </div>

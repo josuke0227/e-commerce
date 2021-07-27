@@ -3,6 +3,12 @@ export const cartReducer = (state = [], action) => {
     case "SET_CART":
       return [...state, action.payload];
 
+    case "UPDATE_CART":
+      const { payload, index } = action;
+      const currentCart = [...state];
+      currentCart[index] = payload;
+      return currentCart;
+
     case "RESET_CART":
       return [];
 

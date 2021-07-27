@@ -66,8 +66,6 @@ const ProductPage = ({ match, location }) => {
     setTimeout(() => setStatus(""), 1000);
   };
 
-  console.log(product);
-
   return (
     <>
       <RatingDialog

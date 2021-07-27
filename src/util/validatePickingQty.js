@@ -1,4 +1,7 @@
 export const validatePickingQty = (sampleValue, variations) => {
+  console.log(`sampleValue`, sampleValue);
+  console.log(`variations`, variations);
+
   const result = { isValid: false, validQty: 0 };
   let correspondingProps;
 

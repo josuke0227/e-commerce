@@ -1,5 +1,6 @@
 // initial data of products
 export const sampleProduct = {
+  // _id: "60f51dfd23eaadaa58e28bcb",
   brand: {
     createdAt: "2021-07-19T06:37:41.623Z",
     name: "The North Face",

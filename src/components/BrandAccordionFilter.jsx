@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 
 const INITIAL_CHECKBOX_STATE = {};
 
-const CategoryAccordionFilter = ({ products }) => {
+const BrandAccordionFilter = ({ products }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -108,4 +108,4 @@ const CategoryAccordionFilter = ({ products }) => {
   );
 };
 
-export default CategoryAccordionFilter;
+export default BrandAccordionFilter;

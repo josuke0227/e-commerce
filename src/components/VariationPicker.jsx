@@ -63,6 +63,7 @@ const VariationPicker = ({ product }) => {
   };
 
   const handleClick = (data) => {
+    console.log(product);
     const productAdded = { ...product, variations: [{ ...data }] };
     if (isAlreadyInCart(product, cart)) {
       setError("You have already added this product to cart.");
@@ -108,9 +109,14 @@ const VariationPicker = ({ product }) => {
           k === "qty" ? (
             ""
           ) : (
-            <Select control={control} name={k} defaultValue={options[k][0]}>
-              {options[k].map((o, i) => (
-                <MenuItem key={i} value={o}>
+            <Select
+              key={`select-${k}`}
+              control={control}
+              name={k}
+              defaultValue={options[k][0]}
+            >
+              {options[k].map((o) => (
+                <MenuItem key={`menu-item-${o}`} value={o}>
                   {o}
                 </MenuItem>
               ))}
@@ -119,7 +125,9 @@ const VariationPicker = ({ product }) => {
         )}
         <Select control={control} name="qty" defaultValue={1}>
           {createNumArray(product.quantity).map((q) => (
-            <MenuItem value={q}>{q}</MenuItem>
+            <MenuItem key={q} value={q}>
+              {q}
+            </MenuItem>
           ))}
         </Select>
         <Button
