@@ -1,11 +1,22 @@
+import { makeStyles } from "@material-ui/core";
 import { useController } from "react-hook-form";
-import { TextField, MenuItem } from "@material-ui/core";
+import {
+  TextField,
+  FormControl,
+  InputLabel,
+  Select as MaterialUISelect,
+} from "@material-ui/core";
 
-const Select = ({ control, name, defaultValue, list, ...rest }) => {
+const useStyles = makeStyles(() => ({
+  label: {
+    textTransform: "capitalize",
+  },
+}));
+
+const Select = ({ control, name, defaultValue, children, ...rest }) => {
+  const classes = useStyles();
   const {
     field: { ref, ...inputProps },
-    fieldState: { invalid, isTouched, isDirty },
-    formState: { touchedFields, dirtyFields },
   } = useController({
     name,
     control,
@@ -14,13 +25,21 @@ const Select = ({ control, name, defaultValue, list, ...rest }) => {
   });
 
   return (
-    <TextField {...inputProps} {...rest} inputRef={ref} select>
-      {list.map((l) => (
-        <MenuItem key={l._id} value={l._id} name={l.name}>
-          {l.name}
-        </MenuItem>
-      ))}
-    </TextField>
+    <FormControl className={classes.formControl}>
+      <InputLabel classes={{ root: classes.label }} id={`${name}-label`}>
+        {name}
+      </InputLabel>
+      <MaterialUISelect
+        labelId={`${name}-label`}
+        id={name}
+        {...inputProps}
+        {...rest}
+        inputRef={ref}
+        select
+      >
+        {children}
+      </MaterialUISelect>
+    </FormControl>
   );
 };
 

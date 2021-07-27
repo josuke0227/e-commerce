@@ -23,26 +23,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ProductPageButtons = ({
-  handleStarButtonClick,
-  handleCartButtonClick,
-}) => {
+const ProductPageButtons = ({ handleStarButtonClick }) => {
   const classes = useStyles();
 
   return (
     <CardActions classes={{ root: classes.cardActions }}>
-      <IconButton
-        classes={{
-          root: classes.iconButtons,
-          label: classes.buttonLabels,
-        }}
-        color="primary"
-        size="small"
-        onClick={handleCartButtonClick}
-      >
-        <AddShoppingCartIcon className={classes.icons} />
-        <span>Add to cart</span>
-      </IconButton>
       <IconButton
         classes={{
           root: classes.iconButtons,
