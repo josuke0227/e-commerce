@@ -118,7 +118,7 @@ const CartItem = ({ product, index }) => {
   const handleDelete = () => {
     dispatch({
       type: "DELETE_CART_ITEM",
-      index,
+      payload: product,
     });
   };
 
