@@ -13,7 +13,6 @@ import {
 import Select from "../components/shared/Select";
 import { getImages, getProduct } from "../services/productServices";
 import { createNumArray } from "../util/createNumArray";
-import { validatePickingQty } from "../util/validatePickingQty";
 
 const useStyles = makeStyles((theme) => ({
   fullList: {
@@ -61,29 +60,37 @@ const CartItem = ({ product, index }) => {
   useEffect(() => {
     const applyNewQty = async () => {
       const currentProduct = { ...product };
-      currentProduct.variations[0].qty = currentProduct.quantity = qty;
-      try {
-        const { isValid, validQty } = validatePickingQty(
-          currentProduct.variations[0],
-          originalProduct.variations
-        );
-        if (!isValid) {
+      const newQty = qty;
+      const validQty = originalProduct.quantity;
+
+      if (!product.variations.length) {
+        if (newQty > validQty) {
           setError(
-            `Sorry, only ${validQty} ${
+            `You can add upto ${validQty} ${
               validQty === 1 ? "product" : "products"
-            } are available.`
+            }.`
           );
-          setShow(true);
           return;
+        } else {
+          currentProduct.quantity = newQty;
         }
-        setError("");
-        dispatch({ type: "UPDATE_CART", payload: currentProduct, index });
-      } catch (error) {
-        console.log(error);
+      } else {
+        if (newQty > validQty) {
+          setError(
+            `You can add upto ${validQty} ${
+              validQty === 1 ? "product" : "products"
+            }.`
+          );
+          return;
+        } else {
+          currentProduct.quantity = currentProduct.variations[0].qty = newQty;
+        }
       }
+      setError("");
+      dispatch({ type: "UPDATE_CART", payload: currentProduct, index });
     };
 
-    if (!qty || qty === product.variations[0].qty || !originalProduct) return;
+    if (!qty || qty === product.quantity || !originalProduct) return;
     applyNewQty();
   }, [qty, originalProduct]);
 
