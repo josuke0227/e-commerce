@@ -66,7 +66,7 @@ const SearchBar = () => {
     return () => {
       clearTimeout(delayed);
     };
-  }, [searchTerm]);
+  }, [searchTerm, dispatch]);
 
   const handleChange = (e) => setSearchTerm(e.target.value);
 

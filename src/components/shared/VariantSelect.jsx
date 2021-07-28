@@ -4,8 +4,6 @@ import { TextField, MenuItem } from "@material-ui/core";
 const Select = ({ control, name, defaultValue, list, ...rest }) => {
   const {
     field: { ref, ...inputProps },
-    fieldState: { invalid, isTouched, isDirty },
-    formState: { touchedFields, dirtyFields },
   } = useController({
     name,
     control,

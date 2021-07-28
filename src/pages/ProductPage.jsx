@@ -29,22 +29,24 @@ const ProductPage = ({ match, location }) => {
   const [status, setStatus] = useState("");
 
   useEffect(() => {
+    const loadProduct = async () => {
+      const { data } = await getProduct(params.slug);
+      setProduct(data);
+    };
+
     loadProduct();
-  }, []);
-  const loadProduct = async () => {
-    const { data } = await getProduct(params.slug);
-    setProduct(data);
-  };
+  }, [params]);
 
   useEffect(() => {
+    const loadImages = async () => {
+      const { data } = await getImages(product._id);
+      setImages(data);
+    };
+
     if (!product) return;
 
     loadImages();
   }, [product]);
-  const loadImages = async () => {
-    const { data } = await getImages(product._id);
-    setImages(data);
-  };
 
   const handleConfirm = async (value) => {
     if (!user) return setStatus("unauthorized");

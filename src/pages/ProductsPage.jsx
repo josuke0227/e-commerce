@@ -1,6 +1,5 @@
 import Layout from "../components/Layout";
 import React, { useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core";
 import { useSelector } from "react-redux";
 
 import { getProducts, deleteProduct } from "../services/productServices";
@@ -11,8 +10,6 @@ import ConfirmDialog from "../components/shared/ConfirmDialog";
 
 import { useDispatch } from "react-redux";
 
-const useStyles = makeStyles({});
-
 const INITIAL_RESULT_STATE = { success: null, message: "" };
 
 const ProductsPage = ({ location }) => {
@@ -22,7 +19,6 @@ const ProductsPage = ({ location }) => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(INITIAL_RESULT_STATE);
 
-  const classes = useStyles();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => ({ ...state }));
 

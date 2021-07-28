@@ -34,35 +34,35 @@ const Variations = ({
   const [currentVariants, setCurrentVariants] = useState([]);
 
   useEffect(() => {
-    if (!currentVariants.length && variations.length) applyVariants();
-  }, [currentVariants, variations]);
+    const applyVariants = () => {
+      const keys = getObjectKeysSet(variations);
+      keys.splice(keys.indexOf("qty"), 1);
 
-  const applyVariants = () => {
-    const keys = getObjectKeysSet(variations);
-    keys.splice(keys.indexOf("qty"), 1);
-
-    const result = [];
-    keys.forEach((k) => {
-      variants.forEach((v) => {
-        if (v.name === k) result.push(v);
+      const result = [];
+      keys.forEach((k) => {
+        variants.forEach((v) => {
+          if (v.name === k) result.push(v);
+        });
       });
-    });
 
-    setCurrentVariants(result);
-  };
+      setCurrentVariants(result);
+    };
+
+    if (!currentVariants.length && variations.length) applyVariants();
+  }, [currentVariants, variations, variants]);
 
   useEffect(() => {
-    loadVariants();
-  }, []);
+    const loadVariants = async () => {
+      try {
+        const { data } = await getVariants();
+        setVariants(data);
+      } catch (error) {
+        console.log("fetching variations error", error);
+      }
+    };
 
-  const loadVariants = async () => {
-    try {
-      const { data } = await getVariants();
-      setVariants(data);
-    } catch (error) {
-      console.log("fetching variations error", error);
-    }
-  };
+    loadVariants();
+  }, [setVariants]);
 
   const handleSwitch = () => {
     if (enableVariations && variations.length) {

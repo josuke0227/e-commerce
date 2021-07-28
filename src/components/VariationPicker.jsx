@@ -37,6 +37,20 @@ const VariationPicker = ({ product }) => {
   const [options, setOptions] = useState();
 
   useEffect(() => {
+    const applyOptions = (keys) => {
+      const result = {};
+      keys.forEach((k) => {
+        k !== "qty" && (result[k] = []);
+        product.variations.forEach((v) => {
+          k !== "qty" && result[k].push(v[k].name);
+        });
+      });
+      result.qty = createNumArray(product.quantity);
+
+      Object.keys(result).forEach((k) => (result[k] = _.uniq(result[k])));
+      setOptions(result);
+    };
+
     if (!product) return;
 
     if (product.variations.length) {
@@ -47,19 +61,6 @@ const VariationPicker = ({ product }) => {
       setOptions({ qty: createNumArray(product.quantity) });
     }
   }, [product]);
-  const applyOptions = (keys) => {
-    const result = {};
-    keys.forEach((k) => {
-      k !== "qty" && (result[k] = []);
-      product.variations.forEach((v) => {
-        k !== "qty" && result[k].push(v[k].name);
-      });
-    });
-    result.qty = createNumArray(product.quantity);
-
-    Object.keys(result).forEach((k) => (result[k] = _.uniq(result[k])));
-    setOptions(result);
-  };
 
   const handleClick = (data) => {
     if (isAlreadyInCart(product, cart)) {

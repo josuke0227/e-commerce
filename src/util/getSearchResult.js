@@ -7,6 +7,4 @@ export const getSearchResult = (data, query) => {
       return name.includes(term);
     })
   );
-
-  return null;
 };

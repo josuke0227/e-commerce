@@ -33,22 +33,35 @@ const BrandAccordionFilter = ({ products }) => {
   const [brands, setBrands] = useState([]);
 
   useEffect(() => {
+    const loadBrands = async () => {
+      const { data } = await getBrands();
+      const availableBrands = [];
+      data.forEach((d) =>
+        products.forEach((p) => {
+          if (p.brand._id === d._id) {
+            availableBrands.push(d);
+          }
+        })
+      );
+      setBrands(availableBrands);
+    };
     loadBrands();
   }, [products]);
-  const loadBrands = async () => {
-    const { data } = await getBrands();
-    const availableBrands = [];
-    data.forEach((d) =>
-      products.forEach((p) => {
-        if (p.brand._id === d._id) {
-          availableBrands.push(d);
-        }
-      })
-    );
-    setBrands(availableBrands);
-  };
 
   useEffect(() => {
+    const loadFilteredProducts = async (name, data) => {
+      if (Object.keys(checkBoxState).length && !data.length) {
+        dispatch({
+          type: "RESET_QUERY",
+          payload: { name },
+        });
+      } else if (data.length)
+        dispatch({
+          type: "SET_QUERY",
+          payload: { name, data: [...data] },
+        });
+    };
+
     if (brands.length && Object.keys(checkBoxState).length) {
       const selectedBrands = [];
       brands.forEach((b) => {
@@ -56,19 +69,7 @@ const BrandAccordionFilter = ({ products }) => {
       });
       loadFilteredProducts("brand", selectedBrands);
     }
-  }, [checkBoxState, brands]);
-  const loadFilteredProducts = async (name, data) => {
-    if (Object.keys(checkBoxState).length && !data.length) {
-      dispatch({
-        type: "RESET_QUERY",
-        payload: { name },
-      });
-    } else if (data.length)
-      dispatch({
-        type: "SET_QUERY",
-        payload: { name, data: [...data] },
-      });
-  };
+  }, [checkBoxState, brands, dispatch]);
 
   const handleChange = (event) => {
     setCheckBoxState({

@@ -15,9 +15,6 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 345,
     margin: theme.spacing(2),
   },
-  media: {
-    height: 190,
-  },
   root: {
     maxWidth: 345,
   },
@@ -41,14 +38,14 @@ const ProductCardForEditing = ({
   const [images, setImages] = useState([]);
 
   useEffect(() => {
+    const loadImages = async () => {
+      const { data } = await getImages(product._id, user);
+      setImages(data);
+    };
+
     if (!user) return;
     loadImages();
-  }, [user]);
-
-  const loadImages = async () => {
-    const { data } = await getImages(product._id, user);
-    setImages(data);
-  };
+  }, [user, product]);
 
   return (
     <Card className={classes.card}>

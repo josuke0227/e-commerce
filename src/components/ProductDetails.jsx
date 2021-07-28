@@ -1,4 +1,3 @@
-import { useDispatch } from "react-redux";
 import { Typography, Card } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 
@@ -17,9 +16,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ProductDetails = ({ product, setShowDialog }) => {
-  const { title, ratings, variations, description } = product;
+  const { title, ratings, description } = product;
   const classes = useStyles();
-  const dispatch = useDispatch();
 
   const handleStarButtonClick = () => {
     setShowDialog(true);

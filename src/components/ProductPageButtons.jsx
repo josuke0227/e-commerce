@@ -1,6 +1,5 @@
 import { CardActions, IconButton } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
-import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 import StarBorderIcon from "@material-ui/icons/StarBorder";
 

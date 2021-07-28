@@ -17,9 +17,6 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 345,
     margin: theme.spacing(2),
   },
-  media: {
-    height: 190,
-  },
   root: {
     maxWidth: 345,
   },
@@ -38,14 +35,14 @@ const ProductCard = ({ product }) => {
   const { user } = useSelector((state) => ({ ...state }));
 
   useEffect(() => {
+    const loadImages = async () => {
+      const { data } = await getImages(product._id);
+      setImages(data);
+    };
+
     if (!user) return;
     loadImages();
-  }, [user]);
-
-  const loadImages = async () => {
-    const { data } = await getImages(product._id);
-    setImages(data);
-  };
+  }, [user, product]);
 
   const renderImage = () => {
     const url = images.length ? images[0].url : "";

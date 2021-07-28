@@ -17,7 +17,7 @@ import { subCategorySchema } from "../schemas/subCategorySchema";
 import CustomSnackBar from "../components/shared/CustomSnackBar";
 import ConfirmDialog from "../components/shared/ConfirmDialog";
 
-import { getSearchResult } from "../util/search.util";
+import { getSearchResult } from "../util/getSearchResult";
 import TogglingInput from "../components/TogglingInput";
 
 import { Container } from "@material-ui/core";

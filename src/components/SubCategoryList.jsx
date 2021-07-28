@@ -9,20 +9,14 @@ import {
 import { SearchOutlined as SearchIcon } from "@material-ui/icons";
 import SubCategoryListItem from "../components/SubCategoryListItem";
 import TextInputGenerator from "../components/shared/TextInputGenerator";
-import { getSearchResult } from "../util/search.util";
+import { getSearchResult } from "../util/getSearchResult";
 import Alert from "@material-ui/lab/Alert";
 
-const useStyles = makeStyles((theme) => ({
-  list: {
-    // minHeight: "400px",
-    // [theme.breakpoints.up("sm")]: {
-    //   minHeight: "400px",
-    // },
-  },
+const useStyles = makeStyles({
   alert: {
     margin: "1rem",
   },
-}));
+});
 
 const SubCategoryList = ({
   subCategories,

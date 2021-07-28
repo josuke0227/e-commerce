@@ -134,7 +134,16 @@ const EditProductForm = () => {
   };
 
   useEffect(() => {
-    if (product === null) return;
+    const loadImages = async (id) => {
+      try {
+        const { data } = await getImages(id, user);
+        setImages(data);
+      } catch (error) {
+        console.log("fetching variations error", error);
+      }
+    };
+
+    if (product === null || user === null) return;
 
     const initialProduct = { ...product };
     const {
@@ -152,18 +161,9 @@ const EditProductForm = () => {
     setBrand(brand);
 
     if (variations.length > 0) setEnableVariations(true);
-
     const initialVariations = [...variations];
     setVariations(initialVariations);
-  }, [product]);
-  const loadImages = async (id) => {
-    try {
-      const { data } = await getImages(id, user);
-      setImages(data);
-    } catch (error) {
-      console.log("fetching variations error", error);
-    }
-  };
+  }, [product, user]);
 
   useEffect(() => {
     if (!category) return;
@@ -175,7 +175,7 @@ const EditProductForm = () => {
 
     loadSubCategories(category._id);
     setSubCategory();
-  }, [category]);
+  }, [category, subCategories]);
   const loadSubCategories = async (id) => {
     if (!id) return;
 
@@ -282,7 +282,6 @@ const EditProductForm = () => {
   };
 
   const endWithFailure = (error) => {
-    const message = error.response.data || "Operation failed.";
     setResult({ message: error.message, success: false });
     setLoading(false);
   };

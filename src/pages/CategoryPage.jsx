@@ -15,7 +15,7 @@ import {
   createCategory,
   deleteCategory,
 } from "../services/categoryServices";
-import { getSearchResult } from "../util/search.util";
+import { getSearchResult } from "../util/getSearchResult";
 import useCategory from "../hooks/useCategory";
 
 const useStyles = makeStyles((theme) => ({

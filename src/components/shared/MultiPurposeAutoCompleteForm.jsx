@@ -80,7 +80,7 @@ const MultiPurposeAutoCompleteForm = ({
     if (!options.length) return;
     const initialValue = value ? value : options[0];
     setValue(initialValue);
-  }, [options]);
+  }, [options, setValue, value]);
 
   const handleAddClick = async () => {
     const { error } = rawInputSchema.validate(inputValue);
@@ -309,7 +309,7 @@ const ActionButton = ({
     });
     if (action === undefined) return setEnabledAction("");
     setEnabledAction(action);
-  }, [buttonState]);
+  }, [buttonState, setEnabledAction]);
 
   const renderButton = (label) => {
     return (

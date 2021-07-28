@@ -1,13 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  Divider,
-} from "@material-ui/core/";
+import { List, ListItem, ListItemText, ListItemIcon } from "@material-ui/core/";
 import { getCategories } from "../services/categoryServices";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 
@@ -41,6 +35,19 @@ const ProductFilterMenu = ({ setSlide, setCategory }) => {
   };
 
   useEffect(() => {
+    const loadFilteredProducts = (name, data) => {
+      if (sideBar && !data.length) {
+        dispatch({
+          type: "RESET_QUERY",
+          payload: { name },
+        });
+      } else if (data.length)
+        dispatch({
+          type: "SET_QUERY",
+          payload: { name, data: [...data] },
+        });
+    };
+
     if (categories.length && sideBar) {
       const selectedCategory = [];
       categories.forEach((c) => {
@@ -48,19 +55,7 @@ const ProductFilterMenu = ({ setSlide, setCategory }) => {
       });
       loadFilteredProducts("category", selectedCategory);
     }
-  }, [sideBar, categories]);
-  const loadFilteredProducts = (name, data) => {
-    if (sideBar && !data.length) {
-      dispatch({
-        type: "RESET_QUERY",
-        payload: { name },
-      });
-    } else if (data.length)
-      dispatch({
-        type: "SET_QUERY",
-        payload: { name, data: [...data] },
-      });
-  };
+  }, [sideBar, categories, dispatch]);
 
   const handleClick = (category) => {
     setSlide(true);

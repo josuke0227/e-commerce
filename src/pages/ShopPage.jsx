@@ -22,28 +22,28 @@ const ShopPage = ({ location }) => {
   const [count, setCount] = useState(1);
 
   useEffect(() => {
-    loadProducts();
-  }, [query, page]);
-
-  const loadProducts = async () => {
-    let response;
-    if (!query.length) {
-      response = await getProductsList("createdAt", "desc", page, 2);
+    const loadProducts = async () => {
+      let response;
+      if (!query.length) {
+        response = await getProductsList("createdAt", "desc", page, 2);
+        applyData(response);
+        return;
+      }
+      response = await getProductsList("createdAt", "desc", page, 2, query);
       applyData(response);
-      return;
-    }
-    response = await getProductsList("createdAt", "desc", page, 2, query);
-    applyData(response);
-  };
+    };
 
-  const applyData = (response) => {
-    const { data } = response;
-    setCount(data.count);
-    dispatch({
-      type: "SET_PRODUCTS",
-      payload: data.products,
-    });
-  };
+    const applyData = (response) => {
+      const { data } = response;
+      setCount(data.count);
+      dispatch({
+        type: "SET_PRODUCTS",
+        payload: data.products,
+      });
+    };
+
+    loadProducts();
+  }, [query, page, dispatch]);
 
   const handleChange = (event, value) => {
     dispatch({

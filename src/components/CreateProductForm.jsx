@@ -129,7 +129,7 @@ const CreateProductForm = () => {
     if (!category) return;
     if (subCategory) setSubCategory();
     loadSubCategories(category._id);
-  }, [category]);
+  }, [category, subCategory]);
   const loadSubCategories = async (id) => {
     if (!id) return;
 

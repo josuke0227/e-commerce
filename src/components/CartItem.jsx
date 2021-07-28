@@ -13,6 +13,7 @@ import {
 import Select from "../components/shared/Select";
 import { getImages, getProduct } from "../services/productServices";
 import { createNumArray } from "../util/createNumArray";
+import { validatePickingQty } from "../util/validatePickingQty";
 
 const useStyles = makeStyles((theme) => ({
   fullList: {
@@ -54,7 +55,7 @@ const CartItem = ({ product, index }) => {
     };
 
     loadOriginalProduct();
-  }, []);
+  }, [product]);
 
   const qty = watch("qty");
   useEffect(() => {
@@ -75,7 +76,11 @@ const CartItem = ({ product, index }) => {
           currentProduct.quantity = newQty;
         }
       } else {
-        if (newQty > validQty) {
+        const { isValid, validQty } = validatePickingQty(
+          { ...currentProduct.variations[0], qty },
+          originalProduct.variations
+        );
+        if (!isValid) {
           setError(
             `You can add upto ${validQty} ${
               validQty === 1 ? "product" : "products"
@@ -92,17 +97,18 @@ const CartItem = ({ product, index }) => {
 
     if (!qty || qty === product.quantity || !originalProduct) return;
     applyNewQty();
-  }, [qty, originalProduct]);
+  }, [qty, originalProduct, dispatch, index, product]);
 
   useEffect(() => {
+    const loadImages = async () => {
+      const { data } = await getImages(product._id);
+      const url = data.length ? data[0].url : "";
+      setImageUrl(url);
+    };
+
     if (!product) return;
     loadImages();
   }, [product]);
-  const loadImages = async () => {
-    const { data } = await getImages(product._id);
-    const url = data.length ? data[0].url : "";
-    setImageUrl(url);
-  };
 
   const handleMouseLeave = () => {
     if (error) return;

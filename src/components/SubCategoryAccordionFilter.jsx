@@ -11,10 +11,7 @@ import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import {
-  getSubCategories,
-  pickByParentId,
-} from "../services/subCategoryServices";
+import { pickByParentId } from "../services/subCategoryServices";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,23 +26,35 @@ const useStyles = makeStyles((theme) => ({
 const INITIAL_CHECKBOX_STATE = {};
 
 const SubCategoryAccordionFilter = ({ category }) => {
-  const classes = useStyles();
   const dispatch = useDispatch();
 
   const [checkBoxState, setCheckBoxState] = useState(INITIAL_CHECKBOX_STATE);
   const [subCategories, setSubCategories] = useState([]);
 
   useEffect(() => {
-    console.log(`category`, category);
+    const loadSubCategories = async () => {
+      const { data } = await pickByParentId(category);
+      setSubCategories(data);
+    };
+
     if (!category) return;
     loadSubCategories();
   }, [category]);
-  const loadSubCategories = async () => {
-    const { data } = await pickByParentId(category);
-    setSubCategories(data);
-  };
 
   useEffect(() => {
+    const loadFilteredProducts = async (name, data) => {
+      if (Object.keys(checkBoxState).length && !data.length) {
+        dispatch({
+          type: "RESET_QUERY",
+          payload: { name },
+        });
+      } else if (data.length)
+        dispatch({
+          type: "SET_QUERY",
+          payload: { name, data: [...data] },
+        });
+    };
+
     if (subCategories.length && Object.keys(checkBoxState).length) {
       const selectedSubCategories = [];
       subCategories.forEach((c) => {
@@ -53,19 +62,7 @@ const SubCategoryAccordionFilter = ({ category }) => {
       });
       loadFilteredProducts("subCategory", selectedSubCategories);
     }
-  }, [checkBoxState, subCategories]);
-  const loadFilteredProducts = async (name, data) => {
-    if (Object.keys(checkBoxState).length && !data.length) {
-      dispatch({
-        type: "RESET_QUERY",
-        payload: { name },
-      });
-    } else if (data.length)
-      dispatch({
-        type: "SET_QUERY",
-        payload: { name, data: [...data] },
-      });
-  };
+  }, [checkBoxState, subCategories, dispatch]);
 
   const handleChange = (event) => {
     setCheckBoxState({
