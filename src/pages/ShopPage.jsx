@@ -57,8 +57,8 @@ const ShopPage = ({ location }) => {
     <Layout location={location}>
       <Grid container component={Container}>
         {products.map((p) => (
-          <Grid item xs={12} sm={6} md={4}>
-            <ProductCard key={p._id} product={p} />
+          <Grid item xs={12} sm={6} md={4} key={p._id}>
+            <ProductCard product={p} />
           </Grid>
         ))}
         <footer className={classes.pagination}>

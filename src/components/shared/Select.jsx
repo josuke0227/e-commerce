@@ -34,7 +34,6 @@ const Select = ({ control, name, defaultValue, children, ...rest }) => {
         {...inputProps}
         {...rest}
         inputRef={ref}
-        select
       >
         {children}
       </MaterialUISelect>

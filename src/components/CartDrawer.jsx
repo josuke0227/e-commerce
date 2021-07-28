@@ -98,7 +98,7 @@ const CartDrawer = () => {
           <List>
             {cart.map((p, i) => (
               <CartItem
-                key={p._id}
+                key={i}
                 product={p}
                 imageUrl={sampleImage}
                 index={i}
