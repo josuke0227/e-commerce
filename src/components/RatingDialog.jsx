@@ -6,8 +6,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import Rating from "@material-ui/lab/Rating";
-import { Link } from "@material-ui/core";
-import { Link as RouterLink } from "react-router-dom";
+import CustomLink from "./shared/CustomLink";
 
 const RatingDialog = ({ open, handleCancel, handleConfirm, status }) => {
   const [value, setValue] = useState(0);
@@ -16,9 +15,9 @@ const RatingDialog = ({ open, handleCancel, handleConfirm, status }) => {
     unauthorized: (
       <DialogContentText>
         Please{" "}
-        <Link component={RouterLink} to="/signin" color="textPrimary">
+        <CustomLink to="/signin" color="textPrimary">
           signin
-        </Link>{" "}
+        </CustomLink>{" "}
         to leave rating.
       </DialogContentText>
     ),

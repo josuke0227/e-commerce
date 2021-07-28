@@ -1,7 +1,7 @@
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import { Link, List } from "@material-ui/core";
-import { Link as RouterLink } from "react-router-dom";
+import { List } from "@material-ui/core";
+import CustomLink from "./shared/CustomLink";
 
 const AdminMenuList = () => {
   return (
@@ -15,11 +15,11 @@ const AdminMenuList = () => {
         { label: "Coupon", path: "/admin/coupon" },
         { label: "Password", path: "/admin/password" },
       ].map(({ label, path }, index) => (
-        <Link key={label} component={RouterLink} to={path}>
+        <CustomLink key={label} to={path}>
           <ListItem button key={index}>
             <ListItemText primary={label} />
           </ListItem>
-        </Link>
+        </CustomLink>
       ))}
     </List>
   );

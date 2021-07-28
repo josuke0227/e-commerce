@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
-import Link from "@material-ui/core/Link";
-import { Link as RouterLink } from "react-router-dom";
 import CardMedia from "@material-ui/core/CardMedia";
 import Typography from "@material-ui/core/Typography";
 import CardActionArea from "@material-ui/core/CardActionArea";
@@ -11,6 +9,7 @@ import { getImages } from "../services/productServices";
 import { CardContent } from "@material-ui/core";
 import { useSelector } from "react-redux";
 import RatingIndicator from "./shared/RatingIndicator";
+import CustomLink from "./shared/CustomLink";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -40,29 +39,25 @@ const ProductCard = ({ product }) => {
       setImages(data);
     };
 
-    if (!user) return;
+    if (!product) return;
     loadImages();
-  }, [user, product]);
+  }, [product]);
 
   const renderImage = () => {
     const url = images.length ? images[0].url : "";
     return (
-      <Link component={RouterLink} to={`shop/${product.slug}`}>
-        {/* TODO: add meaningful title to images. */}
+      //   {/* TODO: add meaningful title to images. */}
+      <CustomLink to={`shop/${product.slug}`}>
         <CardMedia className={classes.media} image={url} title="Paella dish" />
-      </Link>
+      </CustomLink>
     );
   };
 
   const renderContent = () => (
     <>
-      <Link
-        component={RouterLink}
-        to={`shop/${product.slug}`}
-        color="textPrimary"
-      >
+      <CustomLink to={`shop/${product.slug}`} color="textPrimary">
         <Typography>{product.title}</Typography>
-      </Link>
+      </CustomLink>
       <RatingIndicator ratings={product.ratings} />
       <Typography variant="subtitle1" color="secondary">
         AUD {product.price}

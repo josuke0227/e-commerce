@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Typography, Link } from "@material-ui/core";
-import { Link as RouterLink } from "react-router-dom";
+import { Typography } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
+import CustomLink from "./CustomLink";
 
 const useStyles = makeStyles((theme) => ({
   formTitle: theme.formTitle,
@@ -45,9 +45,9 @@ const AuthCardLayout = ({ contents }) => {
         </Alert>
       )}
       {path === "signin" && (
-        <Link href="/forgotpassword">
+        <CustomLink to="/forgotpassword">
           <Typography variant="subtitle2">Forgot password?</Typography>
-        </Link>
+        </CustomLink>
       )}
       {submitButton}
       {SNSButtons && (
@@ -59,11 +59,11 @@ const AuthCardLayout = ({ contents }) => {
         </>
       )}
       {(path === "signin" || path === "signup") && (
-        <Link component={RouterLink} to={authNavigation[path].link}>
+        <CustomLink to={authNavigation[path].link}>
           <Typography variant="subtitle2">
             {authNavigation[path].text}
           </Typography>
-        </Link>
+        </CustomLink>
       )}
     </>
   );
