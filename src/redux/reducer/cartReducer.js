@@ -9,6 +9,10 @@ export const cartReducer = (state = [], action) => {
       currentCart[index] = payload;
       return currentCart;
 
+    case "DELETE_CART_ITEM":
+      if (state.length === 1) return [];
+      return [...state, state.splice(action.index, 1)];
+
     case "RESET_CART":
       return [];
 

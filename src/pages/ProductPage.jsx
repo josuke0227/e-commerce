@@ -11,8 +11,6 @@ import Layout from "../components/Layout";
 import { useSelector } from "react-redux";
 import RatingDialog from "../components/RatingDialog";
 
-import { sampleProduct } from "../data-sample/sampleProductData";
-
 const useStyles = makeStyles((theme) => ({
   container: {
     marginTop: theme.spacing(3),
@@ -30,29 +28,29 @@ const ProductPage = ({ match, location }) => {
   const [showDialog, setShowDialog] = useState(false);
   const [status, setStatus] = useState("");
 
-  // useEffect(() => {
-  //   loadProduct();
-  // }, []);
-  // const loadProduct = async () => {
-  //   const { data } = await getProduct(params.slug);
-  //   setProduct(data);
-  // };
+  useEffect(() => {
+    loadProduct();
+  }, []);
+  const loadProduct = async () => {
+    const { data } = await getProduct(params.slug);
+    setProduct(data);
+  };
 
-  // useEffect(() => {
-  //   if (!product) return;
+  useEffect(() => {
+    if (!product) return;
 
-  //   loadImages();
-  // }, [product]);
-  // const loadImages = async () => {
-  //   const { data } = await getImages(product._id);
-  //   setImages(data);
-  // };
+    loadImages();
+  }, [product]);
+  const loadImages = async () => {
+    const { data } = await getImages(product._id);
+    setImages(data);
+  };
 
   const handleConfirm = async (value) => {
     if (!user) return setStatus("unauthorized");
 
     try {
-      const { data } = await rateProduct(product, value, user);
+      await rateProduct(product, value, user);
       setStatus("success");
     } catch (error) {
       setStatus("failure");
@@ -75,28 +73,16 @@ const ProductPage = ({ match, location }) => {
         handleCancel={handleCancel}
       />
       <Layout location={location}>
-        <Container className={classes.container}>
-          <Paper>
-            <ProductImageViewer images={[]} />
-            <ProductDetails
-              product={sampleProduct}
-              setShowDialog={setShowDialog}
-            />
-          </Paper>
-        </Container>
-        {/* {!product ? (
+        {!product ? (
           <div className="">Loading...</div>
         ) : (
           <Container className={classes.container}>
             <Paper>
-              <ProductImageViewer images={[]} />
-              <ProductDetails
-                product={sampleProduct}
-                setShowDialog={setShowDialog}
-              />
+              <ProductImageViewer images={images} />
+              <ProductDetails product={product} setShowDialog={setShowDialog} />
             </Paper>
           </Container>
-        )} */}
+        )}
       </Layout>
     </>
   );

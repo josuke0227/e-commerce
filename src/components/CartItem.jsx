@@ -6,8 +6,6 @@ import {
   ListItem,
   Grid,
   MenuItem,
-  InputLabel,
-  FormControl,
   Link,
   Typography,
   Box,
@@ -41,46 +39,53 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CartItem = ({ product, index, cart }) => {
+const CartItem = ({ product, index }) => {
   const dispatch = useDispatch();
   const { control, watch } = useForm();
   const [show, setShow] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [error, setError] = useState("");
+  const [originalProduct, setOriginalProduct] = useState();
   const classes = useStyles({ show, error });
+
+  useEffect(() => {
+    const loadOriginalProduct = async () => {
+      const { data } = await getProduct(product.slug);
+      setOriginalProduct(data);
+    };
+
+    loadOriginalProduct();
+  }, []);
 
   const qty = watch("qty");
   useEffect(() => {
-    if (!qty || qty === product.variations[0].qty) return;
-    applyNewQty();
-  }, [qty]);
-
-  const applyNewQty = async () => {
-    const currentProduct = { ...product };
-    currentProduct.variations[0].qty = qty;
-    try {
-      const { data: originalProductData } = await getProduct(
-        currentProduct.slug
-      );
-      const { isValid, validQty } = validatePickingQty(
-        currentProduct.variations[0],
-        originalProductData.variations
-      );
-      if (!isValid) {
-        setError(
-          `Sorry, only ${validQty} ${
-            validQty === 1 ? "product" : "products"
-          } are available.`
+    const applyNewQty = async () => {
+      const currentProduct = { ...product };
+      currentProduct.variations[0].qty = currentProduct.quantity = qty;
+      try {
+        const { isValid, validQty } = validatePickingQty(
+          currentProduct.variations[0],
+          originalProduct.variations
         );
-        setShow(true);
-        return;
+        if (!isValid) {
+          setError(
+            `Sorry, only ${validQty} ${
+              validQty === 1 ? "product" : "products"
+            } are available.`
+          );
+          setShow(true);
+          return;
+        }
+        setError("");
+        dispatch({ type: "UPDATE_CART", payload: currentProduct, index });
+      } catch (error) {
+        console.log(error);
       }
-      setError("");
-      dispatch({ type: "UPDATE_CART", payload: currentProduct, index });
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    };
+
+    if (!qty || qty === product.variations[0].qty || !originalProduct) return;
+    applyNewQty();
+  }, [qty, originalProduct]);
 
   useEffect(() => {
     if (!product) return;
@@ -95,6 +100,13 @@ const CartItem = ({ product, index, cart }) => {
   const handleMouseLeave = () => {
     if (error) return;
     setShow(false);
+  };
+
+  const handleDelete = () => {
+    dispatch({
+      type: "DELETE_CART_ITEM",
+      index,
+    });
   };
 
   return (
@@ -120,8 +132,12 @@ const CartItem = ({ product, index, cart }) => {
       {show && (
         <Grid container spacing={1}>
           <Grid item>
-            <Select control={control} name="qty" defaultValue={1}>
-              {createNumArray(product.quantity).map((q) => (
+            <Select
+              control={control}
+              name="qty"
+              defaultValue={product.quantity}
+            >
+              {createNumArray(originalProduct.quantity).map((q) => (
                 <MenuItem key={q} value={q}>
                   {q}
                 </MenuItem>
@@ -129,7 +145,8 @@ const CartItem = ({ product, index, cart }) => {
             </Select>
           </Grid>
           <Grid item className={classes.price}>
-            <Link>Delete</Link> | <Link>Add to wishlist</Link>
+            <Link onClick={handleDelete}>Delete</Link> |{" "}
+            <Link>Add to wishlist</Link>
           </Grid>
         </Grid>
       )}

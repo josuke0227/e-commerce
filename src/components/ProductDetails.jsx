@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ProductDetails = ({ product, setShowDialog }) => {
+  const { title, ratings, variations, description } = product;
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -27,15 +28,15 @@ const ProductDetails = ({ product, setShowDialog }) => {
   return (
     <>
       <Typography className={classes.title} component="h1" variant="h2">
-        {product.title}
+        {title}
       </Typography>
-      <RatingIndicator ratings={product.ratings} />
+      <RatingIndicator ratings={ratings} />
       <Card classes={{ root: classes.card }} elevation={0}>
         <ProductDetailTable product={product} />
         <VariationPicker product={product} />
         <ProductPageButtons handleStarButtonClick={handleStarButtonClick} />
       </Card>
-      <div dangerouslySetInnerHTML={{ __html: product.description }}></div>
+      <div dangerouslySetInnerHTML={{ __html: description }}></div>
     </>
   );
 };
