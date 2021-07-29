@@ -51,6 +51,7 @@ const VariationPicker = ({ product }) => {
       setOptions(result);
     };
 
+    console.log(`product`, product);
     if (!product) return;
 
     if (product.variations.length) {
