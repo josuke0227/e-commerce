@@ -10,6 +10,7 @@ import {
   Typography,
   Box,
 } from "@material-ui/core";
+import CustomLink from "../components/shared/CustomLink";
 import Select from "../components/shared/Select";
 import { getImages, getProduct } from "../services/productServices";
 import { createNumArray } from "../util/createNumArray";
@@ -139,7 +140,7 @@ const CartItem = ({ product, index }) => {
         </Grid>
         <Grid item xs={show ? 8 : 6} className={classes.price}>
           <div>AUD {product.price}</div>
-          {show && <Link>{product.title}</Link>}
+          {show && <a href={`/shop/${product.slug}`}>{product.title}</a>}
         </Grid>
       </Grid>
       {show && (
