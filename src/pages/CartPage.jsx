@@ -31,6 +31,8 @@ const getTotalQty = (cart) => {
 const CartPage = ({ location }) => {
   const classes = useStyles();
   const { cart } = useSelector((state) => ({ ...state }));
+  console.log(cart);
+  console.log(getTotalPrice(cart));
 
   if (!cart) return <div className="">loading...</div>;
   return (
