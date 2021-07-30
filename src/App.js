@@ -17,6 +17,7 @@ import EditProductPage from "./pages/EditProductPage";
 import ProductsPage from "./pages/ProductsPage";
 import ShopPage from "./pages/ShopPage";
 import ProductPage from "./pages/ProductPage";
+import CartPage from "./pages/CartPage";
 
 const App = () => (
   <ThemeProvider theme={theme}>
@@ -31,6 +32,7 @@ const App = () => (
         <Route exact path="/resetpassword/:token" component={ActivationPage} />
         <Route exact path="/shop" component={ShopPage} />
         <Route exact path="/shop/:slug" component={ProductPage} />
+        <Route exact path="/cart" component={CartPage} />
         <Route exact path="/admin/dashboard" component={Dashboard} />
         <Route exact path="/admin/categories" component={CategoryPage} />
         <Route exact path="/admin/subcategories" component={SubCategoryPage} />

@@ -39,6 +39,10 @@ export const theme = createMuiTheme({
     textDecoration: "none",
     color: "#fff",
   },
+  customButton: {
+    background: "linear-gradient(to bottom,#f7dfa5,#f0c14b)",
+    border: "1px solid #171717",
+  },
 });
 
 const headerHeightDefault = 91;

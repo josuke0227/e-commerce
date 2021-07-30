@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getCategories } from "../services/categoryServices";
-import { TextField, MenuItem, makeStyles } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import { TextField, MenuItem } from "@material-ui/core";
 import { getIndex } from "../util/getIndex";
 
 const useStyles = makeStyles((theme) => ({

@@ -3,7 +3,8 @@ import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
-import { Button, makeStyles, Grid } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import { Button, Grid } from "@material-ui/core";
 
 import ImageSelector from "./ImageSelector";
 import Variations from "./Variations";

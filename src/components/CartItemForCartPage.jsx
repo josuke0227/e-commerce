@@ -10,11 +10,11 @@ import {
   Typography,
   Box,
 } from "@material-ui/core";
-import CustomLink from "../components/shared/CustomLink";
 import Select from "../components/shared/Select";
 import { getImages, getProduct } from "../services/productServices";
 import { createNumArray } from "../util/createNumArray";
 import { validatePickingQty } from "../util/validatePickingQty";
+import CustomLink from "../components/shared/CustomLink";
 
 const useStyles = makeStyles((theme) => ({
   fullList: {
@@ -30,24 +30,33 @@ const useStyles = makeStyles((theme) => ({
   },
   listItem: {
     display: "block",
-    "&:hover": {
-      backgroundColor: "#fff",
-    },
-    backgroundColor: ({ show, error }) => (show || error) && "#fff",
+    backgroundColor: "#fff",
+    marginBottom: theme.spacing(1),
   },
   box: {
     padding: theme.spacing(1),
   },
+  delete: {
+    marginRight: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    borderRight: "1px solid",
+    borderRightColor: theme.palette.grey[300],
+  },
+  variationText: {
+    fontWeight: "bold",
+  },
+  footerContainer: {
+    marginTop: theme.spacing(1),
+  },
 }));
 
-const CartItem = ({ product, index }) => {
+const CartItemForCartPage = ({ product, index }) => {
   const dispatch = useDispatch();
   const { control, watch } = useForm();
-  const [show, setShow] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [error, setError] = useState("");
   const [originalProduct, setOriginalProduct] = useState();
-  const classes = useStyles({ show, error });
+  const classes = useStyles();
 
   useEffect(() => {
     const loadOriginalProduct = async () => {
@@ -111,11 +120,6 @@ const CartItem = ({ product, index }) => {
     loadImages();
   }, [product]);
 
-  const handleMouseLeave = () => {
-    if (error) return;
-    setShow(false);
-  };
-
   const handleDelete = () => {
     dispatch({
       type: "DELETE_CART_ITEM",
@@ -123,49 +127,68 @@ const CartItem = ({ product, index }) => {
     });
   };
 
+  if (!originalProduct || !product) return <div className="">loading...</div>;
+
   return (
-    <ListItem
-      className={classes.listItem}
-      onMouseEnter={() => setShow(true)}
-      onMouseLeave={handleMouseLeave}
-    >
-      {error && (
-        <Box className={classes.box} border={1} borderColor="grey.300">
-          <Typography variant="caption">{error}</Typography>
-        </Box>
-      )}
+    <ListItem className={classes.listItem}>
       <Grid container>
-        <Grid item xs={show ? 4 : 6}>
-          <img src={imageUrl} alt="" className={classes.productImage} />
+        <Grid item xs={4}>
+          <CustomLink to={`/shop/${product.slug}`}>
+            <img src={imageUrl} alt="" className={classes.productImage} />
+          </CustomLink>
         </Grid>
-        <Grid item xs={show ? 8 : 6} className={classes.price}>
-          <div>AUD {product.price}</div>
-          {show && <a href={`/shop/${product.slug}`}>{product.title}</a>}
+        <Grid item xs={8} className={classes.price}>
+          <CustomLink to={`/shop/${product.slug}`}>
+            <Typography variant="h5">{product.title}</Typography>
+          </CustomLink>
+          <Typography variant="h6">AUD {product.price}</Typography>
+          {product.variations.length > 0 &&
+            Object.keys(product.variations[0]).map((k) => {
+              return k !== "qty" ? (
+                <Typography
+                  className={classes.variationText}
+                  variant="subTitle1"
+                >{`${k}: ${product.variations[0][k]}`}</Typography>
+              ) : (
+                ""
+              );
+            })}
+          <Grid container spacing={1} className={classes.footerContainer}>
+            <Grid item>
+              <Select
+                control={control}
+                name="qty"
+                defaultValue={product.quantity}
+              >
+                {createNumArray(originalProduct.quantity).map((q) => (
+                  <MenuItem key={q} value={q}>
+                    {q}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Grid>
+            <Grid item className={classes.price}>
+              <Link onClick={handleDelete} className={classes.delete}>
+                <Typography component="span" variant="subtitle1">
+                  Delete
+                </Typography>
+              </Link>
+              <Link onClick={handleDelete}>
+                <Typography component="span" variant="subtitle1">
+                  Add to wishlist
+                </Typography>
+              </Link>{" "}
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
-      {show && (
-        <Grid container spacing={1}>
-          <Grid item>
-            <Select
-              control={control}
-              name="qty"
-              defaultValue={product.quantity}
-            >
-              {createNumArray(originalProduct.quantity).map((q) => (
-                <MenuItem key={q} value={q}>
-                  {q}
-                </MenuItem>
-              ))}
-            </Select>
-          </Grid>
-          <Grid item className={classes.price}>
-            <Link onClick={handleDelete}>Delete</Link> |{" "}
-            <Link>Add to wishlist</Link>
-          </Grid>
-        </Grid>
+      {error && (
+        <Box className={classes.box} border={1} borderColor="grey.300">
+          <Typography variant="subtitle1">{error}</Typography>
+        </Box>
       )}
     </ListItem>
   );
 };
 
-export default CartItem;
+export default CartItemForCartPage;

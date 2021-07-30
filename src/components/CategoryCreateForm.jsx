@@ -1,15 +1,14 @@
 import { useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import { Typography } from "@material-ui/core";
+import { Typography, makeStyles } from "@material-ui/core";
 import ButtonWithLoader from "../components/shared/ButtonWIthLoader";
 import TextInputGenerator from "../components/shared/TextInputGenerator";
 import { categorySchema } from "../schemas/categorySchema";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles({
   createCategoryForm: {
     marginBottom: "1rem",
   },
-}));
+});
 
 const CategoryCreateForm = ({ doCategoryCreate, loading }) => {
   const classes = useStyles();

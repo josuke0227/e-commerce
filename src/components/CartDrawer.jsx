@@ -1,15 +1,10 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  makeStyles,
-  Drawer,
-  Button,
-  List,
-  Paper,
-  Typography,
-} from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import { Drawer, Button, List, Paper, Typography } from "@material-ui/core";
 import CartItem from "./CartItem";
 import sampleImage from "../images/samplepicture.png";
+import { getTotalPrice } from "../util/getTotalPrice";
 
 const useStyles = makeStyles((theme) => ({
   list: {
@@ -27,9 +22,8 @@ const useStyles = makeStyles((theme) => ({
   buttonContainer: {
     textAlign: "center",
   },
-  checkoutButton: {
-    background: "linear-gradient(to bottom,#f7dfa5,#f0c14b)",
-    border: "1px solid #171717",
+  button: {
+    ...theme.customButton,
   },
   paper: {
     padding: "1rem",
@@ -52,14 +46,6 @@ const CartDrawer = () => {
       type: "SET_SHOW_DRAWER",
       payload: false,
     });
-  };
-
-  const getTotalPrice = (cart) => {
-    if (!cart.length) return 0;
-    if (cart.length === 1) return cart[0].price * cart[0].quantity;
-    return cart.reduce(
-      (accum, curr) => accum.price + curr.price * curr.quantity
-    );
   };
 
   return (
@@ -86,7 +72,7 @@ const CartDrawer = () => {
             <div className={classes.buttonContainer}>
               <Button
                 classes={{
-                  contained: classes.checkoutButton,
+                  contained: classes.button,
                   label: classes.buttonLabel,
                 }}
                 variant="contained"
