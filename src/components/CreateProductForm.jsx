@@ -163,7 +163,6 @@ const CreateProductForm = () => {
     if (error)
       return setOtherErrors({ ...otherErrors, description: error.message });
 
-    console.log(brand);
     const submittingData = {
       ...data,
       category: category ? category._id : "",
