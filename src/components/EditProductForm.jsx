@@ -346,7 +346,6 @@ const EditProductForm = () => {
           options={categories}
           setOptions={setCategories}
           value={category}
-          defaultValue={defaultSelectFormValue.category}
           setValue={setCategory}
           label="Category"
           name="category"
@@ -356,7 +355,6 @@ const EditProductForm = () => {
           options={subCategories}
           setOptions={setSubCategories}
           value={subCategory}
-          defaultValue={defaultSelectFormValue.subCategory}
           setValue={setSubCategory}
           dependency={category}
           label="Sub category"
@@ -366,7 +364,6 @@ const EditProductForm = () => {
         <MultiPurposeAutoCompleteForm
           options={brands}
           value={brand}
-          defaultValue={defaultSelectFormValue.brand}
           setValue={setBrand}
           setOptions={setBrands}
           label="Brands"
