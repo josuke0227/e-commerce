@@ -20,6 +20,7 @@ import { isArray } from "../util/isArray";
 import { isEmptyObject } from "../util/isEmptyObject";
 import { resizeImage } from "../util/resizeImage";
 import { validateVariationsQty } from "../util/validateVariationsQty";
+import { getHelperText } from "../util/getHelperText";
 
 import {
   deleteProduct,
@@ -71,6 +72,7 @@ const EditProductForm = () => {
   const [brands, setBrands] = useState([]);
   const [brand, setBrand] = useState();
   const [defaultDescriptionValue, setDefaultDescriptionValue] = useState("");
+  const [defaultSelectFormValue, setDefaultSelectFormValue] = useState();
   const [showEditor, setShowEditor] = useState(false);
   const [images, setImages] = useState([]);
   const [variants, setVariants] = useState([]);
@@ -287,13 +289,6 @@ const EditProductForm = () => {
     setLoading(false);
   };
 
-  const hasError = (name) => {
-    if (Object.keys(errors).length) {
-      return !!errors[name];
-    }
-    return false;
-  };
-
   if (product === null) return <div className="">Loading...</div>;
   return (
     <>
@@ -313,71 +308,75 @@ const EditProductForm = () => {
         />
         <Input
           className={classes.firstFormParts}
+          errors={errors}
           type="text"
           name="title"
           control={control}
           defaultValue={product.title}
           variant="outlined"
           label="Product name"
-          helperText={hasError("title") && errors.title.message}
-          error={hasError("title")}
           required
           fullWidth
         />
         <Input
           className={classes.formParts}
+          errors={errors}
           type="number"
           name="price"
           control={control}
           defaultValue={product.price}
           variant="outlined"
           label="Price"
-          helperText={hasError("price") && errors.price.message}
-          error={hasError("price")}
           required
           fullWidth
         />
         <Input
           className={classes.formParts}
+          errors={errors}
           type="number"
           name="quantity"
           control={control}
           defaultValue={product.quantity}
           variant="outlined"
           label="Qty"
-          helperText={hasError("quantity") && errors.quantity.message}
-          error={hasError("quantity")}
           required
           fullWidth
         />
-        <MultiPurposeAutoCompleteForm
-          options={categories}
-          setOptions={setCategories}
-          value={category}
-          setValue={setCategory}
-          label="Category"
-          name="category"
-          error={otherErrors.category}
-        />
-        <MultiPurposeAutoCompleteForm
-          options={subCategories}
-          setOptions={setSubCategories}
-          value={subCategory}
-          setValue={setSubCategory}
-          dependency={category}
-          label="Sub category"
-          name="subCategory"
-          error={otherErrors.subCategory}
-        />
-        <MultiPurposeAutoCompleteForm
-          options={brands}
-          value={brand}
-          setValue={setBrand}
-          setOptions={setBrands}
-          label="Brands"
-          name="brand"
-          error={otherErrors.brands}
-        />
+        {defaultSelectFormValue && (
+          <>
+            <MultiPurposeAutoCompleteForm
+              options={categories}
+              setOptions={setCategories}
+              value={category}
+              defaultValue={defaultSelectFormValue.category}
+              setValue={setCategory}
+              label="Category"
+              name="category"
+              error={otherErrors.category}
+            />
+            <MultiPurposeAutoCompleteForm
+              options={subCategories}
+              setOptions={setSubCategories}
+              value={subCategory}
+              defaultValue={defaultSelectFormValue.subCategory}
+              setValue={setSubCategory}
+              dependency={category}
+              label="Sub category"
+              name="subCategory"
+              error={otherErrors.subCategory}
+            />
+            <MultiPurposeAutoCompleteForm
+              options={brands}
+              value={brand}
+              defaultValue={defaultSelectFormValue.brand}
+              setValue={setBrand}
+              setOptions={setBrands}
+              label="Brands"
+              name="brand"
+              error={otherErrors.brands}
+            />
+          </>
+        )}
         <Variations
           quantity={quantity}
           variations={variations}
