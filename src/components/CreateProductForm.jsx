@@ -19,6 +19,7 @@ import { getRawInputData } from "../util/getRawInputData";
 import { isEmptyObject } from "../util/isEmptyObject";
 import { resizeImage } from "../util/resizeImage";
 import { validateVariationsQty } from "../util/validateVariationsQty";
+import { getHelperText } from "../util/getHelperText";
 
 import {
   createProduct,
@@ -128,9 +129,9 @@ const CreateProductForm = () => {
 
   useEffect(() => {
     if (!category) return;
-    if (subCategory) setSubCategory();
+    setSubCategory();
     loadSubCategories(category._id);
-  }, [category, subCategory]);
+  }, [category]);
   const loadSubCategories = async (id) => {
     if (!id) return;
 
@@ -238,13 +239,6 @@ const CreateProductForm = () => {
     setLoading(false);
   };
 
-  const hasError = (name) => {
-    if (Object.keys(errors).length) {
-      return !!errors[name];
-    }
-    return false;
-  };
-
   return (
     <>
       <ConfirmDialog
@@ -264,40 +258,34 @@ const CreateProductForm = () => {
         />
         <Input
           className={classes.firstFormParts}
+          errors={errors}
           type="text"
           name="title"
           control={control}
-          defaultValue=""
           variant="outlined"
           label="Product name"
-          helperText={hasError("title") && errors.title.message}
-          error={hasError("title")}
           required
           fullWidth
         />
         <Input
           className={classes.formParts}
+          errors={errors}
           type="number"
           name="price"
           control={control}
-          defaultValue=""
           variant="outlined"
           label="Price"
-          helperText={hasError("price") && errors.price.message}
-          error={hasError("price")}
           required
           fullWidth
         />
         <Input
           className={classes.formParts}
+          errors={errors}
           type="number"
           name="quantity"
           control={control}
-          defaultValue=""
           variant="outlined"
           label="Qty"
-          helperText={hasError("quantity") && errors.quantity.message}
-          error={hasError("quantity")}
           required
           fullWidth
         />
