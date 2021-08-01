@@ -342,41 +342,37 @@ const EditProductForm = () => {
           required
           fullWidth
         />
-        {defaultSelectFormValue && (
-          <>
-            <MultiPurposeAutoCompleteForm
-              options={categories}
-              setOptions={setCategories}
-              value={category}
-              defaultValue={defaultSelectFormValue.category}
-              setValue={setCategory}
-              label="Category"
-              name="category"
-              error={otherErrors.category}
-            />
-            <MultiPurposeAutoCompleteForm
-              options={subCategories}
-              setOptions={setSubCategories}
-              value={subCategory}
-              defaultValue={defaultSelectFormValue.subCategory}
-              setValue={setSubCategory}
-              dependency={category}
-              label="Sub category"
-              name="subCategory"
-              error={otherErrors.subCategory}
-            />
-            <MultiPurposeAutoCompleteForm
-              options={brands}
-              value={brand}
-              defaultValue={defaultSelectFormValue.brand}
-              setValue={setBrand}
-              setOptions={setBrands}
-              label="Brands"
-              name="brand"
-              error={otherErrors.brands}
-            />
-          </>
-        )}
+        <MultiPurposeAutoCompleteForm
+          options={categories}
+          setOptions={setCategories}
+          value={category}
+          defaultValue={defaultSelectFormValue.category}
+          setValue={setCategory}
+          label="Category"
+          name="category"
+          error={otherErrors.category}
+        />
+        <MultiPurposeAutoCompleteForm
+          options={subCategories}
+          setOptions={setSubCategories}
+          value={subCategory}
+          defaultValue={defaultSelectFormValue.subCategory}
+          setValue={setSubCategory}
+          dependency={category}
+          label="Sub category"
+          name="subCategory"
+          error={otherErrors.subCategory}
+        />
+        <MultiPurposeAutoCompleteForm
+          options={brands}
+          value={brand}
+          defaultValue={defaultSelectFormValue.brand}
+          setValue={setBrand}
+          setOptions={setBrands}
+          label="Brands"
+          name="brand"
+          error={otherErrors.brands}
+        />
         <Variations
           quantity={quantity}
           variations={variations}
