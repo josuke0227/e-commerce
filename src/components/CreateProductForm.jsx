@@ -10,7 +10,7 @@ import ImageSelector from "./ImageSelector";
 import Input from "./shared/Input";
 import Variations from "./Variations";
 import ConfirmDialog from "./shared/ConfirmDialog";
-import MultiPurposeAutoCompleteForm from "./shared/MultiPurposeAutoCompleteForm";
+import ProductAttributes from "./ProductAttributes";
 import RichTextField from "./shared/RichTextField";
 
 import { imageSchema } from "../schemas/imagesSchema";
@@ -63,12 +63,6 @@ const useStyles = makeStyles((theme) => ({
 const CreateProductForm = () => {
   const classes = useStyles();
   const { user } = useSelector((state) => ({ ...state }));
-  const [categories, setCategories] = useState([]);
-  const [category, setCategory] = useState();
-  const [subCategories, setSubCategories] = useState([]);
-  const [subCategory, setSubCategory] = useState();
-  const [brands, setBrands] = useState([]);
-  const [brand, setBrand] = useState();
   const [images, setImages] = useState([]);
   const [variations, setVariations] = useState([]);
   const [variants, setVariants] = useState([]);
@@ -86,6 +80,13 @@ const CreateProductForm = () => {
     variations: "",
     category: "",
     subCategory: "",
+    brand: "",
+  });
+
+  const [value, setValue] = useState({
+    category: "",
+    subCategory: "",
+    brand: "",
   });
 
   const {
@@ -98,50 +99,16 @@ const CreateProductForm = () => {
   const quantity = watch("quantity");
 
   useEffect(() => {
-    loadCategories();
+    const loadVariants = async () => {
+      try {
+        const { data } = await getVariants();
+        setVariants(data);
+      } catch (error) {
+        console.log("fetching variations error", error);
+      }
+    };
     loadVariants();
-    loadBrands();
   }, []);
-  const loadCategories = async () => {
-    try {
-      const { data } = await getCategories();
-      setCategories(data);
-    } catch (error) {
-      console.log("category fetching error", error);
-    }
-  };
-  const loadVariants = async () => {
-    try {
-      const { data } = await getVariants();
-      setVariants(data);
-    } catch (error) {
-      console.log("fetching variations error", error);
-    }
-  };
-  const loadBrands = async () => {
-    try {
-      const { data } = await getBrands();
-      setBrands(data);
-    } catch (error) {
-      console.log("fetching brands error", error);
-    }
-  };
-
-  useEffect(() => {
-    if (!category) return;
-    setSubCategory();
-    loadSubCategories(category._id);
-  }, [category]);
-  const loadSubCategories = async (id) => {
-    if (!id) return;
-
-    try {
-      const { data } = await pickByParentId(id);
-      setSubCategories(data);
-    } catch (error) {
-      console.log("sub categories fetching error", error);
-    }
-  };
 
   const onSubmit = async (data, e) => {
     e.stopPropagation();
@@ -164,6 +131,7 @@ const CreateProductForm = () => {
     if (error)
       return setOtherErrors({ ...otherErrors, description: error.message });
 
+    const { category, subCategory, brand } = value;
     const submittingData = {
       ...data,
       category: category ? category._id : "",
@@ -289,7 +257,12 @@ const CreateProductForm = () => {
           required
           fullWidth
         />
-        {categories.length > 0 && (
+        <ProductAttributes
+          value={value}
+          setValue={setValue}
+          errors={otherErrors}
+        />
+        {/* {categories.length > 0 && (
           <MultiPurposeAutoCompleteForm
             options={categories}
             value={category}
@@ -320,7 +293,7 @@ const CreateProductForm = () => {
           label="Brands"
           name="brand"
           error={otherErrors.brands}
-        />
+        /> */}
         <Variations
           quantity={quantity}
           variations={variations}

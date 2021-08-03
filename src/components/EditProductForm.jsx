@@ -10,8 +10,8 @@ import ImageSelector from "./ImageSelector";
 import Variations from "./Variations";
 import ConfirmDialog from "./shared/ConfirmDialog";
 import Input from "./shared/Input";
-import MultiPurposeAutoCompleteForm from "./shared/MultiPurposeAutoCompleteForm";
 import RichTextField from "./shared/RichTextField";
+import ProductAttributes from "./ProductAttributes";
 
 import { imageSchema } from "../schemas/imagesSchema";
 
@@ -65,14 +65,7 @@ const useStyles = makeStyles((theme) => ({
 const EditProductForm = () => {
   const classes = useStyles();
   const { user, product } = useSelector((state) => ({ ...state }));
-  const [categories, setCategories] = useState([]);
-  const [category, setCategory] = useState();
-  const [subCategories, setSubCategories] = useState([]);
-  const [subCategory, setSubCategory] = useState();
-  const [brands, setBrands] = useState([]);
-  const [brand, setBrand] = useState();
   const [defaultDescriptionValue, setDefaultDescriptionValue] = useState("");
-  const [defaultSelectFormValue, setDefaultSelectFormValue] = useState();
   const [showEditor, setShowEditor] = useState(false);
   const [images, setImages] = useState([]);
   const [variants, setVariants] = useState([]);
@@ -94,6 +87,12 @@ const EditProductForm = () => {
     brand: "",
   });
 
+  const [value, setValue] = useState({
+    category: "",
+    subCategory: "",
+    brand: "",
+  });
+
   const {
     control,
     formState: { errors },
@@ -104,18 +103,8 @@ const EditProductForm = () => {
   const quantity = watch("quantity");
 
   useEffect(() => {
-    loadCategories();
     loadVariants();
-    loadBrands();
   }, []);
-  const loadCategories = async () => {
-    try {
-      const { data } = await getCategories();
-      setCategories(data);
-    } catch (error) {
-      console.log("fetching category error", error);
-    }
-  };
   const loadVariants = async () => {
     try {
       const { data } = await getVariants();
@@ -123,16 +112,6 @@ const EditProductForm = () => {
       setVariants(data);
     } catch (error) {
       console.log("fetching variations error", error);
-    }
-  };
-  const loadBrands = async () => {
-    try {
-      const { data } = await getBrands();
-
-      const brandsData = data.length > 0 ? data : null;
-      setBrands(brandsData);
-    } catch (error) {
-      console.log("fetching brands error", error);
     }
   };
 
@@ -149,47 +128,14 @@ const EditProductForm = () => {
     if (product === null || user === null) return;
 
     const initialProduct = { ...product };
-    const {
-      _id,
-      variations,
-      description,
-      category: defaultCategory,
-      subCategory: defaultSubCategory,
-      brand,
-    } = initialProduct;
+    const { _id, variations, description } = initialProduct;
     loadImages(_id);
     setDefaultDescriptionValue(description);
-    setSubCategory(defaultSubCategory);
-    setCategory(defaultCategory);
-    setBrand(brand);
 
     if (variations.length > 0) setEnableVariations(true);
     const initialVariations = [...variations];
     setVariations(initialVariations);
   }, [product, user]);
-
-  useEffect(() => {
-    if (!category) return;
-
-    if (!subCategories || subCategories.length === 0) {
-      loadSubCategories(category._id);
-      return;
-    }
-
-    loadSubCategories(category._id);
-    setSubCategory();
-  }, [category, subCategories]);
-  const loadSubCategories = async (id) => {
-    if (!id) return;
-
-    try {
-      const { data } = await pickByParentId(id);
-      const subCategoriesData = data.length > 0 ? data : null;
-      setSubCategories(subCategoriesData);
-    } catch (error) {
-      console.log("sub categories fetching error", error);
-    }
-  };
 
   const onSubmit = async (data, e) => {
     e.stopPropagation();
@@ -213,6 +159,7 @@ const EditProductForm = () => {
     if (error)
       return setOtherErrors({ ...otherErrors, description: error.message });
 
+    const { category, subCategory, brand } = value;
     const submittingData = {
       ...data,
       category: category ? category._id : "",
@@ -342,33 +289,11 @@ const EditProductForm = () => {
           required
           fullWidth
         />
-        <MultiPurposeAutoCompleteForm
-          options={categories}
-          setOptions={setCategories}
-          value={category}
-          setValue={setCategory}
-          label="Category"
-          name="category"
-          error={otherErrors.category}
-        />
-        <MultiPurposeAutoCompleteForm
-          options={subCategories}
-          setOptions={setSubCategories}
-          value={subCategory}
-          setValue={setSubCategory}
-          dependency={category}
-          label="Sub category"
-          name="subCategory"
-          error={otherErrors.subCategory}
-        />
-        <MultiPurposeAutoCompleteForm
-          options={brands}
-          value={brand}
-          setValue={setBrand}
-          setOptions={setBrands}
-          label="Brands"
-          name="brand"
-          error={otherErrors.brands}
+        <ProductAttributes
+          product={product}
+          value={value}
+          setValue={setValue}
+          errors={otherErrors}
         />
         <Variations
           quantity={quantity}

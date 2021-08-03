@@ -1,5 +1,11 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import {
+  FormControl,
+  FormHelperText,
+  makeStyles,
+  TextField,
+} from "@material-ui/core";
 import Autocomplete from "./Autocomplete";
 import AutocompleteMenu from "../AutocompleteMenu";
 import AutocompleteActionButtons from "../AutocompleteActionButtons";
@@ -20,6 +26,16 @@ import {
   deleteBrand,
 } from "../../services/brandsService";
 import { getIndex } from "../../util/getIndex";
+
+const useStyles = makeStyles((theme) => ({
+  container: {
+    marginBottom: theme.spacing(2),
+  },
+  formContainer: {
+    display: "flex",
+    gap: theme.spacing(1),
+  },
+}));
 
 const INITIAL_RESULT_STATE = { success: null, message: "" };
 
@@ -53,15 +69,17 @@ const CustomAutoComplete = ({
   value: wholeValue,
   options: wholeOptions,
   handleValueChange,
+  name,
   label,
   dependency,
   error,
   cleanUpAutocomplete,
   refreshAutocomplete,
 }) => {
-  const options = wholeOptions[label];
-  const value = wholeValue[label];
+  const options = wholeOptions[name];
+  const value = wholeValue[name];
 
+  const classes = useStyles();
   const { user } = useSelector((state) => ({ ...state }));
   const [buttonState, setButtonState] = useState(INITIAL_BUTTON_STATE);
   const [result, setResult] = useState(INITIAL_RESULT_STATE);
@@ -91,13 +109,13 @@ const CustomAutoComplete = ({
       const { data } = await makeAPICall();
       const updatedOptions = updateUiFuncMap[action](data);
       setResult({ success: true, message: "Success!" });
-      cleanUpAutocomplete(label);
+      cleanUpAutocomplete(name);
       if (action === "delete") {
-        refreshAutocomplete(label, updatedOptions, updatedOptions[0]);
+        refreshAutocomplete(name, updatedOptions, updatedOptions[0]);
         exitingFunction();
         return;
       }
-      refreshAutocomplete(label, updatedOptions, data);
+      refreshAutocomplete(name, updatedOptions, data);
     } catch (error) {
       console.log(error);
       const message = error.response
@@ -114,9 +132,9 @@ const CustomAutoComplete = ({
   };
 
   const makeAPICall = async () => {
-    const httpService = serviceMap[label][action];
+    const httpService = serviceMap[name][action];
 
-    if (label === "subCategory") {
+    if (name === "subCategory") {
       const data =
         action === "add"
           ? {
@@ -158,18 +176,44 @@ const CustomAutoComplete = ({
 
   const isReady = () => (options.length && value === null) || value;
 
-  return (
-    <div style={{ padding: "1rem" }}>
-      <p>{JSON.stringify(value)}</p>
-      {isReady() ? (
-        <>
-          <AutocompleteMenu
-            buttonState={buttonState}
-            label={label}
-            options={options}
-            handleListItemClick={handleListItemClick}
-          />
+  const isEmpty = () => !options.length && value === undefined;
+
+  if (isEmpty())
+    return (
+      <div className={classes.formContainer}>
+        <TextField
+          variant="filled"
+          label={`Add ${label}`}
+          value={inputValue}
+          helperText={result.message || error}
+          error={result.success === false}
+          onChange={(e) => setInputValue(e.target.value)}
+        />
+        <AutocompleteActionButtons
+          add
+          loading={loading}
+          buttonState={buttonState}
+          action={action}
+          setAction={setAction}
+          handleCancelButtonClick={handleCancelButtonClick}
+          handleActionButtonClick={handleActionButtonClick}
+          setInputValue={setInputValue}
+        />
+      </div>
+    );
+
+  return isReady() ? (
+    <div className={classes.container}>
+      <AutocompleteMenu
+        buttonState={buttonState}
+        label={label}
+        options={options}
+        handleListItemClick={handleListItemClick}
+      />
+      <FormControl>
+        <div className={classes.formContainer}>
           <Autocomplete
+            name={name}
             label={label}
             options={options}
             onOptionChange={handleValueChange}
@@ -185,12 +229,14 @@ const CustomAutoComplete = ({
             handleCancelButtonClick={handleCancelButtonClick}
             handleActionButtonClick={handleActionButtonClick}
           />
-          <div className="">{result.message || error}</div>
-        </>
-      ) : (
-        <div className="">Loading...</div>
-      )}
+        </div>
+        <FormHelperText error={result.success === false || !!error}>
+          {result.message || error}
+        </FormHelperText>
+      </FormControl>
     </div>
+  ) : (
+    <div className="">Loading...</div>
   );
 };
 

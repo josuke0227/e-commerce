@@ -2,12 +2,14 @@ import { useEffect } from "react";
 import { Grow, Button } from "@material-ui/core";
 
 const AutocompleteActionButtons = ({
+  add,
   buttonState,
   loading,
   action,
   setAction,
   handleCancelButtonClick,
   handleActionButtonClick,
+  setInputValue,
 }) => {
   useEffect(() => {
     if (!buttonState) return;
@@ -20,6 +22,13 @@ const AutocompleteActionButtons = ({
     if (action === undefined) return setAction("");
     setAction(action);
   }, [buttonState, setAction]);
+
+  useEffect(() => {
+    if (add) {
+      setAction("add");
+      setInputValue("");
+    }
+  }, [add]);
 
   const renderButton = (label) => {
     return (
@@ -45,6 +54,21 @@ const AutocompleteActionButtons = ({
       </Grow>
     );
   };
+
+  if (add)
+    return (
+      <Grow in={true}>
+        <Button
+          disabled={loading}
+          variant="outlined"
+          color="primary"
+          onClick={handleActionButtonClick}
+        >
+          add
+        </Button>
+      </Grow>
+    );
+
   return action && renderButton(action);
 };
 
