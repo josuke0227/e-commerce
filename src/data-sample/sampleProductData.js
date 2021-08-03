@@ -119,3 +119,162 @@ export const sampleProductInCart = {
     },
   ],
 };
+
+export const categories = [
+  {
+    _id: "60b820a07468c922cf38beb7",
+    name: "Books",
+    slug: "Books",
+    createdAt: {
+      $date: "2021-06-03T00:21:52.278Z",
+    },
+    updatedAt: {
+      $date: "2021-06-08T07:05:06.449Z",
+    },
+    __v: 0,
+  },
+  {
+    _id: "60c00dbf4cb336f57aff244b",
+    name: "Stationary",
+    slug: "Stationary",
+    createdAt: {
+      $date: "2021-06-09T00:39:27.179Z",
+    },
+    updatedAt: {
+      $date: "2021-06-09T00:39:27.179Z",
+    },
+    __v: 0,
+  },
+  {
+    _id: "60c2b9ef7477fe3b9213c2ac",
+    name: "Furniture",
+    slug: "Furniture",
+    createdAt: {
+      $date: "2021-06-11T01:18:39.693Z",
+    },
+    updatedAt: {
+      $date: "2021-06-11T01:18:39.693Z",
+    },
+    __v: 0,
+  },
+  {
+    _id: "60d081106c7d98c6c65cc594",
+    name: "Nice",
+    slug: "Nice",
+    createdAt: {
+      $date: "2021-06-21T12:07:44.224Z",
+    },
+    updatedAt: {
+      $date: "2021-06-21T12:07:59.196Z",
+    },
+    __v: 0,
+  },
+  {
+    _id: "60dedbd6584aff0b64643bf3",
+    name: "Clothes",
+    slug: "clothes",
+    createdAt: {
+      $date: "2021-07-02T09:26:46.068Z",
+    },
+    updatedAt: {
+      $date: "2021-07-02T09:26:46.068Z",
+    },
+    __v: 0,
+  },
+  {
+    _id: "60efffe906dde05f4e4138d7",
+    name: "Car",
+    slug: "car",
+    createdAt: {
+      $date: "2021-07-15T09:29:13.082Z",
+    },
+    updatedAt: {
+      $date: "2021-07-15T09:29:13.082Z",
+    },
+    __v: 0,
+  },
+  {
+    _id: "60f0187906dde05f4e4138e4",
+    name: "Toys",
+    slug: "toys",
+    createdAt: {
+      $date: "2021-07-15T11:14:01.819Z",
+    },
+    updatedAt: {
+      $date: "2021-07-15T11:14:01.819Z",
+    },
+    __v: 0,
+  },
+  {
+    _id: "60f018bd06dde05f4e4138e5",
+    name: "Electronics",
+    slug: "electronics",
+    createdAt: {
+      $date: "2021-07-15T11:15:09.196Z",
+    },
+    updatedAt: {
+      $date: "2021-07-15T11:15:09.196Z",
+    },
+    __v: 0,
+  },
+  {
+    _id: "60f018f606dde05f4e4138e6",
+    name: "Cosmetics",
+    slug: "cosmetics",
+    createdAt: {
+      $date: "2021-07-15T11:16:06.049Z",
+    },
+    updatedAt: {
+      $date: "2021-07-15T11:16:06.049Z",
+    },
+    __v: 0,
+  },
+  {
+    _id: "60f01bd706dde05f4e4138e7",
+    name: "Sports",
+    slug: "sports",
+    createdAt: {
+      $date: "2021-07-15T11:28:23.419Z",
+    },
+    updatedAt: {
+      $date: "2021-07-15T11:28:23.419Z",
+    },
+    __v: 0,
+  },
+  {
+    _id: "60f1087006dde05f4e4138e9",
+    name: "Audio",
+    slug: "audio",
+    createdAt: {
+      $date: "2021-07-16T04:17:52.564Z",
+    },
+    updatedAt: {
+      $date: "2021-07-16T04:17:52.564Z",
+    },
+    __v: 0,
+  },
+  {
+    _id: "60f1a30806dde05f4e4138f9",
+    name: "Kitchin",
+    slug: "kitchin",
+    createdAt: {
+      $date: "2021-07-16T15:17:28.268Z",
+    },
+    updatedAt: {
+      $date: "2021-07-16T15:17:28.268Z",
+    },
+    __v: 0,
+  },
+  {
+    _id: "60f29c2a06dde05f4e413914",
+    name: "School uniform",
+    slug: "school-uniform",
+    createdAt: {
+      $date: "2021-07-17T09:00:26.524Z",
+    },
+    updatedAt: {
+      $date: "2021-07-17T09:00:26.524Z",
+    },
+    __v: 0,
+  },
+];

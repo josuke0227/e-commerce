@@ -80,7 +80,7 @@ const MultiPurposeAutoCompleteForm = ({
     if (!options.length) return;
     const initialValue = value ? value : options[0];
     setValue(initialValue);
-  }, [options, setValue, value]);
+  }, [options]);
 
   const handleAddClick = async () => {
     const { error } = rawInputSchema.validate(inputValue);
