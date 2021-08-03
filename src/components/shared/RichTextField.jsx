@@ -79,7 +79,11 @@ const RichTextField = ({
         </Grid>
       </Grid>
       {!!error && (
-        <Typography color="error" className={classes.formParts}>
+        <Typography
+          variant="caption"
+          color="error"
+          className={classes.formParts}
+        >
           {error}
         </Typography>
       )}

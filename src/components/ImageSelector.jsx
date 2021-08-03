@@ -222,7 +222,9 @@ const ImageSelector = ({ images, setImages, errors, user }) => {
             </Button>
           </label>
         </Grid>
-        <Typography color="error">{errors}</Typography>
+        <Typography variant="caption" color="error">
+          {errors}
+        </Typography>
       </Grid>
     </>
   );
