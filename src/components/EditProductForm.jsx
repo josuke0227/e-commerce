@@ -89,9 +89,13 @@ const EditProductForm = () => {
 
   const [value, setValue] = useState({
     category: "",
-    subCategory: "",
     brand: "",
   });
+  /*
+  separated this option because setOptions({...value, subCategory: data}) 
+  because useEffect stats infinite loop when I put value in dependencies array.
+  */
+  const [subCategory, setSubCategory] = useState("");
 
   const {
     control,
@@ -290,10 +294,12 @@ const EditProductForm = () => {
           fullWidth
         />
         <ProductAttributes
-          product={product}
           value={value}
           setValue={setValue}
           errors={otherErrors}
+          subCategory={subCategory}
+          setSubCategory={setSubCategory}
+          product={product}
         />
         <Variations
           quantity={quantity}

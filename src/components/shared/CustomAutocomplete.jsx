@@ -90,7 +90,7 @@ const CustomAutoComplete = ({
   const [currentValue, setCurrentValue] = useState("");
 
   const handleListItemClick = (path) => {
-    if (path === "edit") setCurrentValue(value);
+    if (path !== "add") setCurrentValue(value);
     setButtonState({ ...INITIAL_BUTTON_STATE, [path]: true });
   };
 
@@ -108,10 +108,15 @@ const CustomAutoComplete = ({
     try {
       const { data } = await makeAPICall();
       const updatedOptions = updateUiFuncMap[action](data);
+      console.log(updatedOptions);
       setResult({ success: true, message: "Success!" });
       cleanUpAutocomplete(name);
       if (action === "delete") {
-        refreshAutocomplete(name, updatedOptions, updatedOptions[0]);
+        refreshAutocomplete(
+          name,
+          updatedOptions,
+          updatedOptions.length ? updatedOptions[0] : undefined
+        );
         exitingFunction();
         return;
       }
@@ -168,7 +173,7 @@ const CustomAutoComplete = ({
       return current;
     },
     delete: () => {
-      const current = options.length > 1 ? [...options] : null;
+      const current = options.length > 1 ? [...options] : [];
       current && current.splice(getIndex(current, value), 1);
       return current;
     },

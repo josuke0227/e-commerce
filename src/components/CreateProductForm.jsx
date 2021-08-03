@@ -85,9 +85,13 @@ const CreateProductForm = () => {
 
   const [value, setValue] = useState({
     category: "",
-    subCategory: "",
     brand: "",
   });
+  /*
+  separated this option because setOptions({...value, subCategory: data}) 
+  because useEffect stats infinite loop when I put value in dependencies array.
+  */
+  const [subCategory, setSubCategory] = useState("");
 
   const {
     control,
@@ -261,39 +265,9 @@ const CreateProductForm = () => {
           value={value}
           setValue={setValue}
           errors={otherErrors}
+          subCategory={subCategory}
+          setSubCategory={setSubCategory}
         />
-        {/* {categories.length > 0 && (
-          <MultiPurposeAutoCompleteForm
-            options={categories}
-            value={category}
-            setValue={setCategory}
-            setOptions={setCategories}
-            label="Category"
-            name="category"
-            error={otherErrors.category}
-          />
-        )}
-        {category && (
-          <MultiPurposeAutoCompleteForm
-            options={subCategories}
-            value={subCategory}
-            setValue={setSubCategory}
-            setOptions={setSubCategories}
-            dependency={category}
-            label="Sub category"
-            name="subCategory"
-            error={otherErrors.subCategory}
-          />
-        )}
-        <MultiPurposeAutoCompleteForm
-          options={brands}
-          value={brand}
-          setValue={setBrand}
-          setOptions={setBrands}
-          label="Brands"
-          name="brand"
-          error={otherErrors.brands}
-        /> */}
         <Variations
           quantity={quantity}
           variations={variations}
