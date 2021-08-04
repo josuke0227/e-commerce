@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useForm, Controller } from "react-hook-form";
-import { FormControlLabel, Checkbox, Button } from "@material-ui/core/";
+import {
+  FormControlLabel,
+  Checkbox,
+  Button,
+  InputLabel,
+  FormHelperText,
+  FormControl,
+  Select,
+} from "@material-ui/core/";
 import { makeStyles } from "@material-ui/core/styles";
 import Joi from "joi";
 import { joiResolver } from "@hookform/resolvers/joi";
@@ -9,8 +17,7 @@ import { countries } from "../data-sample/sampleCountries";
 // TODO: revert
 import { updateUser } from "../services/userService";
 import { getCountryNames } from "../services/countriesService";
-import Input from "../components/shared/Input";
-import Select from "../components/shared/Select";
+import Input from "./shared/Input";
 import { getHelperText } from "../util/getHelperText";
 
 const schema = Joi.object({
@@ -33,7 +40,7 @@ const schema = Joi.object({
 
 const useStyles = makeStyles((theme) => ({
   form: {
-    marginBottom: theme.spacing(3),
+    marginBottom: theme.spacing(2),
   },
 }));
 
@@ -103,19 +110,36 @@ export default function Playground() {
       onSubmit={handleSubmit(onSubmit)}
     >
       {countries.length > 0 ? (
-        <Select
-          className={classes.form}
-          native
-          control={control}
-          name="country"
-          defaultValue={countries[0].name}
-        >
-          {countries.map((c) => (
-            <option key={c.name} value={c.name}>
-              {c.name}
-            </option>
-          ))}
-        </Select>
+        <FormControl variant="outlined" className={classes.form}>
+          <InputLabel htmlFor="country-select">Country</InputLabel>
+          <Controller
+            name="country"
+            control={control}
+            defaultValue=""
+            rules={{ required: true }}
+            render={({ field }) => (
+              <Select
+                native
+                label="Country"
+                {...field}
+                inputProps={{
+                  name: "country",
+                  id: "country-select",
+                }}
+              >
+                <option aria-label="None" value="" />
+                {countries.map((c) => (
+                  <option key={c.name} value={c.name}>
+                    {c.name}
+                  </option>
+                ))}
+              </Select>
+            )}
+          />
+          <FormHelperText error>
+            {errors.country ? errors.country.message : ""}
+          </FormHelperText>
+        </FormControl>
       ) : (
         <div className="">Loading...</div>
       )}
