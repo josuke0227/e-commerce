@@ -18,6 +18,7 @@ import ProductsPage from "./pages/ProductsPage";
 import ShopPage from "./pages/ShopPage";
 import ProductPage from "./pages/ProductPage";
 import CartPage from "./pages/CartPage";
+import CheckoutPage from "./pages/CheckoutPage";
 
 const App = () => (
   <ThemeProvider theme={theme}>
@@ -33,6 +34,7 @@ const App = () => (
         <Route exact path="/shop" component={ShopPage} />
         <Route exact path="/shop/:slug" component={ProductPage} />
         <Route exact path="/cart" component={CartPage} />
+        <Route exact path="/checkout" component={CheckoutPage} />
         <Route exact path="/admin/dashboard" component={Dashboard} />
         <Route exact path="/admin/categories" component={CategoryPage} />
         <Route exact path="/admin/subcategories" component={SubCategoryPage} />

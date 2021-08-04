@@ -3,6 +3,7 @@ import { Grid, List, makeStyles, Typography, Button } from "@material-ui/core";
 import CartItemForCartPage from "../components/CartItemForCartPage";
 import Layout from "../components/Layout";
 import { getTotalPrice } from "../util/getTotalPrice";
+import CustomLink from "../components/shared/CustomLink";
 
 const useStyles = makeStyles((theme) => ({
   subTotal: {
@@ -31,8 +32,6 @@ const getTotalQty = (cart) => {
 const CartPage = ({ location }) => {
   const classes = useStyles();
   const { cart } = useSelector((state) => ({ ...state }));
-  console.log(cart);
-  console.log(getTotalPrice(cart));
 
   if (!cart) return <div className="">loading...</div>;
   return (
@@ -50,15 +49,17 @@ const CartPage = ({ location }) => {
             <Typography variant="subtitle1" gutterBottom>
               Subtotal ({getTotalQty(cart)}) items: AUD {getTotalPrice(cart)}
             </Typography>
-            <Button
-              classes={{
-                contained: classes.button,
-                label: classes.buttonLabel,
-              }}
-              variant="contained"
-            >
-              Proceed to Checkout
-            </Button>
+            <CustomLink to="/checkout">
+              <Button
+                classes={{
+                  contained: classes.button,
+                  label: classes.buttonLabel,
+                }}
+                variant="contained"
+              >
+                Proceed to Checkout
+              </Button>
+            </CustomLink>
           </div>
         </Grid>
       </Grid>
