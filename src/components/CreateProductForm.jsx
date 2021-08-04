@@ -19,17 +19,13 @@ import { getRawInputData } from "../util/getRawInputData";
 import { isEmptyObject } from "../util/isEmptyObject";
 import { resizeImage } from "../util/resizeImage";
 import { validateVariationsQty } from "../util/validateVariationsQty";
-import { getHelperText } from "../util/getHelperText";
 
 import {
   createProduct,
   deleteProduct,
   uploadImage,
 } from "../services/productServices";
-import { getBrands } from "../services/brandsService";
-import { getCategories } from "../services/categoryServices";
 import { getVariants } from "../services/variationServices";
-import { pickByParentId } from "../services/subCategoryServices";
 Joi.ObjectId = require("joi-objectid")(Joi);
 
 const descriptionSchema = Joi.string().min(1).max(2000).label("Description");
@@ -135,7 +131,7 @@ const CreateProductForm = () => {
     if (error)
       return setOtherErrors({ ...otherErrors, description: error.message });
 
-    const { category, subCategory, brand } = value;
+    const { category, brand } = value;
     const submittingData = {
       ...data,
       category: category ? category._id : "",
@@ -284,7 +280,6 @@ const CreateProductForm = () => {
           setValue={setDescription}
           characters={description}
           count={2000}
-          loading={loading}
           label="Description"
           error={otherErrors.description}
         />

@@ -7,7 +7,6 @@ import CardActionArea from "@material-ui/core/CardActionArea";
 import Skeleton from "@material-ui/lab/Skeleton";
 import { getImages } from "../services/productServices";
 import { CardContent } from "@material-ui/core";
-import { useSelector } from "react-redux";
 import RatingIndicator from "./shared/RatingIndicator";
 import CustomLink from "./shared/CustomLink";
 
@@ -31,7 +30,6 @@ const useStyles = makeStyles((theme) => ({
 const ProductCard = ({ product }) => {
   const classes = useStyles();
   const [images, setImages] = useState([]);
-  const { user } = useSelector((state) => ({ ...state }));
 
   useEffect(() => {
     const loadImages = async () => {

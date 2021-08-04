@@ -7,7 +7,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import { Link } from "react-router-dom";
-import CustomLink from "./shared/CustomLink";
 
 const useStyles = makeStyles((theme) => ({
   headerMenuLeft: {

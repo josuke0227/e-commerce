@@ -21,7 +21,6 @@ const RichTextField = ({
   setValue,
   characters,
   count,
-  loading,
   success,
   label,
   error,
@@ -41,21 +40,8 @@ const RichTextField = ({
     setValue(draftToHtml(convertToRaw(editorState.getCurrentContent())));
   }, [editorState, setValue]);
 
-  useEffect(() => {
-    if (loading) return resetInputForm();
-  }, [loading]);
-
   const onEditorStateChange = (editorState) => {
     setEditorState(editorState);
-  };
-
-  const resetInputForm = () => {
-    if (success === false) return;
-    const newEditorState = EditorState.push(
-      editorState,
-      ContentState.createFromText("")
-    );
-    setEditorState(newEditorState);
   };
 
   return (

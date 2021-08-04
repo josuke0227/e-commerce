@@ -28,7 +28,7 @@ const AutocompleteActionButtons = ({
       setAction("add");
       setInputValue("");
     }
-  }, [add]);
+  }, [add, setAction, setInputValue]);
 
   const renderButton = (label) => {
     return (

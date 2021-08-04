@@ -10,7 +10,6 @@ import {
   Typography,
   Box,
 } from "@material-ui/core";
-import CustomLink from "../components/shared/CustomLink";
 import Select from "../components/shared/Select";
 import { getImages, getProduct } from "../services/productServices";
 import { createNumArray } from "../util/createNumArray";
