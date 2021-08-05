@@ -3,7 +3,7 @@ import axios from "axios";
 export const registerAddress = async (address, user) =>
   await axios({
     method: "put",
-    data: address,
+    data: [address],
     url: `${process.env.REACT_APP_API}/user/address/register/${user.id}`,
     headers: {
       "x-auth-token": user.token,

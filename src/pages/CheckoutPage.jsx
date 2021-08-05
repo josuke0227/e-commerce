@@ -35,9 +35,10 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (!addresses.length) return;
-
     const address = addresses.filter((a) => a.isDefault === true);
-    setDefaultAddress(address[0]);
+    address.length
+      ? setDefaultAddress(address[0])
+      : setDefaultAddress(addresses[0]);
   }, [addresses]);
 
   const handleChangeButtonClick = () => {

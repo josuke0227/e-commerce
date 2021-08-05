@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useForm, Controller } from "react-hook-form";
 import {
   FormControlLabel,
@@ -45,6 +45,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Playground() {
+  const dispatch = useDispatch();
   const classes = useStyles();
   const [countriess, setCountries] = useState([]);
   const {
@@ -65,12 +66,12 @@ export default function Playground() {
   // }, []);
 
   const onSubmit = async (data) => {
-    console.log(data);
-    // try {
-    //   await updateUser(data, user);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      await registerAddress(data, user);
+    } catch (error) {
+      console.log(error);
+    }
+    dispatch({ type: "CLOSE_DIALOG" });
   };
 
   const textInputDefs = [
