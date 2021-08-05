@@ -15,7 +15,7 @@ import Joi from "joi";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { countries } from "../data-sample/sampleCountries";
 // TODO: revert
-import { updateUser } from "../services/userService";
+import { registerAddress } from "../services/userService";
 import { getCountryNames } from "../services/countriesService";
 import Input from "./shared/Input";
 import { getHelperText } from "../util/getHelperText";

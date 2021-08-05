@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { getAddress } from "../services/userService";
 import { Grid, Typography, makeStyles, Button, Paper } from "@material-ui/core";
 import AddressCard from "../components/shared/AddressCard";
+import AddressFormDialog from "../components/AddressFormDialog";
 
 const useStyles = makeStyles((theme) => ({
   paper: { padding: theme.spacing(2) },
@@ -13,9 +14,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Playground() {
+export default function CheckoutPage() {
   const classes = useStyles();
-  const { user } = useSelector((state) => ({ ...state }));
+  const { user, addressDialog: dialogState } = useSelector((state) => ({
+    ...state,
+  }));
+  const dispatch = useDispatch();
   const [addresses, setAddresses] = useState([]);
   const [defaultAddress, setDefaultAddress] = useState();
 
@@ -36,33 +40,48 @@ export default function Playground() {
     setDefaultAddress(address[0]);
   }, [addresses]);
 
+  const handleChangeButtonClick = () => {
+    dispatch({ type: "OPEN_DIALOG" });
+  };
+
   if (!user || !defaultAddress) return <div className="">Loading</div>;
   return (
-    <Paper className={classes.paper}>
-      <Grid container>
-        <Grid xs={1} item>
-          <Typography variant="h6">1</Typography>
-        </Grid>
-        <Grid xs={11} item>
-          <Grid container>
-            <Grid item xs={4}>
-              <Typography variant="h6">Delivery Address</Typography>
-            </Grid>
-            <Grid item xs={8}>
-              <Grid container>
-                <Grid item xs={8}>
-                  <AddressCard address={defaultAddress} />
-                </Grid>
-                <Grid item xs={4} className={classes.buttonContainer}>
-                  <Button variant="contained" color="secondary">
-                    Change
-                  </Button>
+    <>
+      <AddressFormDialog
+        addresses={addresses}
+        setAddresses={setAddresses}
+        dialogState={dialogState}
+      />
+      <Paper className={classes.paper}>
+        <Grid container>
+          <Grid xs={1} item>
+            <Typography variant="h6">1</Typography>
+          </Grid>
+          <Grid xs={11} item>
+            <Grid container>
+              <Grid item xs={4}>
+                <Typography variant="h6">Delivery Address</Typography>
+              </Grid>
+              <Grid item xs={8}>
+                <Grid container>
+                  <Grid item xs={8}>
+                    <AddressCard address={defaultAddress} />
+                  </Grid>
+                  <Grid item xs={4} className={classes.buttonContainer}>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={handleChangeButtonClick}
+                    >
+                      Change
+                    </Button>
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
           </Grid>
         </Grid>
-      </Grid>
-    </Paper>
+      </Paper>
+    </>
   );
 }

@@ -1,36 +1,53 @@
-import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Dialog, makeStyles, DialogTitle } from "@material-ui/core";
 import AddressForm from "./AddressForm";
+import Addresses from "./Addresses";
+
+import Slide from "./Slide";
 
 const useStyles = makeStyles((theme) => ({
-  dialog: {
+  dialogContent: {
+    position: "relative",
     padding: theme.spacing(2),
+    overflow: (slide) => (slide ? "scroll" : "hidden"),
   },
   root: {
     paddingTop: 0,
   },
 }));
 
-const AddressFormDialog = () => {
-  const classes = useStyles();
-  const [open, setOpen] = useState(false);
+const AddressFormDialog = ({ addresses, setAddresses, dialogState }) => {
+  const { open, slide } = dialogState;
+  const classes = useStyles(slide);
+  const dispatch = useDispatch();
 
   const handleClose = () => {
-    setOpen(false);
+    dispatch({ type: "CLOSE_DIALOG" });
   };
 
   return (
     <>
-      <button onClick={() => setOpen(true)}>Open</button>
       <Dialog open={open} onClose={handleClose}>
-        <div className={classes.dialog}>
-          <DialogTitle
-            classes={{ root: classes.root }}
-            id="address-dialog-title"
-          >
-            Register shipping address
-          </DialogTitle>
-          <AddressForm />
+        <div className={classes.dialogContent}>
+          <Slide
+            slide={slide}
+            frameWidth="100%"
+            frameHeight="100%"
+            defaultContent={
+              <Addresses addresses={addresses} setAddresses={setAddresses} />
+            }
+            alternativeContent={
+              <>
+                <DialogTitle
+                  classes={{ root: classes.root }}
+                  id="address-dialog-title"
+                >
+                  Register shipping address
+                </DialogTitle>
+                <AddressForm />
+              </>
+            }
+          />
         </div>
       </Dialog>
     </>
