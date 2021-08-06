@@ -20,6 +20,16 @@ export const updateAddress = async (address, user) =>
     },
   });
 
+export const deleteAddress = async (address, user) =>
+  await axios({
+    method: "put",
+    data: [address],
+    url: `${process.env.REACT_APP_API}/user/address/delete/${user.id}`,
+    headers: {
+      "x-auth-token": user.token,
+    },
+  });
+
 export const changeDefaultAddress = async (address, user) =>
   await axios({
     method: "put",

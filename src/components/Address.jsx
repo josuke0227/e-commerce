@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Grid, Typography, makeStyles, Button, Paper } from "@material-ui/core";
+import { makeStyles, Paper } from "@material-ui/core";
 import CurrentAddress from "./CurrentAddress";
 import EditAddress from "./EditAddress";
 
@@ -17,7 +17,6 @@ const Address = ({ address, state }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [showEdit, setShowEdit] = useState(false);
-  const [expand, setExpand] = useState(false);
 
   const handleChangeButtonClick = () => {
     setShowEdit(true);
@@ -27,7 +26,7 @@ const Address = ({ address, state }) => {
           type: "EXPAND",
           payload: "address",
         });
-      }, 250);
+      }, 100);
 
     delay();
   };
@@ -40,7 +39,7 @@ const Address = ({ address, state }) => {
     const delay = () => {
       setTimeout(() => {
         setShowEdit(false);
-      }, 500);
+      }, 350);
     };
     delay();
   };

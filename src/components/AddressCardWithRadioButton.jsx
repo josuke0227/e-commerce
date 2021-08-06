@@ -32,11 +32,16 @@ const AddressCardWithRadioButton = ({
   buttonState,
   onChange,
   onClick,
+  handleDelete,
 }) => {
   const { _id } = address;
   const classes = useStyles();
   return (
-    <Badge badgeContent={"X"} color="secondary">
+    <Badge
+      badgeContent={"X"}
+      color="secondary"
+      onClick={() => handleDelete(address)}
+    >
       <Box
         className={classes.cardContainer}
         border={1}

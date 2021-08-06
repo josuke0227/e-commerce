@@ -23,7 +23,7 @@ export default function CheckoutPage() {
 
     if (!user) return;
     loadUser();
-  }, [user]);
+  }, [user, dispatch]);
 
   useEffect(() => {
     if (!entity.length) return;
@@ -31,7 +31,7 @@ export default function CheckoutPage() {
     address.length
       ? dispatch({ type: "SET_ADDRESS", payload: address[0] })
       : dispatch({ type: "SET_ADDRESS", payload: entity[0] });
-  }, [entity]);
+  }, [entity, dispatch]);
 
   if (!user || !current) return <div className="">Loading</div>;
   return (

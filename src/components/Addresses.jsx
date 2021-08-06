@@ -6,12 +6,11 @@ import {
   Typography,
   makeStyles,
   Button,
-  Badge,
 } from "@material-ui/core";
 import { indigo } from "@material-ui/core/colors";
 import AddIcon from "@material-ui/icons/Add";
 import AddressCardWithRadioButton from "./AddressCardWithRadioButton";
-import { changeDefaultAddress } from "../services/userService";
+import { changeDefaultAddress, deleteAddress } from "../services/userService";
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -108,9 +107,18 @@ export default function Addresses({ handleClose }) {
     dispatch({ type: "OPEN_DIALOG" });
   };
 
-  const handleEditButtonClick = (product) => {
-    dispatch({ type: "SET_SELECTED_ADDRESS", payload: product });
+  const handleEditButtonClick = (address) => {
+    dispatch({ type: "SET_SELECTED_ADDRESS", payload: address });
     dispatch({ type: "OPEN_DIALOG" });
+  };
+
+  const handleDelete = async (address) => {
+    try {
+      const { data } = await deleteAddress(address, user);
+      dispatch({ type: "SET_ADDRESSES", payload: data });
+    } catch (error) {
+      console.log("Deleting address error", error);
+    }
   };
 
   return (
@@ -130,6 +138,7 @@ export default function Addresses({ handleClose }) {
             buttonState={buttonState}
             onChange={handleInputChange}
             onClick={handleEditButtonClick}
+            handleDelete={handleDelete}
           />
         ))}
       <div className={classes.addButtonContainer}>
