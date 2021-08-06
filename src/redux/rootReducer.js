@@ -11,6 +11,7 @@ import { pageReducer } from "./reducer/pageReducer";
 import { cartReducer } from "./reducer/cartReducer";
 import { cartDrawerReducer } from "./reducer/cartDrawerReducer";
 import { addressDialogReducer } from "./reducer/addressDialogReducer";
+import { addressReducer } from "./reducer/addressReducer";
 
 const persistConfig = {
   key: "root",
@@ -28,6 +29,7 @@ const rootReducer = combineReducers({
   cart: cartReducer,
   cartDrawer: cartDrawerReducer,
   addressDialog: addressDialogReducer,
+  address: addressReducer,
 });
 
 export default persistReducer(persistConfig, rootReducer);

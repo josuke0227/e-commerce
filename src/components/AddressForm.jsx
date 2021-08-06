@@ -44,16 +44,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Playground() {
+export default function AddressForm() {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [countriess, setCountries] = useState([]);
   const {
+    user,
+    address: { selected },
+  } = useSelector((state) => ({ ...state }));
+  const {
     control,
     formState: { errors },
     handleSubmit,
-  } = useForm({ resolver: joiResolver(schema) });
-  const { user } = useSelector((state) => ({ ...state }));
+  } = useForm({
+    resolver: joiResolver(schema),
+    defaultValues: {
+      ...selected,
+    },
+  });
 
   // TODO: revert
   // useEffect(() => {
@@ -63,7 +71,7 @@ export default function Playground() {
   //   };
 
   //   loadCountries();
-  // }, []);
+  // }, [])
 
   const onSubmit = async (data) => {
     try {
@@ -105,6 +113,8 @@ export default function Playground() {
     },
   ];
 
+  if (!selected && selected !== undefined)
+    return <div className="">loading</div>;
   return (
     <form
       style={{ display: "flex", flexDirection: "column" }}
@@ -125,7 +135,6 @@ export default function Playground() {
                 {...field}
                 inputProps={{
                   name: "country",
-                  id: "country-select",
                 }}
               >
                 <option aria-label="None" value="" />

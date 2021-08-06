@@ -24,7 +24,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AddressCardWithRadioButton = ({ address, buttonState, onChange }) => {
+const AddressCardWithRadioButton = ({
+  address,
+  buttonState,
+  onChange,
+  onClick,
+}) => {
   const { _id } = address;
   const classes = useStyles();
   return (
@@ -47,6 +52,7 @@ const AddressCardWithRadioButton = ({ address, buttonState, onChange }) => {
         color="primary"
         className={classes.button}
         classes={{ label: classes.buttonLabel }}
+        onClick={() => onClick(address)}
       >
         Edit
       </Button>

@@ -11,6 +11,8 @@ import { indigo } from "@material-ui/core/colors";
 import AddIcon from "@material-ui/icons/Add";
 import AddressCardWithRadioButton from "./AddressCardWithRadioButton";
 import { changeDefaultAddress } from "../services/userService";
+import AddressForm from "./AddressForm";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -45,23 +47,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Addresses({ addresses, setAddresses }) {
-  const { user } = useSelector((state) => ({ ...state }));
+export default function Addresses() {
+  const {
+    user,
+    address: { entity },
+  } = useSelector((state) => ({ ...state }));
   const initialButtonState = useRef();
   const classes = useStyles();
   const dispatch = useDispatch();
   const [buttonState, setButtonState] = useState();
 
   useEffect(() => {
-    if (!addresses.length) return;
+    if (!entity.length) return;
 
     let initialState = {};
-    addresses.forEach(
-      (a) => (initialState = { ...initialState, [a._id]: false })
-    );
+    entity.forEach((a) => (initialState = { ...initialState, [a._id]: false }));
     initialButtonState.current = initialState;
 
-    addresses.forEach(
+    entity.forEach(
       (a) =>
         (initialState = {
           ...initialState,
@@ -69,7 +72,7 @@ export default function Addresses({ addresses, setAddresses }) {
         })
     );
     setButtonState(initialState);
-  }, [addresses]);
+  }, [entity]);
 
   const handleInputChange = (e) => {
     const newState = {
@@ -81,23 +84,36 @@ export default function Addresses({ addresses, setAddresses }) {
 
   const handleDefaultAddressChange = () => {
     // TODO: this is where address data is updated.
-    const newAddresses = addresses.map((a) => ({
+    const newAddresses = entity.map((a) => ({
       ...a,
       isDefault: buttonState[a._id],
     }));
-    setAddresses(newAddresses);
+    dispatch({
+      type: "SET_ADDRESSES",
+      payload: newAddresses,
+    });
     doSubmit(newAddresses);
+  };
+
+  const doSubmit = async (newAddresses) => {
+    try {
+      await changeDefaultAddress(newAddresses, user);
+    } catch (error) {
+      console.log("Changing default address error", error);
+    }
     dispatch({
       type: "CLOSE_DIALOG",
     });
   };
 
-  const doSubmit = async (newAddresses) => {
-    await changeDefaultAddress(newAddresses, user);
+  const handleAddButtonClick = () => {
+    dispatch({ type: "SET_SELECTED_ADDRESS", payload: undefined });
+    dispatch({ type: "OPEN_DIALOG" });
   };
 
-  const handleAddButtonClick = () => {
-    dispatch({ type: "SLIDE" });
+  const handleEditButtonClick = (product) => {
+    dispatch({ type: "SET_SELECTED_ADDRESS", payload: product });
+    dispatch({ type: "OPEN_DIALOG" });
   };
 
   return (
@@ -110,12 +126,13 @@ export default function Addresses({ addresses, setAddresses }) {
         classes={{ root: classes.dividerRoot }}
       />
       {buttonState &&
-        addresses.map((a) => (
+        entity.map((a) => (
           <AddressCardWithRadioButton
             key={a._id}
             address={a}
             buttonState={buttonState}
             onChange={handleInputChange}
+            onClick={handleEditButtonClick}
           />
         ))}
       <div className={classes.addButtonContainer}>
