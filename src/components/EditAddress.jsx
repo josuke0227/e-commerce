@@ -5,8 +5,10 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Button,
 } from "@material-ui/core";
 import Addresses from "./Addresses";
+import CancelPresentationIcon from "@material-ui/icons/CancelPresentation";
 
 const useStyles = makeStyles({
   summaryRoot: {
@@ -14,6 +16,15 @@ const useStyles = makeStyles({
   },
   accordionRoot: {
     "&::before": {
+      backgroundColor: "transparent",
+    },
+  },
+  label: {
+    textTransform: "capitalize",
+  },
+  buttonRoot: {
+    fontWeight: 400,
+    "&:hover": {
       backgroundColor: "transparent",
     },
   },
@@ -36,7 +47,15 @@ const EditAddress = ({ expand, onClick }) => {
           }}
         >
           <Typography variant="h6">Choose a delivery address</Typography>
-          <span onClick={onClick}>Close</span>
+          <Button
+            classes={{ label: classes.label, root: classes.buttonRoot }}
+            variant="text"
+            endIcon={<CancelPresentationIcon />}
+            disableRipple
+            onClick={onClick}
+          >
+            close
+          </Button>
         </div>
         <Accordion
           expanded={expand}
@@ -47,7 +66,7 @@ const EditAddress = ({ expand, onClick }) => {
             classes={{ root: classes.summaryRoot }}
           ></AccordionSummary>
           <AccordionDetails>
-            <Addresses />
+            <Addresses handleClose={onClick} />
           </AccordionDetails>
         </Accordion>
       </Grid>

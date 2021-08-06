@@ -12,6 +12,7 @@ import { cartReducer } from "./reducer/cartReducer";
 import { cartDrawerReducer } from "./reducer/cartDrawerReducer";
 import { addressDialogReducer } from "./reducer/addressDialogReducer";
 import { addressReducer } from "./reducer/addressReducer";
+import { checkoutPageAccordionReducer } from "./reducer/checkoutPageAccordionReducer";
 
 const persistConfig = {
   key: "root",
@@ -30,6 +31,7 @@ const rootReducer = combineReducers({
   cartDrawer: cartDrawerReducer,
   addressDialog: addressDialogReducer,
   address: addressReducer,
+  checkoutAccordion: checkoutPageAccordionReducer,
 });
 
 export default persistReducer(persistConfig, rootReducer);

@@ -6,13 +6,12 @@ import {
   Typography,
   makeStyles,
   Button,
+  Badge,
 } from "@material-ui/core";
 import { indigo } from "@material-ui/core/colors";
 import AddIcon from "@material-ui/icons/Add";
 import AddressCardWithRadioButton from "./AddressCardWithRadioButton";
 import { changeDefaultAddress } from "../services/userService";
-import AddressForm from "./AddressForm";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -47,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Addresses() {
+export default function Addresses({ handleClose }) {
   const {
     user,
     address: { entity },
@@ -101,9 +100,7 @@ export default function Addresses() {
     } catch (error) {
       console.log("Changing default address error", error);
     }
-    dispatch({
-      type: "CLOSE_DIALOG",
-    });
+    handleClose();
   };
 
   const handleAddButtonClick = () => {

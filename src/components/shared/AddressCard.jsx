@@ -8,6 +8,8 @@ const AddressCard = ({ address }) => {
       </div>
       <div className="">
         <span>{address1} </span>
+      </div>
+      <div className="">
         <span>{address2}</span>
       </div>
       <div className="">

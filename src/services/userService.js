@@ -10,6 +10,16 @@ export const registerAddress = async (address, user) =>
     },
   });
 
+export const updateAddress = async (address, user) =>
+  await axios({
+    method: "put",
+    data: [address],
+    url: `${process.env.REACT_APP_API}/user/address/update/${user.id}`,
+    headers: {
+      "x-auth-token": user.token,
+    },
+  });
+
 export const changeDefaultAddress = async (address, user) =>
   await axios({
     method: "put",

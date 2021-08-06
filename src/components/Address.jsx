@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { Grid, Typography, makeStyles, Button, Paper } from "@material-ui/core";
 import CurrentAddress from "./CurrentAddress";
 import EditAddress from "./EditAddress";
@@ -12,8 +13,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Address = ({ address }) => {
+const Address = ({ address, state }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const [showEdit, setShowEdit] = useState(false);
   const [expand, setExpand] = useState(false);
 
@@ -21,26 +23,32 @@ const Address = ({ address }) => {
     setShowEdit(true);
     const delay = () =>
       setTimeout(() => {
-        setExpand(true);
-      }, 100);
+        dispatch({
+          type: "EXPAND",
+          payload: "address",
+        });
+      }, 250);
 
     delay();
   };
 
   const handleCloseButtonClick = () => {
-    setExpand(false);
-    const delay = () =>
+    dispatch({
+      type: "COLLAPSE",
+      payload: "address",
+    });
+    const delay = () => {
       setTimeout(() => {
         setShowEdit(false);
-      }, 300);
-
+      }, 500);
+    };
     delay();
   };
 
   return (
     <Paper className={classes.paper}>
       {showEdit ? (
-        <EditAddress expand={expand} onClick={handleCloseButtonClick} />
+        <EditAddress expand={state.address} onClick={handleCloseButtonClick} />
       ) : (
         <CurrentAddress address={address} onClick={handleChangeButtonClick} />
       )}

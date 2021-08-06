@@ -7,12 +7,6 @@ export const addressDialogReducer = (state = INITIAL_STATE, action) => {
     case "CLOSE_DIALOG":
       return INITIAL_STATE;
 
-    case "SLIDE":
-      return { ...state, slide: true };
-
-    case "SLIDE_BACK":
-      return { ...state, slide: false };
-
     default:
       return state;
   }

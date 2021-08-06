@@ -1,23 +1,13 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getAddress } from "../services/userService";
-import { Grid, Typography, makeStyles, Button, Paper } from "@material-ui/core";
 import Address from "../components/Address";
 import AddressFormDialog from "../components/AddressFormDialog";
 
-const useStyles = makeStyles((theme) => ({
-  paper: { padding: theme.spacing(2) },
-  buttonContainer: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-}));
-
 export default function CheckoutPage() {
-  const classes = useStyles();
   const {
     user,
+    checkoutAccordion,
     addressDialog: dialogState,
     address: { entity, current },
   } = useSelector((state) => ({
@@ -47,7 +37,7 @@ export default function CheckoutPage() {
   return (
     <>
       <AddressFormDialog dialogState={dialogState} />
-      <Address address={current} />
+      <Address address={current} state={checkoutAccordion} />
     </>
   );
 }

@@ -15,7 +15,7 @@ import Joi from "joi";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { countries } from "../data-sample/sampleCountries";
 // TODO: revert
-import { registerAddress } from "../services/userService";
+import { registerAddress, updateAddress } from "../services/userService";
 import { getCountryNames } from "../services/countriesService";
 import Input from "./shared/Input";
 import { getHelperText } from "../util/getHelperText";
@@ -54,13 +54,10 @@ export default function AddressForm() {
   } = useSelector((state) => ({ ...state }));
   const {
     control,
-    formState: { errors },
     handleSubmit,
+    formState: { errors },
   } = useForm({
     resolver: joiResolver(schema),
-    defaultValues: {
-      ...selected,
-    },
   });
 
   // TODO: revert
@@ -74,42 +71,60 @@ export default function AddressForm() {
   // }, [])
 
   const onSubmit = async (data) => {
+    const submittingData = { ...data };
+    if (selected) submittingData._id = selected._id;
+
     try {
-      await registerAddress(data, user);
+      const { data } =
+        selected === undefined
+          ? await registerAddress(submittingData, user)
+          : await updateAddress(submittingData, user);
+      console.log(data);
+      dispatch({ type: "SET_ADDRESSES", payload: data });
+      dispatch({ type: "RESET_SELECTED_ADDRESS" });
     } catch (error) {
       console.log(error);
     }
     dispatch({ type: "CLOSE_DIALOG" });
   };
 
+  const getDefaultValue = (path) => (selected ? selected[path] : "");
+
   const textInputDefs = [
     {
       name: "name",
       label: "Full name",
+      defaultValue: getDefaultValue("name"),
     },
     {
       name: "phone",
       label: "Phone number",
+      defaultValue: getDefaultValue("phone"),
     },
     {
       name: "address1",
       label: "Address line 1",
+      defaultValue: getDefaultValue("address1"),
     },
     {
       name: "address2",
       label: "Address line 2",
+      defaultValue: getDefaultValue("address2"),
     },
     {
       name: "postcode",
       label: "Postcode",
+      defaultValue: getDefaultValue("postcode"),
     },
     {
       name: "city",
       label: "City",
+      defaultValue: getDefaultValue("city"),
     },
     {
       name: "state",
       label: "State/Territory",
+      defaultValue: getDefaultValue("state"),
     },
   ];
 
@@ -126,7 +141,7 @@ export default function AddressForm() {
           <Controller
             name="country"
             control={control}
-            defaultValue=""
+            defaultValue={getDefaultValue("country")}
             rules={{ required: true }}
             render={({ field }) => (
               <Select
@@ -157,6 +172,7 @@ export default function AddressForm() {
         <Input
           key={d.name}
           className={classes.form}
+          defaultValue={d.defaultValue}
           errors={errors}
           type="text"
           name={d.name}
@@ -173,9 +189,14 @@ export default function AddressForm() {
           <Controller
             name="isDefault"
             control={control}
-            defaultValue={false}
             rules={{ required: true }}
-            render={({ field }) => <Checkbox {...field} />}
+            render={({ field }) => (
+              <Checkbox
+                defaultValue={getDefaultValue("isDefault")}
+                defaultChecked={getDefaultValue("isDefault")}
+                {...field}
+              />
+            )}
           />
         }
         label="Use as my default address"
